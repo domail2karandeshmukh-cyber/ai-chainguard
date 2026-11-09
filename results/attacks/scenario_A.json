@@ -2,8 +2,8 @@
   "scenario": "A",
   "title": "Dataset tampering",
   "demonstrates": "Post-attestation modification of a dataset is detected and localised to rows.",
-  "ran_at": "2026-10-15T21:45:19Z",
-  "duration_s": 1.78,
+  "ran_at": "2026-11-09T08:14:16Z",
+  "duration_s": 1.89,
   "all_as_expected": true,
   "variants": [
     {
@@ -15,7 +15,7 @@
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 3.315,
+      "detection_ms": 4.157,
       "evidence": [],
       "details": {},
       "as_expected": true
@@ -32,7 +32,7 @@
         "V2"
       ],
       "warned_checks": [],
-      "detection_ms": 4.463,
+      "detection_ms": 5.378,
       "evidence": [
         "V1 FAIL: file content differs from the signed artifact",
         "V2 FAIL: dataset rows changed after signing: 5 line(s) modified, 0 added, 0 removed"
@@ -66,7 +66,7 @@
         "V6"
       ],
       "warned_checks": [],
-      "detection_ms": 10.021,
+      "detection_ms": 10.639,
       "evidence": [
         "V6 FAIL: parent digits-base-cnn FAILED (V6)"
       ],
@@ -85,7 +85,7 @@
         "V2"
       ],
       "warned_checks": [],
-      "detection_ms": 4.105,
+      "detection_ms": 5.64,
       "evidence": [
         "V1 FAIL: file content differs from the signed artifact",
         "V2 FAIL: dataset rows changed after signing: 0 line(s) modified, 1 added, 0 removed"
@@ -114,7 +114,7 @@
         "V2"
       ],
       "warned_checks": [],
-      "detection_ms": 4.185,
+      "detection_ms": 5.122,
       "evidence": [
         "V1 FAIL: file content differs from the signed artifact",
         "V2 FAIL: dataset rows changed after signing: 1 line(s) modified, 0 added, 0 removed"

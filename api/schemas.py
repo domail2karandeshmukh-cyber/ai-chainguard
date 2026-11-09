@@ -45,3 +45,8 @@ class DeployRequest(BaseModel):
 
 class TamperRequest(BaseModel):
     mode: Literal["append_bytes", "flip_byte", "flip_label"] = "flip_byte"
+
+
+class TrustLogAttackRequest(BaseModel):
+    """v0.4 live demo: attack a SANDBOX COPY of the workspace and show the verdict."""
+    mode: Literal["control", "unrevoke_index", "rogue_key", "truncate_log", "edit_log", "delete_log"] = "unrevoke_index"

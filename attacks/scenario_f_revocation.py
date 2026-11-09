@@ -85,7 +85,7 @@ def _write_log(cg, lines: list[bytes]) -> None:
     cg.settings.trust_log_path.write_bytes(b"\n".join(lines) + b"\n")
 
 
-def _rogue_key_resigns(cg, artifact_id: str) -> str:
+def rogue_key_resigns(cg, artifact_id: str) -> str:
     """E5-C5: the attacker generates a key, writes it into the ``signers`` table with the
     training_pipeline role (as if trusted), substitutes the model file and re-signs the
     manifest with that key. Every stored artefact is self-consistent; only the signed
@@ -180,7 +180,7 @@ def run(out_dir: Path | None = None) -> dict[str, Any]:
                             "the index disagreement is logged as INDEX_TAMPERING"))
 
     cg, ids = fresh_chain()
-    kid = _rogue_key_resigns(cg, ids["final_model"])
+    kid = rogue_key_resigns(cg, ids["final_model"])
     variants.append(observe(cg, "F", "E5-C5", "Bypass: rogue key inserted into the index signs a model",
                             f"attacker key {kid} written into the signers table as training_pipeline; final model "
                             "substituted and re-signed with it", ids["final_model"], "FAILED", "final model"))

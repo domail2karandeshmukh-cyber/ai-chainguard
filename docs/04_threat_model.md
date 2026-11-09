@@ -1,6 +1,6 @@
 # Threat model — AI-ChainGuard
 
-**Assumption:** the signing keys, the trust store and the verifier code are trusted; everything else (files, storage, pipeline hosts, third-party models, the network) may be hostile. Under this assumption AI-ChainGuard detects tampering **after** attestation; it does not detect malice **before** attestation.
+**Assumption:** the signing keys (including the `release_manager` root key and the pin `keys/trust_root.json`), the policy and the verifier code are trusted; everything else (files, storage, the SQLite index, pipeline hosts, third-party models, the network) may be hostile. Since v0.4 the trust store and the revocation list are a signed, hash-chained, append-only log that can live in hostile storage: the index is no longer trusted for either. Under this assumption AI-ChainGuard detects tampering **after** attestation; it does not detect malice **before** attestation.
 
 Method: asset-centric analysis with STRIDE classification; each threat is mapped to a verifier check and to the attack scenario that demonstrates it.
 
@@ -76,6 +76,8 @@ API (`POST /artifacts`, `/verify`, `/artifacts/{id}/revoke`, `/demo/*`), CLI, fi
 | T10 | Key used outside its role | E | Compromised pipeline | Role binding + policy | V4 | D5 | Yes |
 | T11 | Use of revoked key/artifact | S | — | Revocation, propagated to descendants | V4, V7 | D4, tests | Yes |
 | T12 | Index row deleted to escape revocation | T | — | Missing row = FAILED | V7 | tests | Yes |
+| T12b | Index edited to un-revoke, or a rogue key inserted (v0.4) | T | Insider with DB access | Signed trust log replayed by the verifier; index disagreement = `INDEX_TAMPERING` | V4, V7 | E5-C4, E5-C5 | Yes |
+| T12c | Trust log truncated, edited, deleted or substituted (v0.4) | T | — | Root signatures + hash chain + pinned head (rollback protection); fail closed | V3, V4, V7 | E5-C6..C8 | Yes |
 | T13 | File swapped between check and use (TOCTOU) | T | — | Read once, hash the read bytes | `open_verified` | tests | Yes |
 | T14 | DB status / events edited | R, T | — | Status always recomputed | — | — | Verification yes, audit trail no |
 | T15 | Private key theft | S | — | 0600 files, env injection in CI | — | — | **No (residual)** |

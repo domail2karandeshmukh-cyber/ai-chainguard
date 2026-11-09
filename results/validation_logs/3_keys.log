@@ -1,4 +1,6 @@
-data_steward         ed25519:fa6000b804507532  created
-training_pipeline    ed25519:bc5ae63f40bda140  created
-release_manager      ed25519:14d2d65a093f8d09  created
-deployment_gateway   ed25519:3b8a999dbca88d70  created
+release_manager      ed25519:d81bf3d6fab15790  created
+data_steward         ed25519:566515b565ae2014  created
+training_pipeline    ed25519:c6a441e237db7e2c  created
+deployment_gateway   ed25519:4371e0ad993a7421  created
+exit=0
+real 1.0s

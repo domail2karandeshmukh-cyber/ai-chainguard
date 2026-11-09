@@ -1,0 +1,187 @@
+{
+  "scenario": "G",
+  "title": "Untrusted external model source (Experiment 7)",
+  "demonstrates": "An externally published model is accepted only with a valid signature from a registered, unrevoked publisher and unmodified bytes; unsigned models are refused. A trusted publisher can still ship a backdoor: the signature proves origin and integrity, not safety.",
+  "ran_at": "2026-10-15T21:45:29Z",
+  "duration_s": 1.7,
+  "all_as_expected": true,
+  "variants": [
+    {
+      "variant": "E7-A",
+      "title": "Trusted registered publisher signs the model",
+      "attack": "model signed by release-bot@trusted-model-hub.example, key registered as model_publisher",
+      "verified_artifact": "external model",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 1.649,
+      "evidence": [],
+      "details": {
+        "external_artifacts": [
+          "hub-digits-cnn"
+        ],
+        "publisher": "release-bot@trusted-model-hub.example"
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E7-A2",
+      "title": "Fine-tuned on the trusted external model, deployed",
+      "attack": "stage 3 fine-tuning with the external model as parent; gateway decision",
+      "verified_artifact": "fine-tuned model",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 5.77,
+      "evidence": [],
+      "details": {
+        "deployed": true,
+        "gateway_reason": "chain verified",
+        "external_artifacts": [
+          "hub-digits-cnn"
+        ]
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E7-B",
+      "title": "Unknown / unregistered publisher",
+      "attack": "model signed by uploader@unknown-model-mirror.example whose key is not in the trust store",
+      "verified_artifact": "external model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V3",
+        "V4"
+      ],
+      "warned_checks": [],
+      "detection_ms": 1.34,
+      "evidence": [
+        "V3 FAIL: signing key ed25519:a55889fa69d5bd7f is not in the trust store",
+        "V4 FAIL: unknown signer key"
+      ],
+      "details": {
+        "accepted": false
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E7-C",
+      "title": "Trusted publisher's model modified after signing",
+      "attack": "one bit of the downloaded weights flipped before import",
+      "verified_artifact": "external model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V1"
+      ],
+      "warned_checks": [],
+      "detection_ms": 1.672,
+      "evidence": [
+        "V1 FAIL: file content differs from the signed artifact"
+      ],
+      "details": {
+        "accepted": false
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E7-D1",
+      "title": "Unsigned external model (no manifest)",
+      "attack": "weights offered without any publisher manifest",
+      "verified_artifact": "external model (import)",
+      "expected": "REFUSED",
+      "observed": "REFUSED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 1.681,
+      "evidence": [
+        "import: unsigned external model: no publisher manifest/signature supplied"
+      ],
+      "details": {
+        "stored": false
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E7-D2",
+      "title": "Manifest with its signature stripped",
+      "attack": "publisher manifest kept, signature list emptied",
+      "verified_artifact": "external model (import)",
+      "expected": "REFUSED",
+      "observed": "REFUSED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 1.716,
+      "evidence": [
+        "import: unsigned external model: envelope carries no signature"
+      ],
+      "details": {
+        "stored": false
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E7-E",
+      "title": "Trusted publisher key later revoked",
+      "attack": "model_publisher key ed25519:a76334b5a587805d revoked after import",
+      "verified_artifact": "external model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V4"
+      ],
+      "warned_checks": [],
+      "detection_ms": 1.653,
+      "evidence": [
+        "V4 FAIL: key revoked at 2026-10-15T21:45:28.416324Z (publisher reported key compromise)"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "E7-E2",
+      "title": "Model fine-tuned from it, after revocation",
+      "attack": "re-deploy the E7-A2 model once its external parent's key is revoked",
+      "verified_artifact": "fine-tuned model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V6"
+      ],
+      "warned_checks": [],
+      "detection_ms": 5.648,
+      "evidence": [
+        "V6 FAIL: parent hub-digits-cnn FAILED (V4)"
+      ],
+      "details": {
+        "deployed": false,
+        "gateway_reason": "chain verification FAILED (V6)"
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E7-F",
+      "title": "LIMITATION: trusted publisher signs a backdoor",
+      "attack": "publisher trained on 8% corner-trigger poison (label 7), then signed honestly",
+      "verified_artifact": "external model",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 1.864,
+      "evidence": [],
+      "details": {
+        "clean_accuracy": 0.9333,
+        "attack_success_rate": 1.0,
+        "reference_clean_model_asr": 0.0,
+        "deployed": null,
+        "deployment_note": "not attempted: verification only"
+      },
+      "as_expected": true
+    }
+  ],
+  "interpretation": "E7-A/A2: a registered publisher's model verifies, is labelled EXTERNAL, and can be fine-tuned and deployed. E7-B/C/E: unknown key, modified bytes and revoked key all FAIL, and the failure propagates to descendants (gateway blocks). E7-D: unsigned models are refused at import. E7-F: a backdoored model from a trusted publisher VERIFIES - attestation moves trust to the publisher, it does not create it."
+}

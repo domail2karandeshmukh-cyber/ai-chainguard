@@ -1,0 +1,9 @@
+machine label: AI-assisted reference environment - cloud Linux container, 9 Nov 2026
+date (UTC): 2026-11-09T08:13:21Z
+os: Linux 6.18.44-fc-v310 x86_64
+cpu: Intel(R) Xeon(R) Processor @ 2.10GHz x 2 logical
+memory: 8.2 GB
+Python 3.13.16
+torch 2.15.0+cu132 | cuda False | cryptography 50.0.2 | scikit-learn 1.9.1 | numpy 2.5.4
+ruff 0.17.1
+git: d8f38e8

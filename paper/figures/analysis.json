@@ -1,0 +1,366 @@
+{
+  "boundary": {
+    "E0": {
+      "status": "VERIFIED",
+      "clean_accuracy": 0.95,
+      "asr": 0.0,
+      "deployed": true
+    },
+    "E2": {
+      "status": "VERIFIED",
+      "clean_accuracy": 0.9417,
+      "asr": 0.7716,
+      "deployed": true
+    },
+    "E3": {
+      "status": "WARNING",
+      "clean_accuracy": 0.9417,
+      "asr": 0.7716,
+      "deployed": false
+    },
+    "E4": {
+      "status": "VERIFIED",
+      "clean_accuracy": 0.9444,
+      "asr": 0.5123,
+      "deployed": true
+    },
+    "E7-F": {
+      "status": "VERIFIED",
+      "clean_accuracy": 0.9333,
+      "asr": 1.0,
+      "deployed": null
+    }
+  },
+  "bench": {
+    "A  inference, 1 sample": {
+      "median_ms": 0.093,
+      "p95_ms": 0.1933,
+      "runs": 1000
+    },
+    "D  inference after verified deploy": {
+      "median_ms": 0.0923,
+      "p95_ms": 0.1891,
+      "runs": 1000
+    },
+    "B  full chain verification V0-V9": {
+      "median_ms": 8.1695,
+      "p95_ms": 12.8704,
+      "runs": 200
+    },
+    "C1 verify + audit log + safe read": {
+      "median_ms": 32.9646,
+      "p95_ms": 42.1475,
+      "runs": 100
+    },
+    "C2 safe load (safetensors)": {
+      "median_ms": 1.1934,
+      "p95_ms": 1.5908,
+      "runs": 100
+    },
+    "C3 smoke test (360 samples)": {
+      "median_ms": 8.9034,
+      "p95_ms": 11.5224,
+      "runs": 100
+    },
+    "C  first secure deployment, total": {
+      "median_ms": 249.1614,
+      "p95_ms": 277.1084,
+      "runs": 30
+    }
+  },
+  "trustlog": {
+    "5": {
+      "records": 5,
+      "cold_median_ms": 1.221,
+      "cold_p95_ms": 1.374,
+      "warm_median_ms": 0.25,
+      "warm_p95_ms": 0.32,
+      "log_bytes": 2033.0,
+      "per_record_cold_us": 244.2
+    },
+    "50": {
+      "records": 50,
+      "cold_median_ms": 7.292,
+      "cold_p95_ms": 9.857,
+      "warm_median_ms": 0.808,
+      "warm_p95_ms": 0.897,
+      "log_bytes": 19916.0,
+      "per_record_cold_us": 145.8
+    },
+    "500": {
+      "records": 500,
+      "cold_median_ms": 73.27,
+      "cold_p95_ms": 77.943,
+      "warm_median_ms": 7.637,
+      "warm_p95_ms": 8.092,
+      "log_bytes": 199142.0,
+      "per_record_cold_us": 146.5
+    },
+    "2000": {
+      "records": 2000,
+      "cold_median_ms": 281.618,
+      "cold_p95_ms": 311.923,
+      "warm_median_ms": 30.767,
+      "warm_p95_ms": 32.35,
+      "log_bytes": 798893.0,
+      "per_record_cold_us": 140.8
+    }
+  },
+  "variants_total": 48,
+  "variants_as_expected": 48,
+  "per_scenario": {
+    "A": {
+      "n": 5,
+      "ok": 5,
+      "statuses": {
+        "VERIFIED": 1,
+        "FAILED": 4
+      }
+    },
+    "B": {
+      "n": 4,
+      "ok": 4,
+      "statuses": {
+        "VERIFIED": 1,
+        "FAILED": 3
+      }
+    },
+    "C": {
+      "n": 5,
+      "ok": 5,
+      "statuses": {
+        "VERIFIED": 1,
+        "FAILED": 4
+      }
+    },
+    "D": {
+      "n": 7,
+      "ok": 7,
+      "statuses": {
+        "VERIFIED": 1,
+        "FAILED": 6
+      }
+    },
+    "E": {
+      "n": 5,
+      "ok": 5,
+      "statuses": {
+        "VERIFIED": 3,
+        "FAILED": 1,
+        "WARNING": 1
+      }
+    },
+    "F": {
+      "n": 13,
+      "ok": 13,
+      "statuses": {
+        "VERIFIED": 2,
+        "FAILED": 11
+      }
+    },
+    "G": {
+      "n": 9,
+      "ok": 9,
+      "statuses": {
+        "VERIFIED": 3,
+        "FAILED": 4,
+        "REFUSED": 2
+      }
+    }
+  },
+  "detection_ms": {
+    "min": 1.587,
+    "max": 14.271,
+    "median": 8.758
+  },
+  "tests_passed": 166,
+  "tests_seconds": 37.31,
+  "pipeline": {
+    "clean_accuracy": 0.95,
+    "attestation_ms": 12.13,
+    "training_ms": 1320.0,
+    "attestation_pct": 0.919,
+    "gateway_verification_ms": 12.018
+  },
+  "manifest_sizes": {
+    "dataset/digits-finetune": {
+      "artifact_type": "dataset",
+      "artifact_name": "digits-finetune",
+      "envelope_bytes": 3085,
+      "canonical_payload_bytes": 1805,
+      "signatures": 1,
+      "parents": 0,
+      "merkle_sidecar_bytes": 29784,
+      "subject_size_bytes": 64649,
+      "envelope_pct_of_subject": "4.77"
+    },
+    "dataset/digits-train": {
+      "artifact_type": "dataset",
+      "artifact_name": "digits-train",
+      "envelope_bytes": 3069,
+      "canonical_payload_bytes": 1789,
+      "signatures": 1,
+      "parents": 0,
+      "merkle_sidecar_bytes": 68068,
+      "subject_size_bytes": 147571,
+      "envelope_pct_of_subject": "2.08"
+    },
+    "base_model/digits-base-cnn": {
+      "artifact_type": "base_model",
+      "artifact_name": "digits-base-cnn",
+      "envelope_bytes": 2101,
+      "canonical_payload_bytes": 1272,
+      "signatures": 1,
+      "parents": 1,
+      "merkle_sidecar_bytes": 0,
+      "subject_size_bytes": 153944,
+      "envelope_pct_of_subject": "1.36"
+    },
+    "external_base_model/hub-digits-cnn": {
+      "artifact_type": "external_base_model",
+      "artifact_name": "hub-digits-cnn",
+      "envelope_bytes": 1412,
+      "canonical_payload_bytes": 826,
+      "signatures": 1,
+      "parents": 0,
+      "merkle_sidecar_bytes": 0,
+      "subject_size_bytes": 153944,
+      "envelope_pct_of_subject": "0.92"
+    },
+    "finetuned_model/digits-finetuned-cnn": {
+      "artifact_type": "finetuned_model",
+      "artifact_name": "digits-finetuned-cnn",
+      "envelope_bytes": 2403,
+      "canonical_payload_bytes": 1520,
+      "signatures": 1,
+      "parents": 2,
+      "merkle_sidecar_bytes": 0,
+      "subject_size_bytes": 153944,
+      "envelope_pct_of_subject": "1.56"
+    },
+    "deployment_record/deployment-digits-finetuned-cnn": {
+      "artifact_type": "deployment_record",
+      "artifact_name": "deployment-digits-finetuned-cnn",
+      "envelope_bytes": 1643,
+      "canonical_payload_bytes": 1008,
+      "signatures": 1,
+      "parents": 1,
+      "merkle_sidecar_bytes": 0,
+      "subject_size_bytes": 1509,
+      "envelope_pct_of_subject": "108.88"
+    }
+  },
+  "envelope_bytes_min_max": [
+    1412,
+    3085
+  ],
+  "crypto_columns": [
+    "size_bytes",
+    "size_label",
+    "repeats",
+    "manifest_bytes",
+    "sha256_ms",
+    "sha256_stdev",
+    "sign_ms",
+    "sign_stdev",
+    "verify_sig_ms",
+    "verify_sig_stdev",
+    "register_ms",
+    "register_stdev",
+    "verify_full_ms",
+    "verify_full_stdev",
+    "sha256_MBps"
+  ],
+  "F": {
+    "E5-0": {
+      "observed": "VERIFIED",
+      "failed": []
+    },
+    "E5-A1": {
+      "observed": "FAILED",
+      "failed": [
+        "V6",
+        "V7"
+      ]
+    },
+    "E5-A2": {
+      "observed": "FAILED",
+      "failed": [
+        "V6",
+        "V7"
+      ]
+    },
+    "E5-B1": {
+      "observed": "FAILED",
+      "failed": [
+        "V4",
+        "V6"
+      ]
+    },
+    "E5-B2": {
+      "observed": "VERIFIED",
+      "failed": []
+    },
+    "E5-C1": {
+      "observed": "FAILED",
+      "failed": [
+        "V7"
+      ]
+    },
+    "E5-C2": {
+      "observed": "FAILED",
+      "failed": [
+        "V4",
+        "V6"
+      ]
+    },
+    "E5-C3": {
+      "observed": "FAILED",
+      "failed": [
+        "V6",
+        "V7"
+      ]
+    },
+    "E5-C4": {
+      "observed": "FAILED",
+      "failed": [
+        "V6",
+        "V7"
+      ]
+    },
+    "E5-C5": {
+      "observed": "FAILED",
+      "failed": [
+        "V3",
+        "V4"
+      ]
+    },
+    "E5-C6": {
+      "observed": "FAILED",
+      "failed": [
+        "V3",
+        "V4",
+        "V6",
+        "V7"
+      ]
+    },
+    "E5-C7": {
+      "observed": "FAILED",
+      "failed": [
+        "V3",
+        "V4",
+        "V6",
+        "V7"
+      ]
+    },
+    "E5-C8": {
+      "observed": "FAILED",
+      "failed": [
+        "V3",
+        "V4",
+        "V6",
+        "V7"
+      ]
+    }
+  }
+}

@@ -36,9 +36,13 @@
   ok E5-B1  Revoke the training_pipeline key -> its models fail  expected FAILED   got FAILED   [V4,V6]
   ok E5-B2  Dataset signed by another role still verifies        expected VERIFIED got VERIFIED [-]
   ok E5-C1  Bypass: delete the revoked artifact's index row      expected FAILED   got FAILED   [V7]
-  ok E5-C2  Bypass: delete the revoked key from the trust store  expected FAILED   got FAILED   [V3,V4,V6]
+  ok E5-C2  Bypass: delete the revoked key from the index        expected FAILED   got FAILED   [V4,V6]
   ok E5-C3  Bypass: overwrite cached status with VERIFIED        expected FAILED   got FAILED   [V6,V7]
-  ok E5-C4  LIMITATION: un-revoke by editing the trusted index   expected VERIFIED got VERIFIED [-]
+  ok E5-C4  Bypass: un-revoke by editing the index (v0.3 limitation) expected FAILED   got FAILED   [V6,V7]
+  ok E5-C5  Bypass: rogue key inserted into the index signs a model expected FAILED   got FAILED   [V3,V4]
+  ok E5-C6  Bypass: truncate the trust log (rollback)            expected FAILED   got FAILED   [V3,V4,V6,V7]
+  ok E5-C7  Bypass: edit a trust-log record in place             expected FAILED   got FAILED   [V3,V4,V6,V7]
+  ok E5-C8  Bypass: delete the trust log                         expected FAILED   got FAILED   [V3,V4,V6,V7]
 == Scenario G ...
   ok E7-A   Trusted registered publisher signs the model         expected VERIFIED got VERIFIED [-]
   ok E7-A2  Fine-tuned on the trusted external model, deployed   expected VERIFIED got VERIFIED [-]  deployed=True
@@ -50,9 +54,6 @@
   ok E7-E2  Model fine-tuned from it, after revocation           expected FAILED   got FAILED   [V6]  deployed=False
   ok E7-F   LIMITATION: trusted publisher signs a backdoor       expected VERIFIED got VERIFIED [-]  acc=0.933 ASR=1.000
 
-44/44 variants ended with the expected status. Summary: <repo>/results/attacks/summary.csv
-
-real	0m15.252s
-user	0m13.063s
-sys	0m1.197s
+48/48 variants ended with the expected status. Summary: /home/claude/ai-chainguard/results/attacks/summary.csv
 exit=0
+real 16.9s

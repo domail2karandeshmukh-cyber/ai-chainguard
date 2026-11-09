@@ -1,16 +1,16 @@
-   1 KiB  sha256     0.032 ms  sign 0.029 ms  verify_sig 0.113 ms  register     8.962 ms  verify_full     1.228 ms
-  16 KiB  sha256     0.054 ms  sign 0.057 ms  verify_sig 0.190 ms  register    11.969 ms  verify_full     1.971 ms
- 256 KiB  sha256     0.292 ms  sign 0.050 ms  verify_sig 0.200 ms  register    11.436 ms  verify_full     2.199 ms
-   1 MiB  sha256     0.856 ms  sign 0.036 ms  verify_sig 0.123 ms  register    10.758 ms  verify_full     2.264 ms
-   4 MiB  sha256     3.352 ms  sign 0.051 ms  verify_sig 0.168 ms  register    15.045 ms  verify_full     5.221 ms
-  16 MiB  sha256    13.341 ms  sign 0.052 ms  verify_sig 0.173 ms  register    26.059 ms  verify_full    15.048 ms
-  64 MiB  sha256    56.671 ms  sign 0.044 ms  verify_sig 0.134 ms  register    66.425 ms  verify_full    58.297 ms
- 256 MiB  sha256   219.743 ms  sign 0.037 ms  verify_sig 0.165 ms  register   234.593 ms  verify_full   223.900 ms
-merkle      1000 rows        1.51 ms
-merkle     10000 rows       14.59 ms
-merkle    100000 rows      149.03 ms
-merkle   1000000 rows     1618.66 ms
-written to <repo>/results/metrics
+   1 KiB  sha256     0.036 ms  sign 0.036 ms  verify_sig 0.126 ms  register     9.042 ms  verify_full     1.645 ms
+  16 KiB  sha256     0.042 ms  sign 0.037 ms  verify_sig 0.124 ms  register     8.891 ms  verify_full     1.554 ms
+ 256 KiB  sha256     0.258 ms  sign 0.036 ms  verify_sig 0.155 ms  register     9.392 ms  verify_full     1.668 ms
+   1 MiB  sha256     0.889 ms  sign 0.036 ms  verify_sig 0.124 ms  register    12.416 ms  verify_full     2.498 ms
+   4 MiB  sha256     3.389 ms  sign 0.037 ms  verify_sig 0.158 ms  register    15.531 ms  verify_full     5.473 ms
+  16 MiB  sha256    13.918 ms  sign 0.051 ms  verify_sig 0.161 ms  register    26.938 ms  verify_full    16.679 ms
+  64 MiB  sha256    54.634 ms  sign 0.036 ms  verify_sig 0.144 ms  register    66.521 ms  verify_full    57.108 ms
+ 256 MiB  sha256   226.461 ms  sign 0.036 ms  verify_sig 0.145 ms  register   231.878 ms  verify_full   229.734 ms
+merkle      1000 rows        1.43 ms
+merkle     10000 rows       14.87 ms
+merkle    100000 rows      173.24 ms
+merkle   1000000 rows     1608.42 ms
+written to /home/claude/ai-chainguard/results/metrics
 
 == inference overhead benchmark + manifest sizes
 [bench] building an attested chain (small training run; model size does not depend on epochs)
@@ -19,30 +19,27 @@ written to <repo>/results/metrics
 [bench] C deployment components: 100 runs; gateway: 30 runs
 
   measurement                                     runs   median ms     p95 ms
-  A normal inference, 1 sample                    1000      0.0801     0.1360
-  A normal inference, batch 360                    300      6.9818     8.6048
-  B full chain verification (V0-V9)                200      7.9465    11.5550
-  C C1 verify + audit log + TOCTOU-safe read       100     30.4818    37.5923
-  C C2 safe load (safetensors)                     100      0.9278     1.4115
-  C C3 smoke test (360 samples)                    100      7.7603    10.3582
-  C first secure deployment (gateway, total)        30    235.2891   274.5531
-  D subsequent inference, 1 sample                1000      0.0801     0.1435
-  D subsequent inference, batch 360                300      6.9793     8.5334
+  A normal inference, 1 sample                    1000      0.0930     0.1933
+  A normal inference, batch 360                    300      6.9081     8.3365
+  B full chain verification (V0-V9)                200      8.1695    12.8704
+  C C1 verify + audit log + TOCTOU-safe read       100     32.9646    42.1475
+  C C2 safe load (safetensors)                     100      1.1934     1.5908
+  C C3 smoke test (360 samples)                    100      8.9034    11.5224
+  C first secure deployment (gateway, total)        30    249.1614   277.1084
+  D subsequent inference, 1 sample                1000      0.0923     0.1891
+  D subsequent inference, batch 360                300      6.8846     8.4077
 
   model: 153,944 bytes, 38,282 parameters
-  per-prediction overhead after deployment: 0.0 ms (D - A, single sample)
+  per-prediction overhead after deployment: -0.0007 ms (D - A, single sample)
 
   manifest sizes (envelope bytes on disk / canonical signed payload):
-    dataset              digits-finetune                3052 B /  1772 B  + Merkle sidecar 29784 B
-    dataset              digits-train                   3036 B /  1756 B  + Merkle sidecar 68068 B
-    base_model           digits-base-cnn                2068 B /  1239 B
+    dataset              digits-finetune                3085 B /  1805 B  + Merkle sidecar 29784 B
+    dataset              digits-train                   3069 B /  1789 B  + Merkle sidecar 68068 B
+    base_model           digits-base-cnn                2101 B /  1272 B
     external_base_model  hub-digits-cnn                 1412 B /   826 B
-    finetuned_model      digits-finetuned-cnn           2370 B /  1487 B
+    finetuned_model      digits-finetuned-cnn           2403 B /  1520 B
     deployment_record    deployment-digits-finetuned-cnn   1643 B /  1008 B
 
-written to <repo>/results/metrics
-
-real	0m32.853s
-user	0m25.920s
-sys	0m4.306s
+written to /home/claude/ai-chainguard/results/metrics
 exit=0
+real 33.8s

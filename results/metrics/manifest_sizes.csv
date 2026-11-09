@@ -1,7 +1,7 @@
 artifact_type,artifact_name,envelope_bytes,canonical_payload_bytes,signatures,parents,merkle_sidecar_bytes,subject_size_bytes,envelope_pct_of_subject
-dataset,digits-finetune,3052,1772,1,0,29784,64649,4.72
-dataset,digits-train,3036,1756,1,0,68068,147571,2.06
-base_model,digits-base-cnn,2068,1239,1,1,0,153944,1.34
+dataset,digits-finetune,3085,1805,1,0,29784,64649,4.77
+dataset,digits-train,3069,1789,1,0,68068,147571,2.08
+base_model,digits-base-cnn,2101,1272,1,1,0,153944,1.36
 external_base_model,hub-digits-cnn,1412,826,1,0,0,153944,0.92
-finetuned_model,digits-finetuned-cnn,2370,1487,1,2,0,153944,1.54
-deployment_record,deployment-digits-finetuned-cnn,1643,1008,1,1,0,1388,118.37
+finetuned_model,digits-finetuned-cnn,2403,1520,1,2,0,153944,1.56
+deployment_record,deployment-digits-finetuned-cnn,1643,1008,1,1,0,1509,108.88

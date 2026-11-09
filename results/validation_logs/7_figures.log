@@ -1,6 +1,3 @@
 created: fig_cost_vs_size.png, fig_merkle_rows.png, fig_attack_outcomes.png, attack_table.md, fig_backdoor_asr.png, fig_inference_overhead.png, fig_overhead.png
-
-real	0m2.737s
-user	0m2.675s
-sys	0m0.123s
 exit=0
+real 2.6s

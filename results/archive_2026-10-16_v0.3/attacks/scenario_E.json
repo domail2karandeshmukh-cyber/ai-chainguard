@@ -1,0 +1,189 @@
+{
+  "scenario": "E",
+  "title": "Backdoor / data poisoning",
+  "demonstrates": "Attestation detects poisoning after signing, but signed poison verifies; semantic checks are separate, partial evidence.",
+  "ran_at": "2026-10-15T21:45:27Z",
+  "duration_s": 7.17,
+  "all_as_expected": true,
+  "variants": [
+    {
+      "variant": "E0",
+      "title": "Clean baseline",
+      "attack": "none",
+      "verified_artifact": "final model",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 9.396,
+      "evidence": [],
+      "details": {
+        "clean_accuracy": 0.95,
+        "attack_success_rate": 0.0,
+        "base_model_attack_success_rate": 0.0,
+        "deployed": true,
+        "gateway_reason": "chain verified",
+        "semantic_flags": [],
+        "poisoning": null,
+        "baseline_asr": {
+          "corner": 0.0,
+          "left_bar": 0.0062
+        },
+        "false_positive_flags_on_clean_data": []
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E1",
+      "title": "Poison injected after signing",
+      "attack": "80 rows stamped with trigger + relabelled in the signed dataset",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V6"
+      ],
+      "warned_checks": [],
+      "detection_ms": 10.484,
+      "evidence": [
+        "V6 FAIL: parent digits-base-cnn FAILED (V6)"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "E2",
+      "title": "Poison before signing, no content checks",
+      "attack": "8% BadNets corner trigger in the source data, then legitimately signed",
+      "verified_artifact": "final model",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 8.781,
+      "evidence": [],
+      "details": {
+        "clean_accuracy": 0.9417,
+        "attack_success_rate": 0.7716,
+        "base_model_attack_success_rate": 0.9907,
+        "deployed": true,
+        "gateway_reason": "chain verified",
+        "semantic_flags": [],
+        "poisoning": {
+          "poisoned_rows": 80,
+          "rate": 0.08,
+          "target_label": 7,
+          "trigger_pixels": [
+            54,
+            55,
+            62,
+            63
+          ]
+        }
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E3",
+      "title": "Poison before signing, content checks on",
+      "attack": "same as E2 with pre-attestation semantic checks",
+      "verified_artifact": "final model",
+      "expected": "WARNING",
+      "observed": "WARNING",
+      "failed_checks": [],
+      "warned_checks": [
+        "V9"
+      ],
+      "detection_ms": 7.399,
+      "evidence": [
+        "V9 WARN: integrity intact but content flagged - flagged ancestor(s): digits-base-cnn, digits-train"
+      ],
+      "details": {
+        "clean_accuracy": 0.9417,
+        "attack_success_rate": 0.7716,
+        "base_model_attack_success_rate": 0.9907,
+        "deployed": false,
+        "gateway_reason": "integrity intact but content flagged (WARNING); blocked by policy",
+        "semantic_flags": [
+          "label_distribution",
+          "corner_trigger"
+        ],
+        "poisoning": {
+          "poisoned_rows": 80,
+          "rate": 0.08,
+          "target_label": 7,
+          "trigger_pixels": [
+            54,
+            55,
+            62,
+            63
+          ]
+        }
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E4",
+      "title": "Adaptive attacker evades content checks",
+      "attack": "5% left-bar trigger (not a corner patch), checks enabled",
+      "verified_artifact": "final model",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 9.133,
+      "evidence": [],
+      "details": {
+        "clean_accuracy": 0.9444,
+        "attack_success_rate": 0.5123,
+        "base_model_attack_success_rate": 0.9938,
+        "deployed": true,
+        "gateway_reason": "chain verified",
+        "semantic_flags": [],
+        "poisoning": {
+          "poisoned_rows": 50,
+          "rate": 0.05,
+          "target_label": 7,
+          "trigger_pixels": [
+            17,
+            25,
+            33,
+            41
+          ]
+        }
+      },
+      "as_expected": true
+    }
+  ],
+  "asr_table": [
+    {
+      "variant": "E0",
+      "status": "VERIFIED",
+      "deployed": true,
+      "clean_accuracy": 0.95,
+      "attack_success_rate": 0.0
+    },
+    {
+      "variant": "E2",
+      "status": "VERIFIED",
+      "deployed": true,
+      "clean_accuracy": 0.9417,
+      "attack_success_rate": 0.7716
+    },
+    {
+      "variant": "E3",
+      "status": "WARNING",
+      "deployed": false,
+      "clean_accuracy": 0.9417,
+      "attack_success_rate": 0.7716
+    },
+    {
+      "variant": "E4",
+      "status": "VERIFIED",
+      "deployed": true,
+      "clean_accuracy": 0.9444,
+      "attack_success_rate": 0.5123
+    }
+  ],
+  "interpretation": "E1 is caught by integrity checks. E2 and E4 deploy a backdoored model whose chain is cryptographically perfect: attestation moves trust to the signer, it does not create it. E3 shows that semantic checks can catch a known trigger family, as heuristic evidence only."
+}

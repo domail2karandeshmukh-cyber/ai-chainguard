@@ -2,8 +2,8 @@
   "scenario": "B",
   "title": "Model substitution",
   "demonstrates": "Any change to signed weights, even functionally invisible, blocks deployment.",
-  "ran_at": "2026-10-15T21:45:19Z",
-  "duration_s": 0.71,
+  "ran_at": "2026-11-09T08:14:17Z",
+  "duration_s": 0.7,
   "all_as_expected": true,
   "variants": [
     {
@@ -15,7 +15,7 @@
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 9.162,
+      "detection_ms": 9.64,
       "evidence": [],
       "details": {
         "gateway_status": "VERIFIED",
@@ -35,7 +35,7 @@
         "V1"
       ],
       "warned_checks": [],
-      "detection_ms": 10.13,
+      "detection_ms": 9.766,
       "evidence": [
         "V1 FAIL: file content differs from the signed artifact"
       ],
@@ -57,7 +57,7 @@
         "V1"
       ],
       "warned_checks": [],
-      "detection_ms": 7.406,
+      "detection_ms": 11.035,
       "evidence": [
         "V1 FAIL: file content differs from the signed artifact"
       ],
@@ -81,7 +81,7 @@
         "V1"
       ],
       "warned_checks": [],
-      "detection_ms": 7.457,
+      "detection_ms": 10.33,
       "evidence": [
         "V1 FAIL: file content differs from the signed artifact"
       ],

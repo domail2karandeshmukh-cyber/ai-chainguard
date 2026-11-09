@@ -2,8 +2,8 @@
   "scenario": "D",
   "title": "Invalid signature",
   "demonstrates": "Only a valid signature from a trusted, unrevoked key in the right role is accepted.",
-  "ran_at": "2026-10-15T21:45:20Z",
-  "duration_s": 0.29,
+  "ran_at": "2026-11-09T08:14:17Z",
+  "duration_s": 0.32,
   "all_as_expected": true,
   "variants": [
     {
@@ -15,7 +15,7 @@
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 9.815,
+      "detection_ms": 11.922,
       "evidence": [],
       "details": {},
       "as_expected": true
@@ -31,7 +31,7 @@
         "V3"
       ],
       "warned_checks": [],
-      "detection_ms": 10.025,
+      "detection_ms": 10.436,
       "evidence": [
         "V3 FAIL: signature does not match the manifest payload"
       ],
@@ -49,7 +49,7 @@
         "V3"
       ],
       "warned_checks": [],
-      "detection_ms": 8.905,
+      "detection_ms": 14.271,
       "evidence": [
         "V3 FAIL: signature does not match the manifest payload"
       ],
@@ -68,9 +68,9 @@
         "V4"
       ],
       "warned_checks": [],
-      "detection_ms": 9.23,
+      "detection_ms": 8.883,
       "evidence": [
-        "V3 FAIL: signing key ed25519:646aa39833a3c488 is not in the trust store",
+        "V3 FAIL: signing key ed25519:d69e4c2d4fd5b8b7 is not in the signed trust log",
         "V4 FAIL: unknown signer key"
       ],
       "details": {},
@@ -79,7 +79,7 @@
     {
       "variant": "D4",
       "title": "Signature by a revoked key",
-      "attack": "training_pipeline key ed25519:4442de9d132b0e2e revoked",
+      "attack": "training_pipeline key ed25519:c6e3bca13b96f43b revoked",
       "verified_artifact": "final model",
       "expected": "FAILED",
       "observed": "FAILED",
@@ -88,9 +88,9 @@
         "V6"
       ],
       "warned_checks": [],
-      "detection_ms": 12.622,
+      "detection_ms": 9.277,
       "evidence": [
-        "V4 FAIL: key revoked at 2026-10-15T21:45:20.112651Z (simulated key compromise)",
+        "V4 FAIL: key revoked at 2026-11-09T08:14:17Z (simulated key compromise; trust log #5)",
         "V6 FAIL: parent digits-base-cnn FAILED (V4)"
       ],
       "details": {},
@@ -107,7 +107,7 @@
         "V4"
       ],
       "warned_checks": [],
-      "detection_ms": 10.593,
+      "detection_ms": 9.239,
       "evidence": [
         "V4 FAIL: manifest claims role 'training_pipeline' but key is registered for 'data_steward'; manifest claims identity 'training_pipeline@chainguard.local' but key belongs to 'data_steward@chainguard.local'; role 'data_steward' may not sign stage3_finetune artifacts (allowed: training_pipeline)"
       ],
@@ -125,7 +125,7 @@
         "V3"
       ],
       "warned_checks": [],
-      "detection_ms": 8.974,
+      "detection_ms": 10.186,
       "evidence": [
         "V3 FAIL: signature does not match the manifest payload"
       ],

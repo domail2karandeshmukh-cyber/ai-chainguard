@@ -1,0 +1,7 @@
+root key ed25519:d81bf3d6fab15790   head #4 sha256:11f133cf6988d0b1b2918193bb4b8250e76838f3f0e62a8985f74f925444880c   replayed in 2.01 ms
+  #1   2026-11-09T08:14:05  trust_key        release_manager ed25519:d81bf3d6fab15790 release_manager@chainguard.local
+  #2   2026-11-09T08:14:05  trust_key        data_steward ed25519:566515b565ae2014 data_steward@chainguard.local
+  #3   2026-11-09T08:14:05  trust_key        training_pipeline ed25519:c6a441e237db7e2c training_pipeline@chainguard.local
+  #4   2026-11-09T08:14:05  trust_key        deployment_gateway ed25519:4371e0ad993a7421 deployment_gateway@chainguard.local
+exit=0
+real 0.9s

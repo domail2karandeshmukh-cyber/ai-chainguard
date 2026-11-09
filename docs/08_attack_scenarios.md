@@ -1,6 +1,6 @@
 # Attack scenarios
 
-Run: `python -m attacks.run_all` (all) or `--only A B` / `--skip-e`. Each scenario clones a freshly built clean chain into a temporary workspace, attacks it, verifies, and writes `results/attacks/scenario_<X>.json`. Result of the reference run: **26/26 variants with the expected status.**
+Run: `python -m attacks.run_all` (all) or `--only A B` / `--skip-e`. Each scenario clones a freshly built clean chain into a temporary workspace, attacks it, verifies, and writes `results/attacks/scenario_<X>.json`. Result of the v0.4 reference run: **48/48 variants with the expected status** (26 in v0.2, 44 in v0.3).
 
 ## Scenario A — Dataset tampering
 
@@ -71,11 +71,13 @@ Figures: `results/figures/fig_attack_outcomes.png`, `results/figures/fig_backdoo
 
 ---
 
-## Scenario F — Revocation (Experiment 5, v0.3)
+## Scenario F — Revocation (Experiment 5, v0.3; extended in v0.4)
 
 `python -m attacks.run_all --only F` · script `attacks/scenario_f_revocation.py` · every variant starts from a fresh clean chain.
 
-| Variant | Action | Expected | Observed (v0.3 run) | Checks |
+**v0.4 change.** Trust and revocation now live in a signed, hash-chained, append-only log (`artifacts/trust/trust_log.jsonl`) whose records are signed by the `release_manager` root key and whose last record is pinned in `keys/trust_root.json` (`chainguard/trustlog.py`). The verifier replays the log at every verification; the SQLite index is only a convenience copy. E5-C4, reported as a limitation in v0.3, is therefore a detected attack, and four new variants attack the log itself.
+
+| Variant | Action | Expected | Observed (v0.4 run) | Checks |
 | --- | --- | --- | --- | --- |
 | E5-0 | Control: nothing revoked, gateway deploys | VERIFIED | VERIFIED, deployed | — |
 | E5-A1 | Revoke the base model, verify the fine-tuned model | FAILED | FAILED | V6, V7 |
@@ -83,11 +85,15 @@ Figures: `results/figures/fig_attack_outcomes.png`, `results/figures/fig_backdoo
 | E5-B1 | Revoke the `training_pipeline` key, verify the final model | FAILED | FAILED | V4, V6 |
 | E5-B2 | Same revocation, verify a dataset signed by `data_steward` | VERIFIED | VERIFIED (blast radius limited to that key) | — |
 | E5-C1 | Bypass: delete the revoked artifact's index row | FAILED | FAILED | V7 ("revocation state cannot be confirmed") |
-| E5-C2 | Bypass: delete the revoked key from the trust store | FAILED | FAILED | V3, V4, V6 |
+| E5-C2 | Bypass: delete the revoked key from the index | FAILED | FAILED (the signed log still says revoked; missing row = index tampering) | V4, V6 |
 | E5-C3 | Bypass: overwrite the cached `last_status` with VERIFIED | FAILED | FAILED (cached status never read) | V6, V7 |
-| E5-C4 | **Limitation:** set the `revoked` flag back to 0 in SQLite | VERIFIED | VERIFIED | — |
+| E5-C4 | Bypass: set the `revoked` flag back to 0 in SQLite (**v0.3 limitation**) | FAILED | FAILED, `INDEX_TAMPERING` event | V6, V7 |
+| E5-C5 | Bypass: insert the attacker's key into `signers` as `training_pipeline`, substitute and re-sign the model | FAILED | FAILED ("never trusted in the signed trust log") | V3, V4 |
+| E5-C6 | Bypass: truncate the trust log (drop the revocation record), clear the index flag | FAILED | FAILED (rollback: log ends before the pinned head) | V3, V4, V7 |
+| E5-C7 | Bypass: edit the revocation record in place | FAILED | FAILED (root signature invalid) | V3, V4, V7 |
+| E5-C8 | Bypass: delete `trust_log.jsonl`, clear the index flag | FAILED | FAILED (log missing, fail closed) | V3, V4, V7 |
 
-E5-C4 is reported as a limitation, not hidden: revocation state lives in the trusted SQLite index, so an attacker with write access to that index can undo a revocation. Fix: a signed, append-only revocation list (or transparency log) that the verifier checks independently of the mutable index.
+What remains trusted is what the threat model always declared trusted: the keys directory (root private key and pin), the policy and the verifier. Revocation is still local to one organisation's log; publishing the records to a shared transparency log (Rekor-style) is future work.
 
 ## Scenario G — Untrusted external model source (Experiment 7, v0.3)
 

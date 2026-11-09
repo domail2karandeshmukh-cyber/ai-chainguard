@@ -52,7 +52,7 @@ At deployment, the Merkle root over the sorted manifest digests of the model and
 }
 ```
 
-Verification status and revocation status are **not** signed; they change after signing and live in SQLite.
+Verification status is **not** signed; it changes after signing and lives in SQLite as a cache. Revocation status **is** signed since v0.4: each revocation (and each key-trust decision) is a record of the hash-chained trust log signed by the `release_manager` root key (`chainguard/trustlog.py`), pinned in `keys/trust_root.json`.
 
 ## 3. Verifier
 

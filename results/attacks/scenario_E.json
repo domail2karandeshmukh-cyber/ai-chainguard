@@ -2,8 +2,8 @@
   "scenario": "E",
   "title": "Backdoor / data poisoning",
   "demonstrates": "Attestation detects poisoning after signing, but signed poison verifies; semantic checks are separate, partial evidence.",
-  "ran_at": "2026-10-15T21:45:27Z",
-  "duration_s": 7.17,
+  "ran_at": "2026-11-09T08:14:25Z",
+  "duration_s": 7.91,
   "all_as_expected": true,
   "variants": [
     {
@@ -15,7 +15,7 @@
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 9.396,
+      "detection_ms": 9.653,
       "evidence": [],
       "details": {
         "clean_accuracy": 0.95,
@@ -44,7 +44,7 @@
         "V6"
       ],
       "warned_checks": [],
-      "detection_ms": 10.484,
+      "detection_ms": 10.323,
       "evidence": [
         "V6 FAIL: parent digits-base-cnn FAILED (V6)"
       ],
@@ -60,7 +60,7 @@
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 8.781,
+      "detection_ms": 10.516,
       "evidence": [],
       "details": {
         "clean_accuracy": 0.9417,
@@ -94,7 +94,7 @@
       "warned_checks": [
         "V9"
       ],
-      "detection_ms": 7.399,
+      "detection_ms": 9.181,
       "evidence": [
         "V9 WARN: integrity intact but content flagged - flagged ancestor(s): digits-base-cnn, digits-train"
       ],
@@ -131,7 +131,7 @@
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 9.133,
+      "detection_ms": 9.245,
       "evidence": [],
       "details": {
         "clean_accuracy": 0.9444,

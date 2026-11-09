@@ -1,0 +1,96 @@
+{
+  "scenario": "B",
+  "title": "Model substitution",
+  "demonstrates": "Any change to signed weights, even functionally invisible, blocks deployment.",
+  "ran_at": "2026-10-15T21:45:19Z",
+  "duration_s": 0.71,
+  "all_as_expected": true,
+  "variants": [
+    {
+      "variant": "B0",
+      "title": "Control: legitimate fine-tuned model",
+      "attack": "none",
+      "verified_artifact": "final model",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 9.162,
+      "evidence": [],
+      "details": {
+        "gateway_status": "VERIFIED",
+        "deployed": true,
+        "gateway_reason": "chain verified"
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "B1",
+      "title": "Replace with a different model",
+      "attack": "attacker-trained weights at the signed path",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V1"
+      ],
+      "warned_checks": [],
+      "detection_ms": 10.13,
+      "evidence": [
+        "V1 FAIL: file content differs from the signed artifact"
+      ],
+      "details": {
+        "gateway_status": "FAILED",
+        "deployed": false,
+        "gateway_reason": "chain verification FAILED (V1)"
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "B2",
+      "title": "Nudge one weight by 1e-6",
+      "attack": "tensor 'classifier.1.bias'[0] += 1e-6",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V1"
+      ],
+      "warned_checks": [],
+      "detection_ms": 7.406,
+      "evidence": [
+        "V1 FAIL: file content differs from the signed artifact"
+      ],
+      "details": {
+        "test_accuracy_before": 0.7917,
+        "test_accuracy_after": 0.7917,
+        "gateway_status": "FAILED",
+        "deployed": false,
+        "gateway_reason": "chain verification FAILED (V1)"
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "B3",
+      "title": "Same weights re-saved as pickle",
+      "attack": "torch.save() container at the signed path",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V1"
+      ],
+      "warned_checks": [],
+      "detection_ms": 7.457,
+      "evidence": [
+        "V1 FAIL: file content differs from the signed artifact"
+      ],
+      "details": {
+        "gateway_status": "FAILED",
+        "deployed": false,
+        "gateway_reason": "chain verification FAILED (V1)"
+      },
+      "as_expected": true
+    }
+  ]
+}

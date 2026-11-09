@@ -1,0 +1,10 @@
+measurement,label,description,runs,median_ms,p95_ms,mean_ms,min_ms,batch
+A,"normal inference, 1 sample","plain model, no verification",1000,0.0801,0.136,0.0909,0.0727,1
+A,"normal inference, batch 360","plain model, no verification",300,6.9818,8.6048,7.1321,5.1142,360
+B,full chain verification (V0-V9),"model + 3 ancestors, every hash recomputed; no audit-log write",200,7.9465,11.555,8.4402,5.829,
+C,C1 verify + audit log + TOCTOU-safe read,"open_verified: chain verification, run/events/metrics written to SQLite, single read, re-hash",100,30.4818,37.5923,30.7291,21.9488,
+C,C2 safe load (safetensors),model built from the verified bytes,100,0.9278,1.4115,0.9817,0.6861,
+C,C3 smoke test (360 samples),accuracy on the held-out test set,100,7.7603,10.3582,8.1581,5.6414,360
+C,"first secure deployment (gateway, total)",C1 + C2 + C3 + signed deployment record (its registration verifies the chain a second time) + events/metrics,30,235.2891,274.5531,237.1693,184.7571,
+D,"subsequent inference, 1 sample",model already verified at deployment,1000,0.0801,0.1435,0.0912,0.0727,1
+D,"subsequent inference, batch 360",model already verified at deployment,300,6.9793,8.5334,7.174,5.1522,360

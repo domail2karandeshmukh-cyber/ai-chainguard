@@ -1,9 +1,9 @@
 {
   "scenario": "F",
   "title": "Revocation (Experiment 5)",
-  "demonstrates": "Revoking an artifact or a signing key invalidates it and everything derived from it, and the gateway blocks deployment; deleting index rows does not undo a revocation. Editing the trusted index itself is a documented limitation.",
-  "ran_at": "2026-10-15T21:45:27Z",
-  "duration_s": 0.51,
+  "demonstrates": "Revoking an artifact or a signing key invalidates it and everything derived from it, and the gateway blocks deployment. Since v0.4 trust and revocation live in a signed, pinned, append-only log: editing the SQLite index (un-revoke, rogue key) and tampering with the log itself (truncate, edit, delete) are all detected and fail closed.",
+  "ran_at": "2026-11-09T08:14:26Z",
+  "duration_s": 0.73,
   "all_as_expected": true,
   "variants": [
     {
@@ -15,10 +15,11 @@
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 9.425,
+      "detection_ms": 9.467,
       "evidence": [],
       "details": {
-        "deployed": true
+        "deployed": true,
+        "trust_log_seq": 4
       },
       "as_expected": true
     },
@@ -34,7 +35,7 @@
         "V7"
       ],
       "warned_checks": [],
-      "detection_ms": 9.884,
+      "detection_ms": 14.115,
       "evidence": [
         "V6 FAIL: parent digits-base-cnn FAILED (V7)",
         "V7 FAIL: revoked ancestor(s): digits-base-cnn"
@@ -54,7 +55,7 @@
         "V7"
       ],
       "warned_checks": [],
-      "detection_ms": 13.756,
+      "detection_ms": 14.271,
       "evidence": [
         "V6 FAIL: parent digits-base-cnn FAILED (V7)",
         "V7 FAIL: revoked ancestor(s): digits-base-cnn"
@@ -62,14 +63,14 @@
       "details": {
         "deployed": false,
         "gateway_reason": "chain verification FAILED (V6, V7)",
-        "revocation_to_block_ms": 84.232
+        "revocation_to_block_ms": 116.771
       },
       "as_expected": true
     },
     {
       "variant": "E5-B1",
       "title": "Revoke the training_pipeline key -> its models fail",
-      "attack": "key ed25519:4442de9d132b0e2e revoked",
+      "attack": "key ed25519:c6e3bca13b96f43b revoked",
       "verified_artifact": "final model",
       "expected": "FAILED",
       "observed": "FAILED",
@@ -78,9 +79,9 @@
         "V6"
       ],
       "warned_checks": [],
-      "detection_ms": 13.772,
+      "detection_ms": 14.113,
       "evidence": [
-        "V4 FAIL: key revoked at 2026-10-15T21:45:27.765009Z (training key compromised (simulated))",
+        "V4 FAIL: key revoked at 2026-11-09T08:14:26Z (training key compromised (simulated); trust log #5)",
         "V6 FAIL: parent digits-base-cnn FAILED (V4)"
       ],
       "details": {},
@@ -89,13 +90,13 @@
     {
       "variant": "E5-B2",
       "title": "Dataset signed by another role still verifies",
-      "attack": "same revocation of ed25519:4442de9d132b0e2e; dataset signed by data_steward",
+      "attack": "same revocation of ed25519:c6e3bca13b96f43b; dataset signed by data_steward",
       "verified_artifact": "train dataset",
       "expected": "VERIFIED",
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 4.839,
+      "detection_ms": 5.452,
       "evidence": [],
       "details": {},
       "as_expected": true
@@ -111,31 +112,29 @@
         "V7"
       ],
       "warned_checks": [],
-      "detection_ms": 6.633,
+      "detection_ms": 10.803,
       "evidence": [
-        "V7 FAIL: artifact not in registry index: revocation state cannot be confirmed"
+        "V7 FAIL: artifact not in registry index: revocation state cannot be confirmed; artifact revoked: withdrawn (signed trust log #5)"
       ],
       "details": {},
       "as_expected": true
     },
     {
       "variant": "E5-C2",
-      "title": "Bypass: delete the revoked key from the trust store",
-      "attack": "revoked key ed25519:4442de9d132b0e2e row removed from the signers table",
+      "title": "Bypass: delete the revoked key from the index",
+      "attack": "revoked key ed25519:c6e3bca13b96f43b row removed from the signers table",
       "verified_artifact": "final model",
       "expected": "FAILED",
       "observed": "FAILED",
       "failed_checks": [
-        "V3",
         "V4",
         "V6"
       ],
       "warned_checks": [],
-      "detection_ms": 6.297,
+      "detection_ms": 8.852,
       "evidence": [
-        "V3 FAIL: signing key ed25519:4442de9d132b0e2e is not in the trust store",
-        "V4 FAIL: unknown signer key",
-        "V6 FAIL: parent digits-base-cnn FAILED (V3, V4)"
+        "V4 FAIL: key revoked at 2026-11-09T08:14:26Z (training key compromised (simulated); trust log #5); signer row missing from the SQLite index although the signed log trusts the key (index tampering)",
+        "V6 FAIL: parent digits-base-cnn FAILED (V4)"
       ],
       "details": {},
       "as_expected": true
@@ -152,7 +151,7 @@
         "V7"
       ],
       "warned_checks": [],
-      "detection_ms": 6.814,
+      "detection_ms": 7.554,
       "evidence": [
         "V6 FAIL: parent digits-base-cnn FAILED (V7)",
         "V7 FAIL: revoked ancestor(s): digits-base-cnn"
@@ -162,20 +161,120 @@
     },
     {
       "variant": "E5-C4",
-      "title": "LIMITATION: un-revoke by editing the trusted index",
+      "title": "Bypass: un-revoke by editing the index (v0.3 limitation)",
       "attack": "revoked flag set back to 0 directly in SQLite",
       "verified_artifact": "final model",
-      "expected": "VERIFIED",
-      "observed": "VERIFIED",
-      "failed_checks": [],
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V6",
+        "V7"
+      ],
       "warned_checks": [],
-      "detection_ms": 6.478,
-      "evidence": [],
+      "detection_ms": 8.758,
+      "evidence": [
+        "V6 FAIL: parent digits-base-cnn FAILED (V7)",
+        "V7 FAIL: revoked ancestor(s): digits-base-cnn"
+      ],
       "details": {
-        "limitation": "revocation state is stored in the trusted SQLite index; an attacker with write access to it can undo a revocation. Fix: signed append-only revocation list."
+        "closed_in": "v0.4: revocation is read from the signed trust log; the index disagreement is logged as INDEX_TAMPERING"
       },
+      "as_expected": true
+    },
+    {
+      "variant": "E5-C5",
+      "title": "Bypass: rogue key inserted into the index signs a model",
+      "attack": "attacker key ed25519:795e4e00b9ee08ff written into the signers table as training_pipeline; final model substituted and re-signed with it",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V3",
+        "V4"
+      ],
+      "warned_checks": [],
+      "detection_ms": 7.224,
+      "evidence": [
+        "V3 FAIL: signing key ed25519:795e4e00b9ee08ff is not in the signed trust log",
+        "V4 FAIL: key ed25519:795e4e00b9ee08ff is in the SQLite index but was never trusted in the signed trust log (unauthorised key insertion)"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "E5-C6",
+      "title": "Bypass: truncate the trust log (rollback)",
+      "attack": "last record (the revocation) removed from trust_log.jsonl; index flag cleared",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V3",
+        "V4",
+        "V6",
+        "V7"
+      ],
+      "warned_checks": [],
+      "detection_ms": 5.932,
+      "evidence": [
+        "V3 FAIL: trust log unusable, signer cannot be resolved: trust log truncated (rollback): log ends at #4, pin says #5",
+        "V4 FAIL: trust log unusable (fail closed): trust log truncated (rollback): log ends at #4, pin says #5",
+        "V6 FAIL: parent digits-base-cnn FAILED (V3, V4, V6, V7); parent digits-finetune FAILED (V3, V4, V7)",
+        "V7 FAIL: trust log unusable, revocation state cannot be confirmed: trust log truncated (rollback): log ends at #4, pin says #5"
+      ],
+      "details": {
+        "log_records_before": 5
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E5-C7",
+      "title": "Bypass: edit a trust-log record in place",
+      "attack": "revoke_artifact record rewritten as trust_key without the root key",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V3",
+        "V4",
+        "V6",
+        "V7"
+      ],
+      "warned_checks": [],
+      "detection_ms": 7.255,
+      "evidence": [
+        "V3 FAIL: trust log unusable, signer cannot be resolved: record 5 (trust_key): signature by root key invalid - log tampered with",
+        "V4 FAIL: trust log unusable (fail closed): record 5 (trust_key): signature by root key invalid - log tampered with",
+        "V6 FAIL: parent digits-base-cnn FAILED (V3, V4, V6, V7); parent digits-finetune FAILED (V3, V4, V7)",
+        "V7 FAIL: trust log unusable, revocation state cannot be confirmed: record 5 (trust_key): signature by root key invalid - log tampered with; revoked ancestor(s): digits-base-cnn"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "E5-C8",
+      "title": "Bypass: delete the trust log",
+      "attack": "trust_log.jsonl deleted; index flag cleared",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V3",
+        "V4",
+        "V6",
+        "V7"
+      ],
+      "warned_checks": [],
+      "detection_ms": 5.626,
+      "evidence": [
+        "V3 FAIL: trust log unusable, signer cannot be resolved: trust log missing (trust_log.jsonl); pinned head is #5",
+        "V4 FAIL: trust log unusable (fail closed): trust log missing (trust_log.jsonl); pinned head is #5",
+        "V6 FAIL: parent digits-base-cnn FAILED (V3, V4, V6, V7); parent digits-finetune FAILED (V3, V4, V7)",
+        "V7 FAIL: trust log unusable, revocation state cannot be confirmed: trust log missing (trust_log.jsonl); pinned head is #5"
+      ],
+      "details": {},
       "as_expected": true
     }
   ],
-  "interpretation": "Artifact and key revocation propagate to every descendant and block deployment. Deleting the revoked artifact or key from the index fails closed, and the cached status is never trusted. E5-C4 shows the remaining gap: the revocation flag itself is only as trustworthy as the index."
+  "interpretation": "Artifact and key revocation propagate to every descendant and block deployment. Every bypass that edits the SQLite index (delete rows, cached status, un-revoke, rogue key) fails because the verifier reads trust and revocation from the signed, pinned trust log, and every attack on the log itself (truncation, in-place edit, deletion) fails closed because the log must replay exactly to the pinned head under the root key's signatures. The v0.3 limitation E5-C4 is closed."
 }

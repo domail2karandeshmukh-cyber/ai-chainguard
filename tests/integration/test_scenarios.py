@@ -40,4 +40,8 @@ def test_scenario_f_revocation_blocks_deployment(tmp_path):
     by = {v["variant"]: v for v in result["variants"]}
     assert by["E5-0"]["details"]["deployed"] is True
     assert by["E5-A2"]["details"]["deployed"] is False
-    assert by["E5-C4"]["observed"] == "VERIFIED"   # documented limitation
+    assert result["all_as_expected"] and len(result["variants"]) == 13
+    # v0.3 limitation E5-C4 is closed by the signed trust log; the log itself resists tampering
+    for v in ("E5-C4", "E5-C5", "E5-C6", "E5-C7", "E5-C8"):
+        assert by[v]["observed"] == "FAILED", v
+    assert "V7" in by["E5-C4"]["failed_checks"] and {"V3", "V4"} <= set(by["E5-C5"]["failed_checks"])

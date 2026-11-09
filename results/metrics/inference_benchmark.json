@@ -1,14 +1,14 @@
 {
   "benchmark": "inference_overhead",
   "machine": {
-    "machine_label": "AI-assisted reference environment (cloud Linux container) - NOT team hardware",
-    "measured_at_utc": "2026-10-15T21:27:19Z",
-    "platform": "Linux-6.18.44-fc-v114-x86_64-with-glibc2.39",
+    "machine_label": "AI-assisted reference environment - cloud Linux container, 9 Nov 2026",
+    "measured_at_utc": "2026-11-09T08:15:01Z",
+    "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
     "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
     "logical_cpus": 2,
     "ram_gb": 7.8,
     "python": "3.13.16",
-    "torch": "2.14.1+cu130",
+    "torch": "2.15.0+cu132",
     "numpy": "2.5.4",
     "torch_threads": 1,
     "gpu_used": false
@@ -34,10 +34,10 @@
       "label": "normal inference, 1 sample",
       "description": "plain model, no verification",
       "runs": 1000,
-      "median_ms": 0.0801,
-      "p95_ms": 0.136,
-      "mean_ms": 0.0909,
-      "min_ms": 0.0727,
+      "median_ms": 0.093,
+      "p95_ms": 0.1933,
+      "mean_ms": 0.1064,
+      "min_ms": 0.0705,
       "batch": 1
     },
     {
@@ -45,10 +45,10 @@
       "label": "normal inference, batch 360",
       "description": "plain model, no verification",
       "runs": 300,
-      "median_ms": 6.9818,
-      "p95_ms": 8.6048,
-      "mean_ms": 7.1321,
-      "min_ms": 5.1142,
+      "median_ms": 6.9081,
+      "p95_ms": 8.3365,
+      "mean_ms": 7.0636,
+      "min_ms": 6.3188,
       "batch": 360
     },
     {
@@ -56,10 +56,10 @@
       "label": "full chain verification (V0-V9)",
       "description": "model + 3 ancestors, every hash recomputed; no audit-log write",
       "runs": 200,
-      "median_ms": 7.9465,
-      "p95_ms": 11.555,
-      "mean_ms": 8.4402,
-      "min_ms": 5.829,
+      "median_ms": 8.1695,
+      "p95_ms": 12.8704,
+      "mean_ms": 8.9336,
+      "min_ms": 7.755,
       "batch": null
     },
     {
@@ -67,10 +67,10 @@
       "label": "C1 verify + audit log + TOCTOU-safe read",
       "description": "open_verified: chain verification, run/events/metrics written to SQLite, single read, re-hash",
       "runs": 100,
-      "median_ms": 30.4818,
-      "p95_ms": 37.5923,
-      "mean_ms": 30.7291,
-      "min_ms": 21.9488,
+      "median_ms": 32.9646,
+      "p95_ms": 42.1475,
+      "mean_ms": 33.8375,
+      "min_ms": 25.7411,
       "batch": null
     },
     {
@@ -78,10 +78,10 @@
       "label": "C2 safe load (safetensors)",
       "description": "model built from the verified bytes",
       "runs": 100,
-      "median_ms": 0.9278,
-      "p95_ms": 1.4115,
-      "mean_ms": 0.9817,
-      "min_ms": 0.6861,
+      "median_ms": 1.1934,
+      "p95_ms": 1.5908,
+      "mean_ms": 1.2499,
+      "min_ms": 1.0054,
       "batch": null
     },
     {
@@ -89,10 +89,10 @@
       "label": "C3 smoke test (360 samples)",
       "description": "accuracy on the held-out test set",
       "runs": 100,
-      "median_ms": 7.7603,
-      "p95_ms": 10.3582,
-      "mean_ms": 8.1581,
-      "min_ms": 5.6414,
+      "median_ms": 8.9034,
+      "p95_ms": 11.5224,
+      "mean_ms": 9.3074,
+      "min_ms": 7.9758,
       "batch": 360
     },
     {
@@ -100,10 +100,10 @@
       "label": "first secure deployment (gateway, total)",
       "description": "C1 + C2 + C3 + signed deployment record (its registration verifies the chain a second time) + events/metrics",
       "runs": 30,
-      "median_ms": 235.2891,
-      "p95_ms": 274.5531,
-      "mean_ms": 237.1693,
-      "min_ms": 184.7571,
+      "median_ms": 249.1614,
+      "p95_ms": 277.1084,
+      "mean_ms": 251.2215,
+      "min_ms": 221.1954,
       "batch": null
     },
     {
@@ -111,10 +111,10 @@
       "label": "subsequent inference, 1 sample",
       "description": "model already verified at deployment",
       "runs": 1000,
-      "median_ms": 0.0801,
-      "p95_ms": 0.1435,
-      "mean_ms": 0.0912,
-      "min_ms": 0.0727,
+      "median_ms": 0.0923,
+      "p95_ms": 0.1891,
+      "mean_ms": 0.1029,
+      "min_ms": 0.0702,
       "batch": 1
     },
     {
@@ -122,20 +122,20 @@
       "label": "subsequent inference, batch 360",
       "description": "model already verified at deployment",
       "runs": 300,
-      "median_ms": 6.9793,
-      "p95_ms": 8.5334,
-      "mean_ms": 7.174,
-      "min_ms": 5.1522,
+      "median_ms": 6.8846,
+      "p95_ms": 8.4077,
+      "mean_ms": 7.0773,
+      "min_ms": 6.2798,
       "batch": 360
     }
   ],
   "derived": {
-    "per_prediction_overhead_after_deployment_ms": 0.0,
-    "deployment_cost_in_single_predictions": 2937.4,
+    "per_prediction_overhead_after_deployment_ms": -0.0007,
+    "deployment_cost_in_single_predictions": 2679.2,
     "amortised_deployment_overhead_per_prediction_ms": {
-      "1000": 0.23529,
-      "10000": 0.02353,
-      "1000000": 0.00024
+      "1000": 0.24916,
+      "10000": 0.02492,
+      "1000000": 0.00025
     },
     "note": "Derived from the medians above, not separately measured. D vs A differences of a few microseconds are measurement noise; verification is not on the prediction path."
   },
@@ -143,35 +143,35 @@
     {
       "artifact_type": "dataset",
       "artifact_name": "digits-finetune",
-      "envelope_bytes": 3052,
-      "canonical_payload_bytes": 1772,
+      "envelope_bytes": 3085,
+      "canonical_payload_bytes": 1805,
       "signatures": 1,
       "parents": 0,
       "merkle_sidecar_bytes": 29784,
       "subject_size_bytes": 64649,
-      "envelope_pct_of_subject": 4.72
+      "envelope_pct_of_subject": 4.77
     },
     {
       "artifact_type": "dataset",
       "artifact_name": "digits-train",
-      "envelope_bytes": 3036,
-      "canonical_payload_bytes": 1756,
+      "envelope_bytes": 3069,
+      "canonical_payload_bytes": 1789,
       "signatures": 1,
       "parents": 0,
       "merkle_sidecar_bytes": 68068,
       "subject_size_bytes": 147571,
-      "envelope_pct_of_subject": 2.06
+      "envelope_pct_of_subject": 2.08
     },
     {
       "artifact_type": "base_model",
       "artifact_name": "digits-base-cnn",
-      "envelope_bytes": 2068,
-      "canonical_payload_bytes": 1239,
+      "envelope_bytes": 2101,
+      "canonical_payload_bytes": 1272,
       "signatures": 1,
       "parents": 1,
       "merkle_sidecar_bytes": 0,
       "subject_size_bytes": 153944,
-      "envelope_pct_of_subject": 1.34
+      "envelope_pct_of_subject": 1.36
     },
     {
       "artifact_type": "external_base_model",
@@ -187,13 +187,13 @@
     {
       "artifact_type": "finetuned_model",
       "artifact_name": "digits-finetuned-cnn",
-      "envelope_bytes": 2370,
-      "canonical_payload_bytes": 1487,
+      "envelope_bytes": 2403,
+      "canonical_payload_bytes": 1520,
       "signatures": 1,
       "parents": 2,
       "merkle_sidecar_bytes": 0,
       "subject_size_bytes": 153944,
-      "envelope_pct_of_subject": 1.54
+      "envelope_pct_of_subject": 1.56
     },
     {
       "artifact_type": "deployment_record",
@@ -203,8 +203,8 @@
       "signatures": 1,
       "parents": 1,
       "merkle_sidecar_bytes": 0,
-      "subject_size_bytes": 1388,
-      "envelope_pct_of_subject": 118.37
+      "subject_size_bytes": 1509,
+      "envelope_pct_of_subject": 108.88
     }
   ]
 }
