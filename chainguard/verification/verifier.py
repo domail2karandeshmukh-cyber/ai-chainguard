@@ -9,15 +9,18 @@ V1   File hash                             SHA-256 / size of the file != signed 
 V2   Dataset Merkle root                   recomputed row root != signed root
                                            (reports WHICH rows changed)
 V3   Ed25519 signature                     signature invalid over the canonical payload,
-                                           or signing key unknown
+                                           or signing key not in the signed trust log
 V4   Signer trust                          key revoked, role/identity in the manifest !=
-                                           role/identity registered for the key, or role
-                                           not allowed to sign this stage
+                                           role/identity trusted for the key, role not
+                                           allowed to sign this stage, or the index and
+                                           the signed trust log disagree about the key
 V5   Parent links                          a parent envelope is missing, or its recomputed
                                            manifest digest != digest embedded in the child
 V6   Ancestor chain                        any ancestor FAILED (full recursive verification)
-V7   Revocation                            artifact or any ancestor revoked, or artifact
-                                           absent from the index (revocation unknowable)
+V7   Revocation                            artifact or any ancestor revoked in the signed
+                                           trust log (or flagged in the index), artifact
+                                           absent from the index, or index flag cleared
+                                           while the log says revoked (index tampering)
 V8   Policy                                wrong type for stage, missing/forbidden parent
                                            types, parent from a later stage
 V9   Semantic checks                       a signed semantic check flagged the content,
@@ -30,7 +33,11 @@ Design principles
 * Nothing stored is trusted when it can be recomputed: file hashes, manifest
   digests and Merkle roots are always recalculated; the stored ``manifest_digest``
   field and ``last_status`` column are ignored.
-* The DB is consulted only for the trust store (V3/V4) and revocation (V7).
+* v0.4: trusted keys and revocations come from the signed, pinned trust log
+  (:mod:`chainguard.trustlog`), replayed once per verification. If the log is
+  missing, truncated or tampered with, V3, V4 and V7 fail closed. The SQLite index
+  is only consulted to detect disagreement with the log (index tampering) and to
+  keep the v0.3 rule that an artifact missing from the index fails V7.
 """
 
 from __future__ import annotations
@@ -59,6 +66,7 @@ from chainguard.provenance.merkle import (
 )
 from chainguard.provenance.policy import Policy
 from chainguard.storage.repository import Repository
+from chainguard.trustlog import TrustLog, TrustState
 from chainguard.verification.results import (
     AncestorSummary,
     CheckResult,
@@ -72,15 +80,18 @@ MAX_DEPTH = 32  # defensive bound on chain length
 @dataclass
 class _Run:
     """State shared across one top-level verification (memoisation + metrics)."""
+    trust: TrustState
     cache: dict[str, VerificationReport] = field(default_factory=dict)
     metrics: list[dict[str, Any]] = field(default_factory=list)
+    index_tampering: list[str] = field(default_factory=list)
 
 
 class Verifier:
-    def __init__(self, settings: Settings, repo: Repository, policy: Policy):
+    def __init__(self, settings: Settings, repo: Repository, policy: Policy, trust_log: TrustLog | None = None):
         self.settings = settings
         self.repo = repo
         self.policy = policy
+        self.trust_log = trust_log or TrustLog(settings)
 
     # ------------------------------------------------------------------ public API
     def verify(self, artifact_id: str, file_path: str | Path | None = None, context: str = "cli",
@@ -90,12 +101,17 @@ class Verifier:
         ``file_path`` lets a caller verify a candidate file (e.g. a model about to be
         deployed) against the signed manifest instead of the file at the signed URI.
         """
-        run = _Run()
         with timed() as t:
+            run = _Run(trust=self.trust_log.load())   # v0.4: replay the signed trust log once
             report = self._verify(artifact_id, Path(file_path) if file_path else None, run, ())
         report.duration_ms = round(t.ms, 3)
         report.verified_at = utc_now_iso()
         report.context = context
+        report.trust_log_ok = run.trust.ok
+        report.trust_log_seq = run.trust.head_seq
+        report.trust_log_head = run.trust.head_hash
+        run.metrics.append({"operation": "trust_log_verify", "duration_ms": run.trust.verify_ms,
+                            "artifact_id": artifact_id, "size_bytes": run.trust.head_seq})
         if record_run:
             self._persist(report, run)
         return report
@@ -126,10 +142,10 @@ class Verifier:
         checks.append(self._check_file_hash(body, path, path_error, run))
         checks.append(self._check_merkle(body, path))
 
-        # ---- V3 / V4: signature and signer trust ----------------------------------
-        signer = self.repo.get_signer(body.signer.key_id)
+        # ---- V3 / V4: signature and signer trust (signed trust log, v0.4) ---------
+        signer = run.trust.signer(body.signer.key_id) if run.trust.ok else None
         checks.append(self._check_signature(envelope, payload_raw, signer, digest, run))
-        checks.append(self._check_signer_trust(body, signer))
+        checks.append(self._check_signer_trust(body, signer, run))
 
         # ---- V5: parent links -----------------------------------------------------
         v5, parents = self._check_parent_links(body)
@@ -165,7 +181,7 @@ class Verifier:
                                            ancestor_count=len(ancestors)))
 
         # ---- V7: revocation -------------------------------------------------------
-        v7, self_revoked = self._check_revocation(artifact_id, ancestors)
+        v7, self_revoked = self._check_revocation(artifact_id, ancestors, run)
         checks.append(v7)
 
         # ---- V8: policy -----------------------------------------------------------
@@ -275,8 +291,11 @@ class Verifier:
     def _check_signature(self, envelope: Envelope, payload_raw: dict, signer: dict | None, digest: str,
                          run: _Run) -> CheckResult:
         key_id = envelope.payload.signer.key_id
+        if not run.trust.ok:
+            return CheckResult.make("V3", "fail", f"trust log unusable, signer cannot be resolved: {run.trust.error}",
+                                    key_id=key_id, trust_log_error=run.trust.error)
         if signer is None:
-            return CheckResult.make("V3", "fail", f"signing key {key_id} is not in the trust store",
+            return CheckResult.make("V3", "fail", f"signing key {key_id} is not in the signed trust log",
                                     key_id=key_id)
         entries = [s for s in envelope.signatures if s.key_id == key_id]
         if not entries:
@@ -294,12 +313,30 @@ class Verifier:
         return CheckResult.make("V3", "fail", "signature does not match the manifest payload",
                                 key_id=key_id, manifest_digest=digest, stored_digest_consistent=stored_ok)
 
-    def _check_signer_trust(self, body: ManifestBody, signer: dict | None) -> CheckResult:
+    def _check_signer_trust(self, body: ManifestBody, signer: dict | None, run: _Run) -> CheckResult:
+        key_id = body.signer.key_id
+        if not run.trust.ok:
+            return CheckResult.make("V4", "fail", f"trust log unusable (fail closed): {run.trust.error}",
+                                    key_id=key_id, trust_log_error=run.trust.error)
+        index_row = self.repo.get_signer(key_id)
         if signer is None:
-            return CheckResult.make("V4", "fail", "unknown signer key", key_id=body.signer.key_id)
+            if index_row is not None:
+                # The index knows a key the signed log never trusted: someone wrote to the DB.
+                run.index_tampering.append(f"key {key_id} present in the index but not in the signed trust log")
+                return CheckResult.make("V4", "fail", f"key {key_id} is in the SQLite index but was never trusted "
+                                        "in the signed trust log (unauthorised key insertion)",
+                                        key_id=key_id, index_tampering=True)
+            return CheckResult.make("V4", "fail", "unknown signer key", key_id=key_id)
         problems: list[str] = []
         if signer.get("revoked_at"):
-            problems.append(f"key revoked at {signer['revoked_at']} ({signer.get('revoked_reason')})")
+            problems.append(f"key revoked at {signer['revoked_at']} ({signer.get('revoked_reason')}; "
+                            f"trust log #{signer.get('revoked_seq')})")
+        if index_row is None:
+            run.index_tampering.append(f"trusted key {key_id} missing from the index")
+            problems.append("signer row missing from the SQLite index although the signed log trusts the key "
+                            "(index tampering)")
+        elif index_row.get("revoked_at") and not signer.get("revoked_at"):
+            problems.append("index marks the key revoked without a signed revocation record")
         if signer["role"] != body.signer.role:
             problems.append(f"manifest claims role '{body.signer.role}' but key is registered "
                             f"for '{signer['role']}'")
@@ -308,9 +345,11 @@ class Verifier:
                             f"'{signer['identity']}'")
         problems += self.policy.check_signer(signer["role"], body.pipeline_stage)
         if problems:
-            return CheckResult.make("V4", "fail", "; ".join(problems), problems=problems)
+            return CheckResult.make("V4", "fail", "; ".join(problems), problems=problems,
+                                    index_tampering=any("index tampering" in p for p in problems))
         return CheckResult.make("V4", "pass", f"{signer['identity']} ({signer['role']}) may sign "
-                                f"{body.pipeline_stage}", identity=signer["identity"], role=signer["role"])
+                                f"{body.pipeline_stage} (trust log #{signer.get('seq')})",
+                                identity=signer["identity"], role=signer["role"])
 
     def _check_parent_links(self, body: ManifestBody) -> tuple[CheckResult, list[tuple[ParentRef, ManifestBody]]]:
         parents: list[tuple[ParentRef, ManifestBody]] = []
@@ -336,23 +375,38 @@ class Verifier:
             return CheckResult.make("V5", "fail", "; ".join(problems), links=links), parents
         return CheckResult.make("V5", "pass", f"{len(links)} parent link(s) match", links=links), parents
 
-    def _check_revocation(self, artifact_id: str, ancestors: dict[str, AncestorSummary]
+    def _check_revocation(self, artifact_id: str, ancestors: dict[str, AncestorSummary], run: _Run
                           ) -> tuple[CheckResult, bool]:
         row = self.repo.get_artifact(artifact_id)
         problems: list[str] = []
+        details: dict[str, Any] = {}
         self_revoked = False
+        if not run.trust.ok:
+            problems.append(f"trust log unusable, revocation state cannot be confirmed: {run.trust.error}")
+            details["trust_log_error"] = run.trust.error
+        logged = run.trust.artifact_revocation(artifact_id) if run.trust.ok else None
         if row is None:
             # Deleting the index row must not be a way to escape revocation.
             problems.append("artifact not in registry index: revocation state cannot be confirmed")
-        elif row["revoked"]:
+        if logged is not None:
             self_revoked = True
-            problems.append(f"artifact revoked: {row.get('revoked_reason')}")
+            problems.append(f"artifact revoked: {logged.get('reason')} (signed trust log #{logged.get('seq')})")
+            if row is not None and not row["revoked"]:
+                run.index_tampering.append(f"artifact {artifact_id} un-revoked in the index")
+                details["index_tampering"] = True
+                problems.append("index flag says not revoked while the signed log says revoked (index tampering)")
+        elif row is not None and row["revoked"]:
+            # Flag set in the index without a signed record: still treated as revoked (fail closed).
+            self_revoked = True
+            problems.append(f"artifact revoked in the index: {row.get('revoked_reason')} (no signed record)")
         revoked_anc = [a.artifact_name or a.artifact_id for a in ancestors.values() if a.revoked]
         if revoked_anc:
             problems.append(f"revoked ancestor(s): {', '.join(revoked_anc)}")
         if problems:
-            return CheckResult.make("V7", "fail", "; ".join(problems), revoked_ancestors=revoked_anc), self_revoked
-        return CheckResult.make("V7", "pass", "artifact and ancestors not revoked"), self_revoked
+            return CheckResult.make("V7", "fail", "; ".join(problems), revoked_ancestors=revoked_anc,
+                                    **details), self_revoked
+        return CheckResult.make("V7", "pass", "artifact and ancestors not revoked "
+                                f"(signed trust log #{run.trust.head_seq})"), self_revoked
 
     def _check_semantic(self, body: ManifestBody, ancestors: dict[str, AncestorSummary]) -> CheckResult:
         flags = [c for c in body.semantic_checks if c.status == "flag"]
@@ -388,6 +442,15 @@ class Verifier:
                context=report.context, status=report.status.value, chain_length=len(report.ancestors) + 1)
 
         name = report.artifact_name or report.artifact_id
+        if not run.trust.ok:
+            log_event(self.repo, CRITICAL, EventType.TRUST_LOG_INVALID,
+                      f"Trust log unusable while verifying {name}: {run.trust.error} (fail closed)",
+                      artifact_id=report.artifact_id, details={"error": run.trust.error, "context": report.context})
+        for finding in dict.fromkeys(run.index_tampering):
+            log_event(self.repo, CRITICAL, EventType.INDEX_TAMPERING,
+                      f"SQLite index disagrees with the signed trust log: {finding}",
+                      artifact_id=report.artifact_id, details={"finding": finding, "context": report.context})
+        run.index_tampering.clear()
         if report.status == Status.FAILED:
             for c in report.checks:
                 if c.outcome == "fail":

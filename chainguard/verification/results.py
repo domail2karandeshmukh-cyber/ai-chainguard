@@ -77,6 +77,11 @@ class VerificationReport(BaseModel):
     # or an ancestor). Their provenance stops at the publisher's signature: VERIFIED
     # proves origin and integrity, not how (or on what data) they were trained.
     external_artifacts: list[str] = Field(default_factory=list)
+    # v0.4: the signed trust log this verdict was computed against. ``trust_log_ok`` is
+    # False when the log was missing, truncated or tampered with (V3/V4/V7 then fail).
+    trust_log_ok: bool = True
+    trust_log_seq: int = 0
+    trust_log_head: str | None = None
     duration_ms: float = 0.0
     verified_at: str = ""
     context: str = "cli"

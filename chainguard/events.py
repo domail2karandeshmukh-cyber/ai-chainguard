@@ -39,6 +39,9 @@ class EventType:
     EXTERNAL_IMPORTED = "EXTERNAL_IMPORTED"            # v0.3: external model accepted
     EXTERNAL_IMPORT_FAILED = "EXTERNAL_IMPORT_FAILED"  # v0.3: imported but failed verification
     EXTERNAL_IMPORT_REFUSED = "EXTERNAL_IMPORT_REFUSED"  # v0.3: e.g. unsigned, not even stored
+    TRUST_LOG_INITIALISED = "TRUST_LOG_INITIALISED"    # v0.4: root key pinned, genesis record written
+    TRUST_LOG_INVALID = "TRUST_LOG_INVALID"            # v0.4: log missing, truncated or tampered -> fail closed
+    INDEX_TAMPERING = "INDEX_TAMPERING"                # v0.4: SQLite index disagrees with the signed log
 
 
 # Event emitted when a given verification check fails (see verification/verifier.py).

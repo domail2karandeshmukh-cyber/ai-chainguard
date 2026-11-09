@@ -10,6 +10,7 @@ from chainguard.provenance.policy import Policy
 from chainguard.registry import Registry
 from chainguard.storage.repository import Repository
 from chainguard.trust import TrustStore
+from chainguard.trustlog import TrustLog
 from chainguard.verification.verifier import Verifier
 
 
@@ -32,7 +33,8 @@ class ChainGuard:
         settings.ensure_dirs()
         repo = Repository(settings.db_path)
         policy = Policy.load(settings.policy_path)
-        trust = TrustStore(settings, repo)
-        verifier = Verifier(settings, repo, policy)
+        log = TrustLog(settings)                      # v0.4: one signed trust log per workspace
+        trust = TrustStore(settings, repo, log)
+        verifier = Verifier(settings, repo, policy, log)
         registry = Registry(settings, repo, policy, trust, verifier)
         return cls(settings, repo, policy, trust, verifier, registry)

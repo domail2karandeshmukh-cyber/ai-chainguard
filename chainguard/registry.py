@@ -208,9 +208,10 @@ class Registry:
         )
 
     def revoke(self, artifact_id: str, reason: str) -> bool:
+        """Revoke an artifact: a signed record in the trust log (v0.4) plus the index flag."""
         if self.repo.get_artifact(artifact_id) is None:
             raise ArtifactNotFoundError(artifact_id)
-        ok = self.repo.revoke_artifact(artifact_id, reason)
+        ok = self.trust.revoke_artifact(artifact_id, reason)
         if ok:
             log_event(self.repo, CRITICAL, EventType.ARTIFACT_REVOKED, f"Revoked: {reason}",
                       artifact_id=artifact_id, details={"reason": reason})

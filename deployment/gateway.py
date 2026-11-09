@@ -109,6 +109,8 @@ class DeploymentGateway:
                for a in report.ancestors],
             "environment": environment,
             "verification_status": report.status.value,
+            # v0.4: the release commits to the trust-log head it was verified against
+            "trust_log": {"seq": report.trust_log_seq, "head": report.trust_log_head},
             "smoke_test": smoke,
             "decided_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }

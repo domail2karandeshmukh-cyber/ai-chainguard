@@ -17,7 +17,7 @@ Typical use::
     print(report.status)                # VERIFIED / WARNING / FAILED
 """
 
-__version__ = "0.1.0"
+__version__ = "0.4.0"
 
 import logging as _logging
 

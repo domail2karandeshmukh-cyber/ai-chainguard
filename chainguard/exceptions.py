@@ -42,6 +42,10 @@ class ManifestError(ChainGuardError):
     """A manifest or envelope is malformed."""
 
 
+class TrustLogError(ChainGuardError):
+    """The signed trust log cannot be written or is not initialised (v0.4)."""
+
+
 class UnverifiedArtifactError(ChainGuardError):
     """An artifact was about to be consumed but did not pass verification."""
 

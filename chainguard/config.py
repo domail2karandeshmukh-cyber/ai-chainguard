@@ -7,8 +7,9 @@ A *workspace* is one directory holding everything a ChainGuard instance needs::
       artifacts/models/        model weights (.safetensors)
       artifacts/deployments/   signed deployment records
       artifacts/manifests/     signed envelopes (<artifact_id>.json) = source of truth
-      artifacts/chainguard.db  SQLite index (mutable state: status, revocation, events)
-      keys/                    private signing keys (git-ignored, mode 0600)
+      artifacts/trust/         signed, hash-chained trust log (keys and revocations, v0.4)
+      artifacts/chainguard.db  SQLite index (convenience: listings, status cache, events)
+      keys/                    private signing keys + trust_root.json pin (git-ignored, 0600)
       results/                 metrics, attack results, figures
 
 Settings are passed explicitly (dependency injection) instead of being global, so
@@ -66,9 +67,24 @@ class Settings:
     def results_dir(self) -> Path:
         return self.root / "results"
 
+    # ---- v0.4: signed trust log ----------------------------------------------
+    @property
+    def trust_dir(self) -> Path:
+        """Signed trust-log records. Hostile storage: every record is signed and chained."""
+        return self.artifacts_dir / "trust"
+
+    @property
+    def trust_log_path(self) -> Path:
+        return self.trust_dir / "trust_log.jsonl"
+
+    @property
+    def trust_root_path(self) -> Path:
+        """The pin (root public key + head of the log). Lives with the private keys: trusted."""
+        return self.keys_dir / "trust_root.json"
+
     def ensure_dirs(self) -> None:
         for d in (self.data_dir, self.models_dir, self.deployments_dir, self.manifests_dir,
-                  self.results_dir):
+                  self.results_dir, self.trust_dir):
             d.mkdir(parents=True, exist_ok=True)
         self.keys_dir.mkdir(parents=True, exist_ok=True)
         # Private keys directory readable by the owner only (no effect on Windows).
