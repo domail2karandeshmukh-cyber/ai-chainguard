@@ -2,7 +2,7 @@
 PY ?= python
 export CHAINGUARD_HOME ?= $(CURDIR)
 
-.PHONY: help install keys mvp demo demo-auto pipeline attacks attacks-fast benchmark figures test test-fast lint api dashboard up down clean
+.PHONY: help install keys trust-log mvp demo demo-auto pipeline attacks attacks-fast benchmark trustlog-benchmark figures test test-fast lint api dashboard standalone validate paper up down clean
 
 help:
 	@echo "install       install dependencies (CPU PyTorch)"
@@ -14,7 +14,12 @@ help:
 	@echo "benchmark     hashing/signing/verification cost vs artifact size"
 	@echo "figures       report figures from results/"
 	@echo "test          all tests (test-fast skips the backdoor training test)"
+	@echo "trust-log     replay and print the signed trust log (v0.4)"
+	@echo "trustlog-benchmark  cost of replaying the trust log vs number of records (v0.4)"
+	@echo "validate      full validation run -> results/validation_logs (LABEL=\"<machine>\")"
+	@echo "paper         regenerate the IEEE paper figures and build paper/signed_is_not_safe.pdf"
 	@echo "api           FastAPI on :8000      dashboard  Streamlit on :8501"
+	@echo "standalone    dashboard with the API embedded in-process (no second terminal)"
 	@echo "up / down     docker compose stack"
 
 install:
@@ -23,6 +28,9 @@ install:
 
 keys:
 	$(PY) -m cli.main keys init
+
+trust-log:
+	$(PY) -m cli.main keys trust-log
 
 mvp:
 	$(PY) -m cli.main mvp-demo
@@ -45,6 +53,9 @@ attacks-fast:
 benchmark:
 	$(PY) -m scripts.benchmark
 
+trustlog-benchmark:
+	$(PY) -m scripts.trustlog_benchmark
+
 figures:
 	$(PY) -m scripts.make_figures
 
@@ -62,6 +73,17 @@ api:
 
 dashboard:
 	streamlit run dashboard/Overview.py --server.port 8501
+
+standalone:
+	CHAINGUARD_STANDALONE=1 streamlit run dashboard/Overview.py --server.port 8501
+
+LABEL ?= team laptop - <owner>, <cpu>
+validate:
+	PYTHON=$(PY) bash scripts/run_validation.sh "$(LABEL)"
+
+paper:
+	$(PY) paper/figures/make_figures.py
+	cd paper && pdflatex -interaction=nonstopmode signed_is_not_safe.tex >/dev/null && pdflatex -interaction=nonstopmode signed_is_not_safe.tex >/dev/null && echo "paper/signed_is_not_safe.pdf"
 
 up:
 	docker compose -f docker/docker-compose.yml up --build
