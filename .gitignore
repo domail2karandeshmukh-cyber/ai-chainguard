@@ -31,3 +31,9 @@ dist/
 .vscode/
 .idea/
 .DS_Store
+
+# --- LaTeX build files (paper/) ---
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.synctex.gz

@@ -32,37 +32,37 @@
     }
   },
   "bench": {
-    "A  inference, 1 sample": {
+    "inference, 1 sample": {
       "median_ms": 0.0844,
       "p95_ms": 0.1911,
       "runs": 1000
     },
-    "D  inference after verified deploy": {
+    "inference after verified deploy": {
       "median_ms": 0.085,
       "p95_ms": 0.1835,
       "runs": 1000
     },
-    "B  full chain verification V0-V9": {
+    "full chain verification V0\u2013V9": {
       "median_ms": 8.4985,
       "p95_ms": 12.2206,
       "runs": 200
     },
-    "C1 verify + audit log + safe read": {
+    "verify + audit log + safe read": {
       "median_ms": 30.9348,
       "p95_ms": 39.8479,
       "runs": 100
     },
-    "C2 safe load (safetensors)": {
+    "safe load (safetensors)": {
       "median_ms": 1.0637,
       "p95_ms": 1.5336,
       "runs": 100
     },
-    "C3 smoke test (360 samples)": {
+    "smoke test (360 samples)": {
       "median_ms": 8.2784,
       "p95_ms": 10.8111,
       "runs": 100
     },
-    "C  first secure deployment, total": {
+    "first secure deployment, total": {
       "median_ms": 252.683,
       "p95_ms": 295.3838,
       "runs": 30
@@ -271,6 +271,25 @@
     "verify_full_stdev",
     "sha256_MBps"
   ],
+  "crypto": {
+    "sha256_largest_label": "256 MiB",
+    "sha256_largest_ms": 219.5737,
+    "sha256_GBps_at_largest": 1.223,
+    "ed25519_sign_ms_min_max": [
+      0.0336,
+      0.0364
+    ],
+    "ed25519_verify_ms_min_max": [
+      0.1186,
+      0.1416
+    ]
+  },
+  "merkle_rows_ms": {
+    "1000": 2.168,
+    "10000": 15.691,
+    "100000": 160.603,
+    "1000000": 1668.792
+  },
   "F": {
     "E5-0": {
       "observed": "VERIFIED",

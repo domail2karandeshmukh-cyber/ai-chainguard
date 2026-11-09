@@ -29,38 +29,38 @@ COL = {"VERIFIED": "#1f9d55", "WARNING": "#d69e2e", "FAILED": "#c53030", "REFUSE
 # Labels of the two figures in both languages of the paper (signed_is_not_safe.tex / signed_is_not_safe_fr.tex).
 T = {
     "en": {
-        "suffix": "", "rate": "rate", "acc": "clean test accuracy", "asr": "backdoor success rate (trigger \u2192 7)",
+        "suffix": "", "rate": "rate (%)", "acc": "clean test accuracy", "asr": "backdoor success rate (trigger \u2192 7)",
         "deployed": "deployed", "blocked": "blocked", "imported": "imported",
         "status": {"VERIFIED": "VERIFIED", "WARNING": "WARNING", "FAILED": "FAILED", "REFUSED": "REFUSED"},
         "items": [("E0", "clean\nbaseline"), ("E2", "poison before\nsigning"), ("E3", "poison +\ncontent checks"),
-                  ("E4", "adaptive\ntrigger"), ("E7-F", "trusted hub,\nbackdoored")],
+                  ("E4", "adaptive\ntrigger"), ("E7-F", "trusted\npublisher,\nbackdoored")],
         "scen": {"A": "A dataset tampering", "B": "B model substitution", "C": "C broken provenance",
                  "D": "D invalid signature", "E": "E poison before signing", "F": "F revocation + bypasses",
                  "G": "G external source"},
         "xlab_a": "verification time of the attacked artifact incl. its chain (ms, log)",
-        "legend_a": "{n} variants, observed status", "title_a": "(a) attack suite: outcome and detection time",
-        "bench": ["A  inference, 1 sample", "D  inference after verified deploy", "B  full chain verification V0-V9",
-                  "C1 verify + audit log + safe read", "C2 safe load (safetensors)", "C3 smoke test (360 samples)",
-                  "C  first secure deployment, total"],
+        "title_a": "(a) {n} variants: outcome and detection time",
+        "bench": ["inference, 1 sample", "inference after verified deploy", "full chain verification V0\u2013V9",
+                  "verify + audit log + safe read", "safe load (safetensors)", "smoke test (360 samples)",
+                  "first secure deployment, total"],
         "replay": "trust log replay, {n} records", "xlab_b": "time (ms, log scale)",
         "title_b": "(b) what attestation costs",
     },
     "fr": {
-        "suffix": "_fr", "rate": "taux", "acc": "exactitude sur donn\u00e9es propres",
+        "suffix": "_fr", "rate": "taux (%)", "acc": "exactitude sur donn\u00e9es propres",
         "asr": "taux de succ\u00e8s de la porte d\u00e9rob\u00e9e (d\u00e9clencheur \u2192 7)",
         "deployed": "d\u00e9ploy\u00e9", "blocked": "bloqu\u00e9", "imported": "import\u00e9",
         "status": {"VERIFIED": "V\u00c9RIFI\u00c9", "WARNING": "AVERTISSEMENT", "FAILED": "\u00c9CHEC", "REFUSED": "REFUS\u00c9"},
         "items": [("E0", "r\u00e9f\u00e9rence\npropre"), ("E2", "poison avant\nsignature"), ("E3", "poison +\ncontr\u00f4les"),
-                  ("E4", "d\u00e9clencheur\nadaptatif"), ("E7-F", "\u00e9diteur fiable,\nporte d\u00e9rob\u00e9e")],
+                  ("E4", "d\u00e9clencheur\nadaptatif"), ("E7-F", "\u00e9diteur de\nconfiance,\nporte d\u00e9rob\u00e9e")],
         "scen": {"A": "A alt\u00e9ration du jeu de donn\u00e9es", "B": "B substitution du mod\u00e8le",
                  "C": "C provenance bris\u00e9e", "D": "D signature invalide", "E": "E poison avant signature",
                  "F": "F r\u00e9vocation + contournements", "G": "G source externe"},
         "xlab_a": "temps de v\u00e9rification de l'artefact attaqu\u00e9, cha\u00eene comprise (ms, log)",
-        "legend_a": "{n} variantes, statut", "title_a": "(a) suite d'attaques : verdict et temps de d\u00e9tection",
-        "bench": ["A  inf\u00e9rence, 1 \u00e9chantillon", "D  inf\u00e9rence apr\u00e8s d\u00e9ploiement v\u00e9rifi\u00e9",
-                  "B  v\u00e9rification de la cha\u00eene, V0-V9", "C1 v\u00e9rif. + journal d'audit + lecture s\u00fbre",
-                  "C2 chargement s\u00fbr (safetensors)", "C3 test de fum\u00e9e (360 \u00e9chantillons)",
-                  "C  premier d\u00e9ploiement s\u00e9curis\u00e9, total"],
+        "title_a": "(a) {n} variantes : verdict et temps de d\u00e9tection",
+        "bench": ["inf\u00e9rence, 1 \u00e9chantillon", "inf\u00e9rence apr\u00e8s d\u00e9ploiement v\u00e9rifi\u00e9",
+                  "v\u00e9rification de la cha\u00eene, V0\u2013V9", "v\u00e9rif. + journal d'audit + lecture s\u00fbre",
+                  "chargement s\u00fbr (safetensors)", "test de fum\u00e9e (360 \u00e9chantillons)",
+                  "premier d\u00e9ploiement s\u00e9curis\u00e9, total"],
         "replay": "rejeu du journal, {n} enregistrements", "xlab_b": "temps (ms, \u00e9chelle log)",
         "title_b": "(b) co\u00fbt de l'attestation",
     },
@@ -113,24 +113,25 @@ def fig_boundary(d: dict, a: dict, lang: str = "en") -> None:
     acc = [it[2]["details"]["clean_accuracy"] for it in items]
     asr = [it[2]["details"]["attack_success_rate"] for it in items]
     w = 0.36
-    ax.bar([i - w / 2 for i in x], acc, w, color="#2b6cb0", label=t["acc"])
-    ax.bar([i + w / 2 for i in x], asr, w, color="#c53030", label=t["asr"])
-    pct = "\u202f%" if lang == "fr" else "%"
+    acc_pct = [v * 100 for v in acc]
+    asr_pct = [v * 100 for v in asr]
+    ax.bar([i - w / 2 for i in x], acc_pct, w, color="#2b6cb0", label=t["acc"])
+    ax.bar([i + w / 2 for i in x], asr_pct, w, color="#c53030", label=t["asr"])
     for i, it in enumerate(items):
         st = it[2]["observed"]
         dep = it[2]["details"].get("deployed")
         label = t["status"][st] + "\n" + (t["deployed"] if dep else (t["blocked"] if dep is False else t["imported"]))
-        ax.text(i, 1.06, label, ha="center", va="bottom", fontsize=6.2 if lang == "en" else 4.8, color=COL[st],
+        ax.text(i, 106, label, ha="center", va="bottom", fontsize=6.2 if lang == "en" else 5.1, color=COL[st],
                 fontweight="bold")
-        ax.text(i + w / 2, asr[i] - 0.09 if asr[i] > 0.2 else asr[i] + 0.02, f"{asr[i] * 100:.0f}{pct}",
-                ha="center", va="bottom", fontsize=6, color="white" if asr[i] > 0.2 else "black")
-        ax.text(i - w / 2, acc[i] - 0.09, f"{acc[i] * 100:.0f}{pct}", ha="center", va="bottom", fontsize=6, color="white")
+        # value labels: inside the bar (white) when the bar is tall enough, above it otherwise; no unit, the axis has it
+        inside = asr_pct[i] > 20
+        ax.text(i + w / 2, asr_pct[i] - 9 if inside else asr_pct[i] + 2, f"{asr_pct[i]:.0f}", ha="center", va="bottom",
+                fontsize=5.6, color="white" if inside else "black")
+        ax.text(i - w / 2, acc_pct[i] - 9, f"{acc_pct[i]:.0f}", ha="center", va="bottom", fontsize=5.6, color="white")
     ax.set_xticks(list(x))
     ax.set_xticklabels([f"{it[0]}\n{it[1]}" for it in items], fontsize=6.3 if lang == "en" else 5.6)
-    ax.set_ylim(0, 1.33)
-    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
-    if lang == "fr":
-        ax.set_yticklabels(["0", "0,25", "0,50", "0,75", "1,00"])
+    ax.set_ylim(0, 133)
+    ax.set_yticks([0, 25, 50, 75, 100])
     ax.set_ylabel(t["rate"])
     if lang == "en":
         fig.legend(loc="lower center", ncol=2, frameon=False, bbox_to_anchor=(0.5, -0.01), fontsize=6.8)
@@ -165,17 +166,17 @@ def fig_detection_cost(d: dict, a: dict, lang: str = "en") -> None:
     ax1.set_yticklabels([labels[s] for s in order], fontsize=7 if lang == "en" else 6.4)
     ax1.invert_yaxis()
     ax1.set_xscale("log")
-    ax1.set_xlim(0.8, 300)
-    ax1.set_xticks([1, 2, 5, 10, 20, 50, 100])
-    ax1.set_xticklabels(["1", "2", "5", "10", "20", "50", "100"])
+    ax1.set_xlim(0.8, 40)
+    ax1.set_xticks([1, 2, 5, 10, 20])
+    ax1.set_xticklabels(["1", "2", "5", "10", "20"])
     ax1.minorticks_off()
     ax1.set_xlabel(t["xlab_a"])
     ax1.grid(axis="x", alpha=0.3)
     for st, c in COL.items():
         ax1.scatter([], [], color=c, s=14, label=t["status"][st].lower(), edgecolor="black", linewidth=0.3)
-    ax1.legend(loc="center right", frameon=False, ncol=1, title=t["legend_a"].format(n=len(rows)),
-               title_fontsize=6.5, bbox_to_anchor=(1.0, 0.5), handletextpad=0.3, borderaxespad=0.2)
-    ax1.set_title(t["title_a"], loc="left")
+    ax1.legend(loc="lower right", frameon=False, ncol=4, bbox_to_anchor=(1.0, 1.0), borderaxespad=0.0,
+               handletextpad=0.2, columnspacing=0.7, fontsize=6.3)
+    ax1.set_title(t["title_a"].format(n=len(rows)), loc="left", pad=14)
 
     # (b) cost: inference, verification, deployment, trust-log replay
     b = {r["measurement"] + "|" + r["label"]: r for r in d["bench"]}
@@ -194,13 +195,14 @@ def fig_detection_cost(d: dict, a: dict, lang: str = "en") -> None:
     ax2.barh(list(y), med, color=colors, height=0.62)
     ax2.errorbar(med, list(y), xerr=[[0] * len(med), [p - m for p, m in zip(p95, med, strict=True)]],
                  fmt="none", ecolor="black", elinewidth=0.6, capsize=1.5)
-    for i, m in enumerate(med):
-        ax2.text(m * 1.25, i, num(m, lang, 2) if m < 10 else f"{m:.0f}", va="center", fontsize=6)
+    for i, (m, p) in enumerate(zip(med, p95, strict=True)):
+        nd = 3 if m < 1 else (2 if m < 10 else (1 if m < 100 else 0))
+        ax2.text(max(m, p) * 1.18, i, num(m, lang, nd), va="center", fontsize=6)
     ax2.set_yticks(list(y))
     ax2.set_yticklabels(names, fontsize=6.3 if lang == "en" else 5.7)
     ax2.invert_yaxis()
     ax2.set_xscale("log")
-    ax2.set_xlim(0.03, 3000)
+    ax2.set_xlim(0.03, 4000)
     ax2.set_xticks([0.1, 1, 10, 100, 1000])
     ax2.set_xticklabels(["0,1" if lang == "fr" else "0.1", "1", "10", "100", "1000"])
     ax2.minorticks_off()
@@ -241,9 +243,18 @@ def numbers(d: dict, a: dict) -> None:
     env = [int(r["envelope_bytes"]) for r in d["sizes"] if r.get("envelope_bytes", "").isdigit()]
     if env:
         a["envelope_bytes_min_max"] = [min(env), max(env)]
-    # crypto throughput (SHA-256 at the largest size, Ed25519)
+    # crypto micro-benchmarks quoted in Section V: SHA-256 at the largest size, Ed25519 sign/verify, Merkle over rows
     cr = d["crypto"]
     a["crypto_columns"] = list(cr[0].keys()) if cr else []
+    if cr:
+        largest = max(cr, key=lambda r: int(r["size_bytes"]))
+        a["crypto"] = {"sha256_largest_label": largest["size_label"], "sha256_largest_ms": float(largest["sha256_ms"]),
+                       "sha256_GBps_at_largest": round(int(largest["size_bytes"]) / float(largest["sha256_ms"]) / 1e6, 3),
+                       "ed25519_sign_ms_min_max": [min(float(r["sign_ms"]) for r in cr), max(float(r["sign_ms"]) for r in cr)],
+                       "ed25519_verify_ms_min_max": [min(float(r["verify_sig_ms"]) for r in cr),
+                                                     max(float(r["verify_sig_ms"]) for r in cr)]}
+    mk = read_csv(RES / "metrics" / "benchmark_merkle.csv")
+    a["merkle_rows_ms"] = {int(r["rows"]): float(r["merkle_ms"]) for r in mk}
     fv = [v for v in d["F"]["variants"]]
     a["F"] = {v["variant"]: {"observed": v["observed"], "failed": v["failed_checks"]} for v in fv}
 
