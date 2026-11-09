@@ -2,7 +2,7 @@
 PY ?= python
 export CHAINGUARD_HOME ?= $(CURDIR)
 
-.PHONY: help install keys trust-log mvp demo demo-auto pipeline attacks attacks-fast benchmark trustlog-benchmark figures test test-fast lint api dashboard standalone validate paper up down clean
+.PHONY: help install keys trust-log mvp demo demo-auto pipeline attacks attacks-fast benchmark trustlog-benchmark figures test test-fast lint api dashboard standalone validate paper website up down clean
 
 help:
 	@echo "install       install dependencies (CPU PyTorch)"
@@ -18,6 +18,7 @@ help:
 	@echo "trustlog-benchmark  cost of replaying the trust log vs number of records (v0.4)"
 	@echo "validate      full validation run -> results/validation_logs (LABEL=\"<machine>\")"
 	@echo "paper         regenerate the IEEE paper figures and build paper/signed_is_not_safe.pdf"
+	@echo "website       refresh the project website's figures, screenshots and paper copies (website/)"
 	@echo "api           FastAPI on :8000      dashboard  Streamlit on :8501"
 	@echo "standalone    dashboard with the API embedded in-process (no second terminal)"
 	@echo "up / down     docker compose stack"
@@ -86,6 +87,10 @@ paper:
 	$(PY) paper/figures/make_slide_figures.py
 	cd paper && pdflatex -interaction=nonstopmode signed_is_not_safe.tex >/dev/null && pdflatex -interaction=nonstopmode signed_is_not_safe.tex >/dev/null && echo "paper/signed_is_not_safe.pdf"
 	cd paper && pdflatex -interaction=nonstopmode signed_is_not_safe_fr.tex >/dev/null && pdflatex -interaction=nonstopmode signed_is_not_safe_fr.tex >/dev/null && echo "paper/signed_is_not_safe_fr.pdf"
+
+website:
+	$(PY) paper/figures/make_slide_figures.py --web website/assets/figures
+	$(PY) -m scripts.website_assets
 
 up:
 	docker compose -f docker/docker-compose.yml up --build

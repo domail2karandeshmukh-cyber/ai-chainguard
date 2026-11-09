@@ -4,6 +4,8 @@ ESAIP Master 1 MSc · Projet Applicatif 2 · Applied AI Projects · Referent: So
 Team: Karan DESHMUKH, JOGI Sudheer reddy, DAMA Dola Krishna, MEKALA Rambabu
 **Version 0.4 (9 November 2026)**. What changed: [`docs/16_progress_update_v0.4.md`](docs/16_progress_update_v0.4.md) · v0.3 notes: [`docs/14_progress_update_since_oct5.md`](docs/14_progress_update_since_oct5.md) · IEEE paper: [`paper/signed_is_not_safe.pdf`](paper/signed_is_not_safe.pdf) (English) · [`paper/signed_is_not_safe_fr.pdf`](paper/signed_is_not_safe_fr.pdf) (French)
 
+**Project website:** [ai-chainguard.vercel.app](https://ai-chainguard.vercel.app) · **CI:** both GitHub Actions workflows pass ([runs](https://github.com/domail2karandeshmukh-cyber/ai-chainguard/actions))
+
 > **One sentence.** Existing tools sign one artifact (cosign, OpenSSF Model Signing), describe it (model cards, ML-BOM) or attest software builds (SLSA, in-toto). AI-ChainGuard links datasets, base models, fine-tuned models and deployments into **one verifiable chain with a role policy, a signed revocation log and a deployment gate**, exports to the ecosystem's formats (in-toto / DSSE / SLSA), and **measures** where cryptographic integrity stops: *a signed model is not a safe model*. Why that matters and how it compares: [`docs/03_comparative_table.md`](docs/03_comparative_table.md) and the dashboard page **Why ChainGuard**.
 
 ## What AI-ChainGuard is
@@ -232,8 +234,9 @@ Figures: `results/figures/` (`fig_attack_outcomes.png`, `fig_backdoor_asr.png`, 
 | Inference-overhead, manifest-size and trust-log benchmarks | Completed (reference environment only) |
 | API, dashboard, CLI | Prototype, no authentication; dashboard runs standalone |
 | Docker | Image build, Compose stack, pipeline, API and dashboard executed on team hardware (16 Oct 2026) |
-| GitHub Actions | Implemented and statically checked, **not yet executed on GitHub** (no repository yet) |
+| GitHub Actions | **Executed on GitHub, both workflows passed** (9 Nov 2026, Python 3.11.18): lint and all 168 tests; attested pipeline, independent re-verification, tamper negative control, attack scenarios A–D, F, G (43/43). The optional Sigstore job is disabled |
 | Tests and benchmarks on team hardware | **Not yet done** (`scripts/run_validation.sh`) |
+| Project website | Static page on Vercel built from `website/` (figures and numbers from `results/`); `make website` refreshes its assets |
 | State of the art and IEEE paper | Paper drafted with verified references (`paper/`); SoA document still to consolidate |
 
 ## Team

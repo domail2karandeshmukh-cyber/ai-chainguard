@@ -65,4 +65,14 @@ Decision / next step:
 **Interpretation:** the trust decisions are now protected by the same mechanism as the artifacts; what remains trusted is the keys directory (root key and pin). The semantic boundary is unchanged, as expected: signatures do not see content.
 **Next:** run `scripts/run_validation.sh` on a team laptop and append the entry; push the repository and let CI run; checkpoint signed trust-log snapshots.
 
+### 2026-11-09 (evening) · Repository published on GitHub; first GitHub Actions runs · AI-assisted, validated by execution
+
+**Goal:** publish the repository and run the two CI workflows on GitHub for the first time.
+**Setup:** https://github.com/domail2karandeshmukh-cyber/ai-chainguard (public), branch `main`, commit 679f855. GitHub-hosted runner `ubuntu-latest`, Python 3.11.18 (the minimum supported version), PyTorch 2.15.0+cpu, cryptography 50.0.2, ruff 0.17.1 (pinned).
+**Result:**
+- `ci` (run 42666510422): `ruff` clean; private-key guard passed; fast tests 167 passed (1 deselected), slow backdoor test 1 passed: 168/168.
+- `attest-and-verify` (run 42666509774): ephemeral keys initialised; four-stage attested pipeline, gateway VERIFIED → DEPLOYED; independent re-verification of the deployed model VERIFIED; negative control (one flipped byte of the deployed model) FAILED as required; attack scenarios A–D, F, G 43/43 as expected (the runner exits non-zero otherwise); evidence uploaded as a workflow artifact. The optional Sigstore job was skipped (disabled by default).
+**Interpretation:** the test suite and the CI release gate also hold outside the reference environment, on Python 3.11. Benchmarks were not measured in CI: shared runners are not a stable timing environment.
+**Next:** run `scripts/run_validation.sh` on a team laptop; enable the Sigstore job if keyless signing is wanted.
+
 ### [date] · [next experiment] · [author]

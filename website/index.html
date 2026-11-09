@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-ChainGuard: Signed is not safe</title>
+<meta name="description" content="AI-ChainGuard attests every stage of an AI pipeline and measures what a valid signature proves. Every post-signing manipulation of 48 variants was detected; a dataset poisoned before signing deployed as VERIFIED with a 77 % backdoor success rate.">
+<meta name="author" content="Karan Deshmukh, Sudheer Reddy Jogi, Dola Krishna Dama, Rambabu Mekala">
+<meta name="theme-color" content="#0F2A44">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AI-ChainGuard: Signed is not safe">
+<meta property="og:description" content="An attestation chain for AI pipelines, and a measurement of where cryptographic integrity stops. ESAIP Angers, MSc Cybersecurity and Data Science, November 2026.">
+<meta property="og:image" content="https://ai-chainguard.vercel.app/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/ibm-plex-sans-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/site.css">
+<script>document.documentElement.classList.add("js")</script>
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="AI-ChainGuard, back to top">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0F2A44"/><rect x="9" y="21" width="27" height="22" rx="11" fill="none" stroke="#5CC8D0" stroke-width="5"/><rect x="28" y="21" width="27" height="22" rx="11" fill="none" stroke="#FFFFFF" stroke-width="5"/></svg>
+      AI-ChainGuard
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#result">Result</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#how">How it works</a>
+      <a href="#cost">Cost</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#paper">Paper</a>
+      <a href="#team">Team</a>
+    </nav>
+    <a class="btn btn-ghost btn-small" href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      Source code
+    </a>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <h1>Signed is<br>not safe.</h1>
+      <p class="lede">AI-ChainGuard signs every stage of an AI pipeline, from the dataset to the deployed model, links the stages by their digests and refuses to deploy anything that fails verification. Then we measured what that guarantee covers. Every manipulation made after signing was caught. A dataset poisoned before signing passed every check and was deployed.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="assets/paper/signed-is-not-safe-en.pdf">Read the paper (PDF)</a>
+        <a class="btn btn-ghost" href="assets/paper/signe-n-est-pas-sur-fr.pdf" hreflang="fr" lang="fr">Version française</a>
+        <a class="btn btn-ghost" href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard">Source code</a>
+      </div>
+      <p class="note">A six-page IEEE-format paper in English and French, from the MSc in Cybersecurity and Data Science at ESAIP École d'Ingénieurs, Angers (Projet Applicatif 2, November 2026).</p>
+    </div>
+
+    <figure class="report" data-report>
+      <div class="term">
+        <div class="term-bar">
+          <p>What the verifier sees</p>
+          <button class="replay" type="button" data-replay hidden>Run again</button>
+        </div>
+        <div class="term-body">
+          <span class="l cmd" data-wait="0">$ chainguard verify $MODEL_ID</span>
+          <span class="l" data-wait="380"> </span>
+          <span class="l"><span class="ok">  VERIFIED  digits-finetuned-cnn</span></span>
+          <span class="l">  [<span class="ok">PASS</span>] V0 Envelope well-formed</span>
+          <span class="l">  [<span class="ok">PASS</span>] V1 File hash (SHA-256)</span>
+          <span class="l">  [<span class="skip-o">skip</span>] V2 Dataset Merkle root</span>
+          <span class="l">  [<span class="ok">PASS</span>] V3 Ed25519 signature</span>
+          <span class="l">  [<span class="ok">PASS</span>] V4 Signer trusted for role and stage</span>
+          <span class="l">  [<span class="ok">PASS</span>] V5 Parent links (manifest digests)</span>
+          <span class="l">  [<span class="ok">PASS</span>] V6 Ancestor chain verified</span>
+          <span class="l">  [<span class="ok">PASS</span>] V7 Revocation (artifact and ancestors)</span>
+          <span class="l">  [<span class="ok">PASS</span>] V8 Supply-chain policy</span>
+          <span class="l">  [<span class="skip-o">skip</span>] V9 Semantic checks (content)</span>
+          <span class="l dim">         no content checks recorded for this artifact:
+integrity-only guarantee</span>
+          <span class="l dim">  verified in 13.5&nbsp;ms</span>
+          <span class="l" data-wait="300"> </span>
+          <span class="l">[stage 4] gateway: <span class="ok">VERIFIED</span> -&gt; DEPLOYED (chain verified)</span>
+        </div>
+      </div>
+      <div class="behaviour">
+        <p>What the deployed model does</p>
+        <dl>
+          <div><dt>Accuracy on clean test digits</dt><dd>94.2&nbsp;%</dd></div>
+          <div class="bad"><dt>Other digits stamped with a 2×2 corner patch, read as 7</dt><dd>77.2&nbsp;%</dd></div>
+        </dl>
+      </div>
+      <figcaption>Experiment E2 of the paper. The data steward signed a training set that already held 80 poisoned rows (8&nbsp;%). Every signature is genuine, so every check passes and the gateway deploys the model. <span class="st st-verified">VERIFIED</span> says who attested the model and that nothing changed since. It says nothing about what the model learned.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section section-band" id="result" aria-labelledby="result-h">
+  <div class="wrap">
+    <div class="section-head prose">
+      <h2 id="result-h">What a signature proves, and what it does not</h2>
+      <p class="lede">Seven experiments, 48 attack and control variants, one real pipeline: four attested stages around a small convolutional network for 8×8 handwritten digits. Experiments 6 and 7 measure what lies beyond the reach of signatures.</p>
+    </div>
+    <figure class="fig fig-narrow">
+      <a href="assets/figures/boundary.svg" aria-label="Open the figure full size"><img src="assets/figures/boundary.svg" width="900" height="470" alt="Bar chart. E0 clean pipeline: VERIFIED and deployed, 95 % accuracy, 0 % backdoor success. E2 poison signed before attestation: VERIFIED and deployed, 94 % accuracy, 77 % backdoor success. E3 the same poison with content checks: WARNING and blocked, 94 % and 77 %. E4 adaptive trigger: VERIFIED and deployed, 94 % and 51 %. E7-F backdoored model from a trusted publisher: VERIFIED and imported, 93 % and 100 %."></a>
+      <figcaption>Clean accuracy and backdoor success rate of the deployed or imported model, with its verification status. E0: clean pipeline. E2: poison signed before attestation. E3: the same poison with content checks before signing. E4: a trigger the checks do not know. E7-F: a backdoored model from a trusted, registered publisher.</figcaption>
+    </figure>
+    <div class="split">
+      <div>
+        <h3>A <span class="st st-verified">VERIFIED</span> status proves</h3>
+        <ul class="ticks">
+          <li>who attested each artifact in the chain, and under which role;</li>
+          <li>that no byte, row, parent link or signature has changed since;</li>
+          <li>that every signer was trusted for its stage and is not revoked, according to the signed trust log.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>It does not prove</h3>
+        <ul class="ticks no">
+          <li>that the data was clean when it was signed (E2: 77.2&nbsp;% backdoor success);</li>
+          <li>that a trusted publisher's model is harmless (E7-F: 100&nbsp;%);</li>
+          <li>that content checks stop an adaptive attacker (E4: 51.2&nbsp;%, still <span class="st st-verified">VERIFIED</span>).</li>
+        </ul>
+      </div>
+    </div>
+    <p class="prose">Content checks run before signing count as evidence, not proof. They flagged the known trigger in E3, the model went to <span class="st st-warning">WARNING</span> and the gateway blocked it by default; they missed the adaptive trigger in E4. AI-ChainGuard therefore reports the two kinds of evidence separately: checks V0 to V8 are cryptographic, V9 is about content, and a heuristic can never produce a <span class="st st-failed">FAILED</span>, nor a signature a “safe”.</p>
+  </div>
+</section>
+
+<section class="section" id="evidence" aria-labelledby="evidence-h">
+  <div class="wrap">
+    <div class="section-head prose">
+      <h2 id="evidence-h">Every manipulation after signing was caught</h2>
+      <p class="lede">Each variant starts from a fresh copy of a clean, fully attested chain, applies one manipulation with the access an attacker would have, then verifies the target with its whole chain. All 48 variants produced the predicted verdict. Detection took 1.7 to 15.1&nbsp;ms, chain included (median 7.5&nbsp;ms).</p>
+    </div>
+    <figure class="fig fig-narrow">
+      <a href="assets/figures/detection.svg" aria-label="Open the figure full size"><img src="assets/figures/detection.svg" width="900" height="520" alt="Dot plot of the verification time of the 48 variants by scenario A to G, between about 1.7 and 15 milliseconds on a log scale, coloured by verdict: verified controls, failed attacks, one warning in scenario E and two refused imports in scenario G."></a>
+      <figcaption>Verification time and verdict of all 48 variants, by scenario. Each dot is one variant on its own fresh chain.</figcaption>
+    </figure>
+    <p class="prose">The manipulations range from the subtle to the structural: flipping the labels of five rows, appending one row or a single trailing space to a signed dataset; nudging one weight by 10<sup>−6</sup> or re-saving identical weights in another format; re-signing a modified parent with the legitimate key; presenting a model with no dataset ancestry; replaying signatures, using a key in the wrong role, or signing with unknown or revoked keys.</p>
+    <div class="table-wrap">
+      <table>
+        <caption class="vh">The seven experiments of the attack suite</caption>
+        <thead><tr><th scope="col">Exp.</th><th scope="col">Experiment (scenario)</th><th scope="col" class="num">Variants</th><th scope="col">Outcome</th><th scope="col">Checks that fired</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><th scope="row">Dataset tampering (A)</th><td class="num">5</td><td>control <span class="st st-verified">VERIFIED</span>; 4 <span class="st st-failed">FAILED</span></td><td class="mono">V1, V2, V6</td></tr>
+          <tr><td>2</td><th scope="row">Model substitution (B)</th><td class="num">4</td><td>control <span class="st st-verified">VERIFIED</span>; 3 <span class="st st-failed">FAILED</span></td><td class="mono">V1</td></tr>
+          <tr><td>3</td><th scope="row">Invalid signature, key misuse (D)</th><td class="num">7</td><td>control <span class="st st-verified">VERIFIED</span>; 6 <span class="st st-failed">FAILED</span></td><td class="mono">V3, V4, V6</td></tr>
+          <tr><td>4</td><th scope="row">Broken provenance (C)</th><td class="num">5</td><td>control <span class="st st-verified">VERIFIED</span>; 4 <span class="st st-failed">FAILED</span></td><td class="mono">V3, V5, V8</td></tr>
+          <tr><td>5</td><th scope="row">Revocation and 8 bypasses (F)</th><td class="num">13</td><td>2 <span class="st st-verified">VERIFIED</span> as predicted; 11 <span class="st st-failed">FAILED</span>, deployment blocked</td><td class="mono">V3, V4, V6, V7</td></tr>
+          <tr><td>6</td><th scope="row">Poison before signing (E)</th><td class="num">5</td><td>E0 control <span class="st st-verified">VERIFIED</span>; E1 <span class="st st-failed">FAILED</span>; E3 <span class="st st-warning">WARNING</span>; E2, E4 <span class="st st-verified">VERIFIED</span></td><td class="mono">V6, V9</td></tr>
+          <tr><td>7</td><th scope="row">Untrusted external source (G)</th><td class="num">9</td><td>3 <span class="st st-verified">VERIFIED</span>; 4 <span class="st st-failed">FAILED</span>; 2 <span class="st st-refused">REFUSED</span> at import</td><td class="mono">V1, V3, V4, V6</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Attacks on the trust itself</h3>
+    <p class="prose">After a base model is revoked, eight bypasses try to make its fine-tuned descendant verify again. All eight fail.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Bypass</th><th scope="col">What the attacker does</th><th scope="col">Result</th><th scope="col">Checks</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">C1</th><td>Deletes the revoked artifact's row from the SQLite index</td><td><span class="st st-failed">FAILED</span></td><td class="mono">V7</td></tr>
+          <tr><th scope="row">C2</th><td>Deletes the revoked key from the index</td><td><span class="st st-failed">FAILED</span></td><td class="mono">V4, V6</td></tr>
+          <tr><th scope="row">C3</th><td>Overwrites the cached status</td><td><span class="st st-failed">FAILED</span></td><td class="mono">V6, V7</td></tr>
+          <tr><th scope="row">C4</th><td>Clears the <code>revoked</code> flag in the index (the documented limit of version 0.3)</td><td><span class="st st-failed">FAILED</span>, <code>INDEX_TAMPERING</code> raised</td><td class="mono">V6, V7</td></tr>
+          <tr><th scope="row">C5</th><td>Writes a rogue key with the training role into the index and re-signs a substituted model</td><td><span class="st st-failed">FAILED</span></td><td class="mono">V3, V4</td></tr>
+          <tr><th scope="row">C6</th><td>Truncates the trust log to before the revocation (rollback)</td><td><span class="st st-failed">FAILED</span></td><td class="mono">V3, V4, V6, V7</td></tr>
+          <tr><th scope="row">C7</th><td>Edits a trust-log record in place</td><td><span class="st st-failed">FAILED</span></td><td class="mono">V3, V4, V6, V7</td></tr>
+          <tr><th scope="row">C8</th><td>Deletes the trust log</td><td><span class="st st-failed">FAILED</span></td><td class="mono">V3, V4, V6, V7</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="prose note">What remains trusted is the keys directory: whoever holds the root key and can rewrite the pin file controls trust decisions.</p>
+  </div>
+</section>
+
+<section class="section section-band" id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <div class="section-head prose">
+      <h2 id="how-h">How AI-ChainGuard works</h2>
+      <p class="lede">Every artifact gets a signed manifest whose payload embeds the manifest digests of its parents, so the lineage becomes one hash-linked graph, the way Git commits are linked. A verifier checks that graph, and a gateway refuses to load a model that does not verify.</p>
+    </div>
+
+    <ol class="chain" aria-label="The four attested stages">
+      <li class="stage"><span class="stage-n">Stage 1</span><strong>Datasets</strong><span class="role">data_steward</span><p>SHA-256 of the file and a Merkle root over its rows, so a report can name the changed lines.</p></li>
+      <li class="stage"><span class="stage-n">Stage 2</span><strong>Base model</strong><span class="role">training_pipeline</span><p>Must descend from a signed training dataset.</p></li>
+      <li class="stage"><span class="stage-n">Stage 3</span><strong>Fine-tuned model</strong><span class="role">training_pipeline</span><p>Parents: a fine-tuning dataset and exactly one base model, internal or external.</p></li>
+      <li class="stage"><span class="stage-n">Stage 4</span><strong>Deployment</strong><span class="role">deployment_gateway</span><p>Verifies the whole chain once, loads the model from the verified bytes, smoke-tests it and signs a deployment record.</p></li>
+    </ol>
+    <div class="inputs">
+      <div class="input input-ext"><strong>External base model</strong><p>Signed by its publisher (<code>model_publisher</code>). Only the publisher's public key is registered, out of band. Unsigned or malformed imports are refused and failed ones quarantined. Provenance ends at the publisher.</p></div>
+      <div class="input input-log"><strong>Signed trust log</strong><p>Keys, roles and revocations as hash-chained records signed by the root key (<code>release_manager</code>), with the head pinned. Every verification replays it; a truncated, edited, deleted or substituted log fails closed.</p></div>
+    </div>
+
+    <div class="cols">
+      <div>
+        <h3>The signed manifest</h3>
+        <p>The whole manifest body is serialised as canonical JSON and signed with Ed25519, not just the file hash, so nobody can keep a valid hash and signature while changing the stage, the parents or the role around them. The SHA-256 of that body is the artifact's identity: rewriting an ancestor, even re-signed with the legitimate key, changes it and breaks every descendant.</p>
+        <p class="note">Signed payload of a fine-tuned model (excerpt, digests shortened):</p>
+<pre class="code"><code>{
+  "artifact_name": "digits-finetuned-cnn",
+  "artifact_type": "finetuned_model",
+  "pipeline_stage": "stage3_finetune",
+  "subject": {
+    "sha256": "95cba5f7…317e5b",
+    "size_bytes": 153944,
+    "media_type": "application/safetensors"
+  },
+  "parents": [
+    {
+      "manifest_digest": "sha256:c8df3c8c…0bfddb",
+      "relation": "fine_tuned_from"
+    },
+    {
+      "manifest_digest": "sha256:51a1aec7…b60272",
+      "relation": "trained_on"
+    }
+  ],
+  "signer": {
+    "identity": "training_pipeline@chainguard.local",
+    "role": "training_pipeline",
+    "key_id": "ed25519:0dda1db0a6406ccd"
+  }
+}</code></pre>
+      </div>
+      <div>
+        <h3>Ten checks, three verdicts</h3>
+        <p>A verification runs ten checks and descends into every parent. The verdict is derived, never stored: <span class="st st-failed">FAILED</span> if any check fails, <span class="st st-warning">WARNING</span> if integrity holds but a content check flagged the data here or upstream, <span class="st st-verified">VERIFIED</span> otherwise.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col"></th><th scope="col">Check</th><th scope="col">Fails when</th></tr></thead>
+            <tbody>
+              <tr><th scope="row" class="mono">V0</th><td>Envelope</td><td>missing, malformed, or stored under another id</td></tr>
+              <tr><th scope="row" class="mono">V1</th><td>File hash</td><td>SHA-256 or size differs from the signed values</td></tr>
+              <tr><th scope="row" class="mono">V2</th><td>Dataset Merkle root</td><td>rows changed (the report lists which lines)</td></tr>
+              <tr><th scope="row" class="mono">V3</th><td>Ed25519 signature</td><td>invalid over the canonical body, or key not in the signed trust log</td></tr>
+              <tr><th scope="row" class="mono">V4</th><td>Signer trust</td><td>key revoked, role or identity mismatch, role not allowed for the stage, index and log disagree</td></tr>
+              <tr><th scope="row" class="mono">V5</th><td>Parent links</td><td>a parent envelope is missing or its recomputed digest differs from the embedded one</td></tr>
+              <tr><th scope="row" class="mono">V6</th><td>Ancestry</td><td>any ancestor <span class="st st-failed">FAILED</span> (recursive)</td></tr>
+              <tr><th scope="row" class="mono">V7</th><td>Revocation</td><td>artifact or ancestor revoked in the signed log, index row deleted, or index flag cleared against the log</td></tr>
+              <tr><th scope="row" class="mono">V8</th><td>Policy</td><td>wrong type for the stage, missing or forbidden parent types, parent from a later stage</td></tr>
+              <tr><th scope="row" class="mono">V9</th><td>Content flags</td><td>a signed pre-attestation content check flagged the data here or upstream: <span class="st st-warning">WARNING</span> only</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="blocks">
+      <div>
+        <h3>The deployment gateway</h3>
+        <p>It verifies the full chain at deployment time, once per deployment and never per prediction. It refuses a <span class="st st-failed">FAILED</span> model and, by default, a <span class="st st-warning">WARNING</span> one, and refuses pickle-based formats. It reads the model bytes once, re-hashes them and loads the model from those same bytes, so there is no time-of-check to time-of-use gap. It then runs a smoke test on held-out data and signs a deployment record bound to the trust-log head it used.</p>
+      </div>
+      <div>
+        <h3>Interoperability</h3>
+        <p>Any attestation exports as an in-toto Statement v1 inside a DSSE envelope, signed with the role key of the original manifest, with either a ChainGuard predicate or a SLSA Provenance v1 predicate in which the training step is the build and the dataset and base model are its resolved dependencies. An independent DSSE verifier checks the export in the test suite, including the specification's PAE test vector.</p>
+      </div>
+    </div>
+
+    <h3 class="subhead">How it compares</h3>
+    <p class="prose note">Capabilities as documented by each project, November 2026. “no” means not a goal of that tool. No column reaches “yes” for poisoned content: that is the boundary measured above.</p>
+    <div class="table-wrap">
+      <table class="compare">
+        <thead><tr><th scope="col"></th><th scope="col">Sigstore / cosign</th><th scope="col">OpenSSF Model Signing</th><th scope="col">in-toto layouts, SLSA provenance</th><th scope="col">Model cards, ML-BOM, registries (MLflow, DVC)</th><th scope="col">Backdoor scanners</th><th scope="col">AI-ChainGuard</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Scope</th><td>one artifact (OCI image, blob)</td><td>a model directory</td><td>steps of a software build</td><td>description, inventory, versions</td><td>model behaviour</td><td>dataset, base model, fine-tune, deployment</td></tr>
+          <tr><th scope="row">Links stages</th><td>no</td><td>no</td><td>layout links steps; build inputs recorded</td><td>metadata lineage</td><td>no</td><td>yes: parent manifest digests inside each signed payload</td></tr>
+          <tr><th scope="row">Who may sign what</th><td>identity policies</td><td>signer identity</td><td>functionaries per step; builder identity</td><td>platform access control</td><td>n/a</td><td>role per stage, verified (V4, V8); external publishers</td></tr>
+          <tr><th scope="row">Revocation</th><td>certificate expiry, log</td><td>Sigstore ecosystem</td><td>key revocation in layout</td><td>stage transitions</td><td>n/a</td><td>signed, pinned, append-only log; propagates to descendants</td></tr>
+          <tr><th scope="row">Deployment decision</th><td>admission controllers</td><td>no</td><td>verification of the final product</td><td>no</td><td>no</td><td>gateway: verify at deployment, safe load, smoke test, signed record</td></tr>
+          <tr><th scope="row">Poisoned content</th><td>no</td><td>no</td><td>no</td><td>no</td><td>partial, heuristic</td><td>partial: heuristics give <span class="st st-warning">WARNING</span> only; measured, not claimed</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="cost" aria-labelledby="cost-h">
+  <div class="wrap">
+    <div class="section-head prose">
+      <h2 id="cost-h">What it costs</h2>
+      <p class="lede">Attestation runs once per artifact and verification once per deployment, never per prediction.</p>
+    </div>
+    <figure class="fig fig-narrow">
+      <a href="assets/figures/cost.svg" aria-label="Open the figure full size"><img src="assets/figures/cost.svg" width="900" height="400" alt="Horizontal bar chart on a log scale: inference 0.08 ms before and after a verified deployment; full chain verification 8.5 ms; verify plus audit log plus safe read 31 ms; safe load 1.06 ms; smoke test 8.28 ms; first secure deployment 253 ms; trust-log replay 0.75, 6.87 and 69 ms for 5, 50 and 500 records."></a>
+      <figcaption>Median time (bar) and 95th percentile (whisker) in the reference environment.</figcaption>
+    </figure>
+    <dl class="facts">
+      <div><dt>Attesting the four artifacts of the pipeline</dt><dd><b>10.7&nbsp;ms</b> against 1,288&nbsp;ms of training (0.83&nbsp;%)</dd></div>
+      <div><dt>Full-chain verification (fine-tuned model and its three ancestors)</dt><dd><b>8.5&nbsp;ms</b> median, p95 12.2&nbsp;ms, 200 runs</dd></div>
+      <div><dt>One prediction, before and after the verified deployment</dt><dd><b>0.084&nbsp;ms</b> and <b>0.085&nbsp;ms</b></dd></div>
+      <div><dt>First secure deployment, paid once</dt><dd><b>253&nbsp;ms</b>, of which 31&nbsp;ms verification, audit writes and safe read, 1.1&nbsp;ms safetensors load, 8.3&nbsp;ms smoke test; the rest signs and registers the deployment record</dd></div>
+      <div><dt>Signed manifest</dt><dd><b>1.4 to 3.1&nbsp;KB</b> per artifact</dd></div>
+      <div><dt>SHA-256 and Ed25519</dt><dd>about <b>1.2&nbsp;GB/s</b> (256&nbsp;MiB in 220&nbsp;ms); sign 0.04&nbsp;ms, verify 0.12 to 0.14&nbsp;ms</dd></div>
+      <div><dt>Trust-log replay, every signature checked</dt><dd>about <b>0.14&nbsp;ms</b> per record: 0.75, 6.9, 69 and 288&nbsp;ms for 5, 50, 500 and 2,000&nbsp;records</dd></div>
+      <div><dt>Code</dt><dd>about <b>8,200</b> lines of Python and <b>1,600</b> lines of tests (<b>168</b> tests)</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="section section-navy" id="dashboard" aria-labelledby="dash-h">
+  <div class="wrap">
+    <div class="section-head prose">
+      <h2 id="dash-h">The dashboard</h2>
+      <p class="lede">The same library drives a command-line tool, a REST API and a Streamlit dashboard. Screenshots from the run of 9 November 2026; select one to open it full size.</p>
+    </div>
+    <ul class="shots">
+      <li><figure><a href="assets/screens/01_overview.webp"><img src="assets/screens/01_overview.webp" width="1400" height="950" loading="lazy" alt="Dashboard overview page"></a><figcaption><b>Overview.</b> The five registered artifacts of the pipeline, their status and the signed trust log.</figcaption></figure></li>
+      <li><figure><a href="assets/screens/02_provenance_chain.webp"><img src="assets/screens/02_provenance_chain.webp" width="1400" height="950" loading="lazy" alt="Provenance chain graph from datasets to deployment"></a><figcaption><b>Provenance chain.</b> Each edge is a parent manifest digest inside the child's signed payload.</figcaption></figure></li>
+      <li><figure><a href="assets/screens/03_verify_artifact.webp"><img src="assets/screens/03_verify_artifact.webp" width="1400" height="950" loading="lazy" alt="Verify artifact page with the ten checks"></a><figcaption><b>Verify artifact.</b> The ten checks for any artifact, with its ancestors.</figcaption></figure></li>
+      <li><figure><a href="assets/screens/04_attack_lab_tamper.webp"><img src="assets/screens/04_attack_lab_tamper.webp" width="1400" height="950" loading="lazy" alt="Attack lab showing FAILED after one byte of the training set was flipped"></a><figcaption><b>Attack lab.</b> One byte of the training set flipped: <span class="st st-failed-navy">FAILED</span>, with V1 and V2 naming the changed line.</figcaption></figure></li>
+      <li><figure><a href="assets/screens/05_security_events.webp"><img src="assets/screens/05_security_events.webp" width="1400" height="950" loading="lazy" alt="Security events page"></a><figcaption><b>Security events.</b> Verifications, failures and refusals, as they happened.</figcaption></figure></li>
+      <li><figure><a href="assets/screens/06_metrics.webp"><img src="assets/screens/06_metrics.webp" width="1400" height="950" loading="lazy" alt="Metrics page"></a><figcaption><b>Metrics.</b> Timings recorded by the platform during the run.</figcaption></figure></li>
+      <li><figure><a href="assets/screens/07_external_models.webp"><img src="assets/screens/07_external_models.webp" width="1400" height="950" loading="lazy" alt="External models page"></a><figcaption><b>External models.</b> Imports from a trusted publisher, an unknown one, and an unsigned model.</figcaption></figure></li>
+      <li><figure><a href="assets/screens/08_trust_log.webp"><img src="assets/screens/08_trust_log.webp" width="1400" height="950" loading="lazy" alt="Trust log page showing a valid log and a failed bypass attempt"></a><figcaption><b>Trust log.</b> The signed log replayed and valid; a bypass attempt on a sandbox copy fails.</figcaption></figure></li>
+      <li><figure><a href="assets/screens/09_why_chainguard.webp"><img src="assets/screens/09_why_chainguard.webp" width="1400" height="950" loading="lazy" alt="Why ChainGuard comparison page"></a><figcaption><b>Why ChainGuard.</b> The comparison with existing tools.</figcaption></figure></li>
+    </ul>
+    <div class="run">
+      <div>
+        <h3>Run it yourself</h3>
+        <p>Python 3.11 or newer, no GPU. The demo builds a fresh attested chain, attacks it and verifies it, step by step.</p>
+        <p class="note">Continuous integration: both GitHub Actions workflows passed on 9 November 2026, on Python 3.11. One lints and runs the 168 tests. The other attests the pipeline, re-verifies the deployed model, checks that tampering is caught and replays the attack scenarios. <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/actions">See the runs</a>.</p>
+      </div>
+<pre class="code code-dark"><code>git clone https://github.com/domail2karandeshmukh-cyber/ai-chainguard
+cd ai-chainguard
+python -m venv .venv &amp;&amp; source .venv/bin/activate
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+pip install -r requirements-dev.txt
+
+python -m scripts.demo   <span class="dim"># 15-step demo, pauses between steps</span>
+make standalone          <span class="dim"># the dashboard, no API process needed</span>
+make up                  <span class="dim"># Docker Compose: API and dashboard</span>
+make test                <span class="dim"># the 168 tests</span></code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="limits" aria-labelledby="limits-h">
+  <div class="wrap">
+    <div class="section-head prose">
+      <h2 id="limits-h">Limitations</h2>
+      <p class="lede">The measurements are an upper bound on what the design offers.</p>
+    </div>
+    <ul class="limits">
+      <li>The attack suite is written by the defenders and runs on a small network for 8×8 digits. It shows that the cryptographic checks behave as designed and how large the semantic gap is on a small model, not how large it is for a language model, where poisoning is cheaper.</li>
+      <li>The content checks are simple heuristics, chosen to show that they can be evaded (E4). Stronger defences such as Neural Cleanse, STRIP or spectral signatures would raise the bar without closing it.</li>
+      <li>Trust rests on long-lived Ed25519 keys stored in files: a stolen key that has not been revoked signs valid manifests. Short-lived keyless certificates (Sigstore) or hardware-backed keys address this.</li>
+      <li>The trust log is local and has a single writer: a stale copy would miss a recent revocation, and the pin file is as critical as the root key. Publishing the log to a shared transparency log such as Rekor is the next step.</li>
+      <li>The canonical JSON form is Python-specific rather than RFC 8785, the API has no authentication, and the gateway verifies the chain twice on a first deployment.</li>
+      <li>The benchmarks were measured in one environment, described below. The tests also pass on GitHub Actions, and the Docker Compose deployment ran on a team laptop (MacBook Air, 16 October 2026). AI-ChainGuard runs locally; this page is a static summary, not a hosted service.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section section-band" id="paper" aria-labelledby="paper-h">
+  <div class="wrap">
+    <h2 id="paper-h">The paper</h2>
+    <div class="paper">
+      <div>
+        <h3>Signed Is Not Safe: Measuring the Boundary Between Cryptographic Integrity and Semantic Trust in AI Supply Chains</h3>
+        <p class="authors">Karan Deshmukh, Sudheer Reddy Jogi, Dola Krishna Dama, Rambabu Mekala. ESAIP École d'Ingénieurs, Angers, November 2026.</p>
+        <p class="abstract">A deployed model is the product of datasets, pretrained weights and fine-tuning steps from different parties, yet software supply-chain controls sign one build or one file and say nothing about this lineage or about what a valid signature means for a model's behaviour. We present AI-ChainGuard, a prototype that gives every artifact of an AI pipeline, from dataset to deployment record, a signed manifest whose payload embeds the manifest digests of its parents. The result is a hash-linked provenance graph that a verifier validates with ten checks. Trust and revocation live in a signed, pinned, append-only log, and a deployment gateway verifies the whole chain at deployment time before loading a model from the verified bytes. We then <em>measure</em> the boundary of such guarantees with a reproducible suite of 48 attack and control variants in seven experiments. Every post-signing manipulation in the suite, from a 10<sup>−6</sup> change to one weight to the truncation of the trust log, is detected in 1.7–15.1&nbsp;ms including the chain. But a dataset poisoned <em>before</em> signing verifies and deploys with a 77&nbsp;% backdoor success rate behind a <span class="st st-verified">VERIFIED</span> status, an adaptive trigger evades content heuristics at 51&nbsp;%, and a trusted publisher's backdoored model verifies with 100&nbsp;%. Attestation costs 0.8&nbsp;% of training time, 8.5&nbsp;ms per full-chain verification, nothing per inference and 1.4–3.1&nbsp;KB per manifest, and exports as in-toto/DSSE attestations with ChainGuard or SLSA predicates. We argue that AI supply-chain controls must report cryptographic and semantic evidence separately, and release code, tests and scenarios.</p>
+      </div>
+      <div>
+        <div class="actions">
+          <a class="btn btn-primary" href="assets/paper/signed-is-not-safe-en.pdf">English (PDF)</a>
+          <a class="btn btn-ghost" href="assets/paper/signe-n-est-pas-sur-fr.pdf" hreflang="fr" lang="fr">Français (PDF)</a>
+          <a class="btn btn-ghost" href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/tree/main/paper">LaTeX source</a>
+        </div>
+        <p class="note">IEEE conference format, six pages in each language, with the same sections, tables, figures, references and numbers. The figures are vector drawings generated from the evaluation data.</p>
+
+      </div>
+    </div>
+    <h3 class="bib-h">Cite</h3>
+<pre class="code bib"><code>@misc{deshmukh2026signed,
+  title  = {Signed Is Not Safe: Measuring the Boundary
+            Between Cryptographic Integrity and Semantic
+            Trust in AI Supply Chains},
+  author = {Deshmukh, Karan and Jogi, Sudheer Reddy and
+            Dama, Dola Krishna and Mekala, Rambabu},
+  year   = {2026},
+  note   = {ESAIP \'Ecole d'Ing\'enieurs, Angers.
+            MSc Cybersecurity and Data Science,
+            Projet Applicatif 2},
+  url    = {https://github.com/domail2karandeshmukh-cyber/ai-chainguard}
+}</code></pre>
+  </div>
+</section>
+
+<section class="section" id="team" aria-labelledby="team-h">
+  <div class="wrap">
+    <h2 id="team-h">Team</h2>
+    <ul class="team">
+      <li><b>Karan DESHMUKH</b><span>Technical lead and security architecture: backend, provenance, deployment verification</span></li>
+      <li><b>JOGI Sudheer reddy</b><span>AI and machine-learning engineering</span></li>
+      <li><b>DAMA Dola Krishna</b><span>Testing, documentation and quality</span></li>
+      <li><b>MEKALA Rambabu</b><span>Security and DevOps: cryptography, keys, Docker, CI/CD</span></li>
+    </ul>
+    <p class="note">Supervised by Sofiane HAMRIOUI, ESAIP École d'Ingénieurs, Angers. MSc Cybersecurity and Data Science, Projet Applicatif 2.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="links">
+      <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard">Source code on GitHub</a>
+      <a href="assets/paper/signed-is-not-safe-en.pdf">Paper (English)</a>
+      <a href="assets/paper/signe-n-est-pas-sur-fr.pdf" hreflang="fr" lang="fr">Article (français)</a>
+    </div>
+    <p>Measurements come from the run of 9 November 2026 in the reference environment: a cloud Linux container with two logical Intel Xeon cores at 2.10 GHz, 8 GB of memory and no GPU (Python 3.13, PyTorch 2.15 on CPU). Every number on this page comes from the repository's <code>results/</code> folder, which its scripts regenerate.</p>
+    <p>The prototype was developed with AI-assisted code generation and validated by execution; the team is responsible for its design, evaluation and conclusions.</p>
+    <p>© 2026 Karan Deshmukh, Sudheer Reddy Jogi, Dola Krishna Dama, Rambabu Mekala. Typeface: IBM Plex, under the SIL Open Font License.</p>
+  </div>
+</footer>
+</body>
+</html>
