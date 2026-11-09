@@ -62,7 +62,7 @@ def fig_boundary(d: dict, a: dict) -> None:
     items = [("E0", "clean\nbaseline", ev["E0"]), ("E2", "poison before\nsigning", ev["E2"]),
              ("E3", "poison +\ncontent checks", ev["E3"]), ("E4", "adaptive\ntrigger", ev["E4"]),
              ("E7-F", "trusted hub,\nbackdoored", gv["E7-F"])]
-    fig, ax = plt.subplots(figsize=(3.45, 2.35))
+    fig, ax = plt.subplots(figsize=(3.45, 2.2))
     x = range(len(items))
     acc = [it[2]["details"]["clean_accuracy"] for it in items]
     asr = [it[2]["details"]["attack_success_rate"] for it in items]
@@ -94,7 +94,7 @@ def fig_boundary(d: dict, a: dict) -> None:
 def fig_detection_cost(d: dict, a: dict) -> None:
     rows = d["summary"]
     order = ["A", "B", "C", "D", "E", "F", "G"]
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7.1, 2.3), gridspec_kw={"width_ratios": [1.25, 1]})
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7.1, 2.05), gridspec_kw={"width_ratios": [1.25, 1]})
     # (a) detection time per variant, one row per scenario
     y_pos = {s: i for i, s in enumerate(order)}
     seen: dict[str, int] = {}
