@@ -2,7 +2,7 @@
 
 ESAIP Master 1 MSc · Projet Applicatif 2 · Applied AI Projects · Referent: Sofiane HAMRIOUI
 Team: Karan DESHMUKH, JOGI Sudheer reddy, DAMA Dola Krishna, MEKALA Rambabu
-**Version 0.4 (9 November 2026)**. What changed: [`docs/16_progress_update_v0.4.md`](docs/16_progress_update_v0.4.md) · v0.3 notes: [`docs/14_progress_update_since_oct5.md`](docs/14_progress_update_since_oct5.md) · IEEE paper: [`paper/signed_is_not_safe.pdf`](paper/signed_is_not_safe.pdf)
+**Version 0.4 (9 November 2026)**. What changed: [`docs/16_progress_update_v0.4.md`](docs/16_progress_update_v0.4.md) · v0.3 notes: [`docs/14_progress_update_since_oct5.md`](docs/14_progress_update_since_oct5.md) · IEEE paper: [`paper/signed_is_not_safe.pdf`](paper/signed_is_not_safe.pdf) (English) · [`paper/signed_is_not_safe_fr.pdf`](paper/signed_is_not_safe_fr.pdf) (French)
 
 > **One sentence.** Existing tools sign one artifact (cosign, OpenSSF Model Signing), describe it (model cards, ML-BOM) or attest software builds (SLSA, in-toto). AI-ChainGuard links datasets, base models, fine-tuned models and deployments into **one verifiable chain with a role policy, a signed revocation log and a deployment gate**, exports to the ecosystem's formats (in-toto / DSSE / SLSA), and **measures** where cryptographic integrity stops: *a signed model is not a safe model*. Why that matters and how it compares: [`docs/03_comparative_table.md`](docs/03_comparative_table.md) and the dashboard page **Why ChainGuard**.
 
@@ -282,7 +282,7 @@ ml_pipeline/       PyTorch pipeline: dataset export, CNN, training, fine-tuning,
 deployment/        Stage 4 deployment gateway
 attacks/           Scenarios A-G + run_all
 dashboard/         Streamlit dashboard (talks to the API; embeds it in standalone mode)
-paper/             IEEE conference paper (LaTeX, figures regenerated from results/)
+paper/             IEEE conference paper, English and French (LaTeX, vector figures regenerated from results/)
 tests/             unit + integration tests (168)
 config/policy.yaml who may sign what, required/allowed parents
 docker/            Dockerfile + compose (profiles: experiments, demo)
