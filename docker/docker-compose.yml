@@ -1,0 +1,73 @@
+# docker compose -f docker/docker-compose.yml up --build
+#   1. "pipeline" builds the attested four-stage chain once (keys + datasets + models)
+#   2. "api" serves the verification API on http://localhost:8000/docs
+#   3. "dashboard" serves the Streamlit dashboard on http://localhost:8501
+#
+# Optional (v0.3), same image and workspace volume:
+#   docker compose -f docker/docker-compose.yml --profile experiments run --rm experiments
+#       -> attack scenarios A-G; results appear in the dashboard Attack Lab
+#   docker compose -f docker/docker-compose.yml --profile demo run --rm demo
+#       -> the 10-minute professor demo script in the terminal
+#
+# PROTOTYPE NOTE: private keys live in the shared "workspace" volume. In production
+# they would sit in a KMS/HSM and never share a volume with the API.
+
+name: ai-chainguard
+
+x-common: &common
+  build:
+    context: ..
+    dockerfile: docker/Dockerfile
+  image: ai-chainguard:latest
+  volumes:
+    - workspace:/workspace
+  environment:
+    CHAINGUARD_HOME: /workspace
+    CHAINGUARD_DEMO_MODE: "1"
+
+services:
+  pipeline:
+    <<: *common
+    command: ["python", "-m", "ml_pipeline.run_pipeline"]
+    restart: "no"
+
+  api:
+    <<: *common
+    depends_on:
+      pipeline:
+        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  dashboard:
+    <<: *common
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      CHAINGUARD_HOME: /workspace
+      CHAINGUARD_API_URL: http://api:8000
+    command: ["streamlit", "run", "dashboard/Overview.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+    ports:
+      - "8501:8501"
+
+  experiments:
+    <<: *common
+    profiles: ["experiments"]
+    command: ["python", "-m", "attacks.run_all"]
+    restart: "no"
+
+  demo:
+    <<: *common
+    profiles: ["demo"]
+    command: ["python", "-m", "scripts.demo", "--auto"]
+    restart: "no"
+
+volumes:
+  workspace:

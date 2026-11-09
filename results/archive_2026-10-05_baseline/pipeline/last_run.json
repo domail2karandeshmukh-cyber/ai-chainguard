@@ -1,0 +1,80 @@
+{
+  "workspace": "/home/claude/ai-chainguard",
+  "poison_rate": 0.0,
+  "artifacts": {
+    "train_dataset": "24e93e0f-d186-47fe-8fa8-52ee00cbed1d",
+    "finetune_dataset": "db70077d-f5b0-40b3-80ba-c6e1b15f119f",
+    "base_model": "e11efe97-00a7-4d86-ac4b-8022c1a04d29",
+    "final_model": "f96e72db-99c7-4d8f-b092-1165d6f83ef0"
+  },
+  "semantic_flags": [],
+  "training": {
+    "base": {
+      "train_time_s": 1.172,
+      "final_loss": 0.14425,
+      "train_accuracy": 0.977,
+      "samples": 1000,
+      "input_status": "VERIFIED"
+    },
+    "finetune": {
+      "train_time_s": 0.211,
+      "final_loss": 0.07156,
+      "train_accuracy": 0.9886,
+      "samples": 437
+    }
+  },
+  "evaluation": {
+    "base": {
+      "clean_accuracy": 0.9472,
+      "attack_success_rate": 0.0
+    },
+    "final": {
+      "clean_accuracy": 0.95,
+      "attack_success_rate": 0.0
+    }
+  },
+  "attestation_ms": {
+    "train_dataset": {
+      "hash": 0.16077600002972758,
+      "merkle": 1.6181610001240188,
+      "semantic": 5.933733000119901,
+      "sign": 0.4715159998340823
+    },
+    "finetune_dataset": {
+      "hash": 0.09286199997404765,
+      "merkle": 0.7457559997874341,
+      "semantic": 3.048620000072333,
+      "sign": 0.2138309998827026
+    },
+    "base_model": {
+      "hash": 0.161984999976994,
+      "sign": 0.2080650001516915
+    },
+    "final_model": {
+      "hash": 0.18226199995297065,
+      "sign": 0.1608170000508835
+    }
+  },
+  "deployment": {
+    "model_id": "f96e72db-99c7-4d8f-b092-1165d6f83ef0",
+    "status": "VERIFIED",
+    "deployed": true,
+    "reason": "chain verified",
+    "deployment_record_id": "9be93ecf-92e2-481e-8154-df8e25a8527c",
+    "release_root": "sha256:fe2b944c0338264f98faee9c0a1d7fb465f0a798480f593dbc34c38410f77863",
+    "smoke_test": {
+      "ran": true,
+      "test_accuracy": 0.95,
+      "samples": 360,
+      "batch_latency_ms": 6.764,
+      "eval_ms": 7.797
+    },
+    "verification_ms": 8.582
+  },
+  "overhead": {
+    "attestation_ms": 13.0,
+    "training_ms": 1383.0,
+    "attestation_vs_training_pct": 0.94
+  },
+  "wall_time_s": 3.05
+}

@@ -1,0 +1,136 @@
+{
+  "scenario": "D",
+  "title": "Invalid signature",
+  "demonstrates": "Only a valid signature from a trusted, unrevoked key in the right role is accepted.",
+  "ran_at": "2026-10-15T21:45:20Z",
+  "duration_s": 0.29,
+  "all_as_expected": true,
+  "variants": [
+    {
+      "variant": "D0",
+      "title": "Control: valid signature",
+      "attack": "none",
+      "verified_artifact": "final model",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 9.815,
+      "evidence": [],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "D1",
+      "title": "Corrupt one bit of the signature",
+      "attack": "bit 0 of byte 10 flipped",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V3"
+      ],
+      "warned_checks": [],
+      "detection_ms": 10.025,
+      "evidence": [
+        "V3 FAIL: signature does not match the manifest payload"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "D2",
+      "title": "Replay a signature from another manifest",
+      "attack": "valid base-model signature pasted into the final-model envelope",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V3"
+      ],
+      "warned_checks": [],
+      "detection_ms": 8.905,
+      "evidence": [
+        "V3 FAIL: signature does not match the manifest payload"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "D3",
+      "title": "Sign with an unregistered key",
+      "attack": "manifest re-signed by an attacker-generated Ed25519 key",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V3",
+        "V4"
+      ],
+      "warned_checks": [],
+      "detection_ms": 9.23,
+      "evidence": [
+        "V3 FAIL: signing key ed25519:646aa39833a3c488 is not in the trust store",
+        "V4 FAIL: unknown signer key"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "D4",
+      "title": "Signature by a revoked key",
+      "attack": "training_pipeline key ed25519:4442de9d132b0e2e revoked",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V4",
+        "V6"
+      ],
+      "warned_checks": [],
+      "detection_ms": 12.622,
+      "evidence": [
+        "V4 FAIL: key revoked at 2026-10-15T21:45:20.112651Z (simulated key compromise)",
+        "V6 FAIL: parent digits-base-cnn FAILED (V4)"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "D5",
+      "title": "Trusted key used outside its role",
+      "attack": "data_steward key signs a model while claiming training_pipeline",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V4"
+      ],
+      "warned_checks": [],
+      "detection_ms": 10.593,
+      "evidence": [
+        "V4 FAIL: manifest claims role 'training_pipeline' but key is registered for 'data_steward'; manifest claims identity 'training_pipeline@chainguard.local' but key belongs to 'data_steward@chainguard.local'; role 'data_steward' may not sign stage3_finetune artifacts (allowed: training_pipeline)"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "D6",
+      "title": "Malformed signature encoding",
+      "attack": "signature replaced by garbage",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V3"
+      ],
+      "warned_checks": [],
+      "detection_ms": 8.974,
+      "evidence": [
+        "V3 FAIL: signature does not match the manifest payload"
+      ],
+      "details": {},
+      "as_expected": true
+    }
+  ]
+}

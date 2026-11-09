@@ -1,0 +1,12 @@
+[stage 1] datasets attested: train=d8eed05c finetune=ce37e969
+[stage 2] base model attested: 6c463350  train 1.015s acc 0.977
+[stage 3] fine-tuned model attested: 9929e757  train 0.246s
+[eval]    final clean acc 0.950  ASR(corner->7) 0.000
+[stage 4] gateway: VERIFIED -> DEPLOYED (chain verified)
+          release root sha256:889395b19af4a69db67caa5788c0b674b4585660e513ffe050de7a963867ab90
+summary written to <repo>/results/pipeline/last_run.json
+
+real	0m6.121s
+user	0m5.696s
+sys	0m0.405s
+exit=0

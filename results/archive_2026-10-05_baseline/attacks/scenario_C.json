@@ -1,0 +1,101 @@
+{
+  "scenario": "C",
+  "title": "Broken provenance",
+  "demonstrates": "Hash-linked parents make it impossible to cut, swap or rewrite ancestry unnoticed.",
+  "ran_at": "2026-10-05T11:31:36Z",
+  "duration_s": 0.15,
+  "all_as_expected": true,
+  "variants": [
+    {
+      "variant": "C0",
+      "title": "Control: intact chain",
+      "attack": "none",
+      "verified_artifact": "base model",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 7.787,
+      "evidence": [],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "C1",
+      "title": "Delete the parent dataset record",
+      "attack": "envelope and index row of the training dataset removed",
+      "verified_artifact": "base model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V5",
+        "V8"
+      ],
+      "warned_checks": [],
+      "detection_ms": 2.487,
+      "evidence": [
+        "V5 FAIL: parent 6a1a2e28-830c-4c7c-9ac4-227d1854e333 (trained_on): no signed envelope for 6a1a2e28-830c-4c7c-9ac4-227d1854e333",
+        "V8 FAIL: base_model must have a 'dataset' parent"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "C2",
+      "title": "Re-sign a modified parent (history rewrite)",
+      "attack": "dataset changed and re-signed with the legitimate data-steward key",
+      "verified_artifact": "base model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V5"
+      ],
+      "warned_checks": [],
+      "detection_ms": 5.062,
+      "evidence": [
+        "V5 FAIL: parent digits-train (trained_on) manifest digest changed: expected sha256:b8b50fb8b789..., found sha256:f518da6269a3..."
+      ],
+      "details": {
+        "rewritten_dataset_alone": "VERIFIED",
+        "note": "the re-signed dataset verifies on its own; the hash link from the model exposes the rewrite"
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "C3",
+      "title": "Edit parent link without re-signing",
+      "attack": "base model now claims the fine-tune dataset as parent",
+      "verified_artifact": "base model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V3"
+      ],
+      "warned_checks": [],
+      "detection_ms": 4.018,
+      "evidence": [
+        "V3 FAIL: signature does not match the manifest payload"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "C4",
+      "title": "Model with no dataset ancestry",
+      "attack": "validly signed by training_pipeline, registration policy bypassed",
+      "verified_artifact": "orphan model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V8"
+      ],
+      "warned_checks": [],
+      "detection_ms": 1.666,
+      "evidence": [
+        "V8 FAIL: base_model must have a 'dataset' parent"
+      ],
+      "details": {},
+      "as_expected": true
+    }
+  ]
+}

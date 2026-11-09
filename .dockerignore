@@ -1,0 +1,26 @@
+# Secrets and generated workspace state never go into the image.
+keys/
+*.pem
+.env
+artifacts/
+data/*
+!data/samples/
+results/
+demo-ws/
+*.db
+
+# Local environments and caches (v0.3: the README tells users to create .venv in the
+# repo root; without these lines the whole virtualenv, incl. PyTorch, became build context).
+.venv/
+venv/
+.git/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Not needed at runtime.
+tests/
+docs/

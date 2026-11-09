@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies (CPU PyTorch)
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements-dev.txt
+      - name: Lint
+        run: ruff check .
+      - name: Guard - no private key committed
+        # v0.3 fix: the pattern is assembled at runtime. Written literally, this workflow file
+        # itself matched the search and the guard failed on every run.
+        run: |
+          PATTERN="PRIVATE KEY""-----"
+          if git grep -nI "$PATTERN" -- ':!*.md' ':!chainguard/crypto/keys.py' ':!.env.example'; then
+            echo "::error::A private key is committed to the repository"; exit 1
+          fi
+      - name: Tests (fast)
+        run: pytest -q -m "not slow"
+      - name: Tests (slow - backdoor scenario)
+        run: pytest -q -m slow
+      - name: Environment record (for the experimentation journal)
+        if: always()
+        run: |
+          python --version
+          python -c "import torch, cryptography; print('torch', torch.__version__, '| cryptography', cryptography.__version__)"
+          ruff --version

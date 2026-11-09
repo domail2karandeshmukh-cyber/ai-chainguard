@@ -1,0 +1,55 @@
+# AI-ChainGuard supply-chain policy.
+#
+# A valid signature only proves WHO signed. The policy says who is ALLOWED to sign
+# what, and how artifacts may be connected. The verifier enforces it (checks V4, V8),
+# so a stolen data-steward key cannot be used to sign a model, and a model without a
+# dataset parent is rejected even if it is correctly signed.
+
+stages:
+  stage1_dataset:
+    artifact_types: [dataset]
+    signer_roles: [data_steward]
+  stage2_training:
+    artifact_types: [base_model]          # INTERNAL trained base model
+    signer_roles: [training_pipeline]
+  # v0.3 - Experiment 7: a pretrained model published OUTSIDE the organisation.
+  # Only a key registered in the trust store with role model_publisher may sign it,
+  # and our own training_pipeline key may not (separation of duties: an internally
+  # trained model cannot be relabelled "external" to escape the dataset rule).
+  stage2_external_import:
+    artifact_types: [external_base_model]
+    signer_roles: [model_publisher]
+  stage3_finetune:
+    artifact_types: [finetuned_model]
+    signer_roles: [training_pipeline]
+  stage4_deployment:
+    artifact_types: [deployment_record]
+    signer_roles: [deployment_gateway]
+
+# Which parent artifact types are allowed / required for each artifact type.
+#   required        : every listed type must appear among the parents
+#   required_one_of : for each group, at least one listed type must appear (v0.3)
+#   allowed         : no parent type outside this list
+parents:
+  dataset:
+    required: []
+    allowed: [dataset]            # e.g. a cleaned dataset derived from a raw one
+  base_model:                     # INTERNAL: unchanged, a dataset parent is mandatory
+    required: [dataset]
+    allowed: [dataset]
+  external_base_model:            # EXTERNAL: no internal lineage; trust = publisher signature
+    required: []
+    allowed: []
+  finetuned_model:
+    required: [dataset]
+    required_one_of:
+      - [base_model, external_base_model]
+    allowed: [base_model, external_base_model, finetuned_model, dataset]
+  deployment_record:
+    required: [finetuned_model]
+    allowed: [finetuned_model, base_model]
+
+# Gateway behaviour for artifacts whose integrity is intact but whose content was
+# flagged by a semantic check (status WARNING).
+gateway:
+  block_on_warning: true

@@ -1,0 +1,27 @@
+scenario,variant,title,expected,observed,as_expected,failed_checks,warned_checks,detection_ms
+A,A0,Control: untouched signed dataset,VERIFIED,VERIFIED,True,,,5.264
+A,A1,Flip labels of 5 signed rows,FAILED,FAILED,True,V1 V2,,5.507
+A,A2,Downstream impact on the final model,FAILED,FAILED,True,V6,,10.218
+A,A3,Append one injected row,FAILED,FAILED,True,V1 V2,,4.4
+A,A4,One trailing space on one line,FAILED,FAILED,True,V1 V2,,5.4
+B,B0,Control: legitimate fine-tuned model,VERIFIED,VERIFIED,True,,,9.675
+B,B1,Replace with a different model,FAILED,FAILED,True,V1,,10.112
+B,B2,Nudge one weight by 1e-6,FAILED,FAILED,True,V1,,9.289
+B,B3,Same weights re-saved as pickle,FAILED,FAILED,True,V1,,8.977
+C,C0,Control: intact chain,VERIFIED,VERIFIED,True,,,7.787
+C,C1,Delete the parent dataset record,FAILED,FAILED,True,V5 V8,,2.487
+C,C2,Re-sign a modified parent (history rewrite),FAILED,FAILED,True,V5,,5.062
+C,C3,Edit parent link without re-signing,FAILED,FAILED,True,V3,,4.018
+C,C4,Model with no dataset ancestry,FAILED,FAILED,True,V8,,1.666
+D,D0,Control: valid signature,VERIFIED,VERIFIED,True,,,9.441
+D,D1,Corrupt one bit of the signature,FAILED,FAILED,True,V3,,9.039
+D,D2,Replay a signature from another manifest,FAILED,FAILED,True,V3,,9.627
+D,D3,Sign with an unregistered key,FAILED,FAILED,True,V3 V4,,9.319
+D,D4,Signature by a revoked key,FAILED,FAILED,True,V4 V6,,9.11
+D,D5,Trusted key used outside its role,FAILED,FAILED,True,V4,,11.264
+D,D6,Malformed signature encoding,FAILED,FAILED,True,V3,,9.094
+E,E0,Clean baseline,VERIFIED,VERIFIED,True,,,8.629
+E,E1,Poison injected after signing,FAILED,FAILED,True,V6,,11.907
+E,E2,"Poison before signing, no content checks",VERIFIED,VERIFIED,True,,,10.544
+E,E3,"Poison before signing, content checks on",WARNING,WARNING,True,,V9,9.01
+E,E4,Adaptive attacker evades content checks,VERIFIED,VERIFIED,True,,,8.858

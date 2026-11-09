@@ -1,0 +1,80 @@
+{
+  "workspace": "<repo>",
+  "poison_rate": 0.0,
+  "artifacts": {
+    "train_dataset": "484fd26a-4d75-45cf-8655-f685475442a2",
+    "finetune_dataset": "75f472ad-2648-4ad1-b116-e9743099e30d",
+    "base_model": "a29baee8-68e9-45f7-be7b-d3ccd1200252",
+    "final_model": "4d94feb1-84f2-4735-900f-72d19d473fcd"
+  },
+  "semantic_flags": [],
+  "training": {
+    "base": {
+      "train_time_s": 1.066,
+      "final_loss": 0.14425,
+      "train_accuracy": 0.977,
+      "samples": 1000,
+      "input_status": "VERIFIED"
+    },
+    "finetune": {
+      "train_time_s": 0.229,
+      "final_loss": 0.07156,
+      "train_accuracy": 0.9886,
+      "samples": 437
+    }
+  },
+  "evaluation": {
+    "base": {
+      "clean_accuracy": 0.9472,
+      "attack_success_rate": 0.0
+    },
+    "final": {
+      "clean_accuracy": 0.95,
+      "attack_success_rate": 0.0
+    }
+  },
+  "attestation_ms": {
+    "train_dataset": {
+      "hash": 0.21907500001816516,
+      "merkle": 1.9832869999731884,
+      "semantic": 6.2868489999914345,
+      "sign": 0.5821940000032555
+    },
+    "finetune_dataset": {
+      "hash": 0.087780000001203,
+      "merkle": 0.6955979999929696,
+      "semantic": 3.064087999973708,
+      "sign": 0.26753800000278716
+    },
+    "base_model": {
+      "hash": 0.14033400003654606,
+      "sign": 0.21036399999729838
+    },
+    "final_model": {
+      "hash": 0.10842400001820351,
+      "sign": 0.19886399996948967
+    }
+  },
+  "deployment": {
+    "model_id": "4d94feb1-84f2-4735-900f-72d19d473fcd",
+    "status": "VERIFIED",
+    "deployed": true,
+    "reason": "chain verified",
+    "deployment_record_id": "efe7835c-7104-465e-836a-325ebfa2e1a7",
+    "release_root": "sha256:fe26602b286f73c8e47c2a789c14abb73db270e0c0792f1083c592b4c21fe425",
+    "smoke_test": {
+      "ran": true,
+      "test_accuracy": 0.95,
+      "samples": 360,
+      "batch_latency_ms": 5.423,
+      "eval_ms": 5.923
+    },
+    "verification_ms": 6.621
+  },
+  "overhead": {
+    "attestation_ms": 13.84,
+    "training_ms": 1295.0,
+    "attestation_vs_training_pct": 1.069
+  },
+  "wall_time_s": 3.09
+}

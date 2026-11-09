@@ -1,0 +1,33 @@
+# --- Secrets: private keys must NEVER be committed ---
+keys/
+*.pem
+*.key
+.env
+
+# --- Generated workspace state ---
+data/*
+!data/samples/
+artifacts/
+demo-ws/
+*.db
+*.db-wal
+*.db-shm
+# results/ (metrics, attacks, figures, pipeline/last_run.json) is evidence for the report and is
+# committed on purpose (v0.3). Re-running the scripts overwrites it.
+results/mvp_demo.json
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+build/
+dist/
+
+# --- Editors / OS ---
+.vscode/
+.idea/
+.DS_Store

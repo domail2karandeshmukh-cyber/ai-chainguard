@@ -1,0 +1,181 @@
+{
+  "scenario": "F",
+  "title": "Revocation (Experiment 5)",
+  "demonstrates": "Revoking an artifact or a signing key invalidates it and everything derived from it, and the gateway blocks deployment; deleting index rows does not undo a revocation. Editing the trusted index itself is a documented limitation.",
+  "ran_at": "2026-10-15T21:45:27Z",
+  "duration_s": 0.51,
+  "all_as_expected": true,
+  "variants": [
+    {
+      "variant": "E5-0",
+      "title": "Control: nothing revoked, gateway deploys",
+      "attack": "none",
+      "verified_artifact": "final model",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 9.425,
+      "evidence": [],
+      "details": {
+        "deployed": true
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E5-A1",
+      "title": "Revoke the base model -> descendant fails",
+      "attack": "base model revoked; fine-tuned model verified",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V6",
+        "V7"
+      ],
+      "warned_checks": [],
+      "detection_ms": 9.884,
+      "evidence": [
+        "V6 FAIL: parent digits-base-cnn FAILED (V7)",
+        "V7 FAIL: revoked ancestor(s): digits-base-cnn"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "E5-A2",
+      "title": "Revoked ancestor -> deployment BLOCKED",
+      "attack": "gateway asked to deploy the fine-tuned model",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V6",
+        "V7"
+      ],
+      "warned_checks": [],
+      "detection_ms": 13.756,
+      "evidence": [
+        "V6 FAIL: parent digits-base-cnn FAILED (V7)",
+        "V7 FAIL: revoked ancestor(s): digits-base-cnn"
+      ],
+      "details": {
+        "deployed": false,
+        "gateway_reason": "chain verification FAILED (V6, V7)",
+        "revocation_to_block_ms": 84.232
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "E5-B1",
+      "title": "Revoke the training_pipeline key -> its models fail",
+      "attack": "key ed25519:4442de9d132b0e2e revoked",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V4",
+        "V6"
+      ],
+      "warned_checks": [],
+      "detection_ms": 13.772,
+      "evidence": [
+        "V4 FAIL: key revoked at 2026-10-15T21:45:27.765009Z (training key compromised (simulated))",
+        "V6 FAIL: parent digits-base-cnn FAILED (V4)"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "E5-B2",
+      "title": "Dataset signed by another role still verifies",
+      "attack": "same revocation of ed25519:4442de9d132b0e2e; dataset signed by data_steward",
+      "verified_artifact": "train dataset",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 4.839,
+      "evidence": [],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "E5-C1",
+      "title": "Bypass: delete the revoked artifact's index row",
+      "attack": "revoked final model's row removed from the SQLite index",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V7"
+      ],
+      "warned_checks": [],
+      "detection_ms": 6.633,
+      "evidence": [
+        "V7 FAIL: artifact not in registry index: revocation state cannot be confirmed"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "E5-C2",
+      "title": "Bypass: delete the revoked key from the trust store",
+      "attack": "revoked key ed25519:4442de9d132b0e2e row removed from the signers table",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V3",
+        "V4",
+        "V6"
+      ],
+      "warned_checks": [],
+      "detection_ms": 6.297,
+      "evidence": [
+        "V3 FAIL: signing key ed25519:4442de9d132b0e2e is not in the trust store",
+        "V4 FAIL: unknown signer key",
+        "V6 FAIL: parent digits-base-cnn FAILED (V3, V4)"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "E5-C3",
+      "title": "Bypass: overwrite cached status with VERIFIED",
+      "attack": "last_status column forced to VERIFIED for every artifact",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V6",
+        "V7"
+      ],
+      "warned_checks": [],
+      "detection_ms": 6.814,
+      "evidence": [
+        "V6 FAIL: parent digits-base-cnn FAILED (V7)",
+        "V7 FAIL: revoked ancestor(s): digits-base-cnn"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "E5-C4",
+      "title": "LIMITATION: un-revoke by editing the trusted index",
+      "attack": "revoked flag set back to 0 directly in SQLite",
+      "verified_artifact": "final model",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 6.478,
+      "evidence": [],
+      "details": {
+        "limitation": "revocation state is stored in the trusted SQLite index; an attacker with write access to it can undo a revocation. Fix: signed append-only revocation list."
+      },
+      "as_expected": true
+    }
+  ],
+  "interpretation": "Artifact and key revocation propagate to every descendant and block deployment. Deleting the revoked artifact or key from the index fails closed, and the cached status is never trusted. E5-C4 shows the remaining gap: the revocation flag itself is only as trustworthy as the index."
+}

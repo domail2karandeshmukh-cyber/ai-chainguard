@@ -1,0 +1,117 @@
+# Supply-chain gate: build the attested chain in CI and refuse to "release" unless
+# the deployment gateway returns VERIFIED.
+#
+# Key handling: by default this workflow generates EPHEMERAL keys per run (fine for a
+# demonstration: each run attests and verifies its own chain). For a persistent
+# trust root, store PEM keys as repository secrets and expose them as
+# CHAINGUARD_KEY_<ROLE> (see the commented env block) - the code reads them from the
+# environment and never writes them to disk.
+name: attest-and-verify
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege (v0.3): the OIDC token permission is granted ONLY to the optional
+# Sigstore job below, not to the job that holds signing keys.
+permissions:
+  contents: read
+
+jobs:
+  attest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CHAINGUARD_HOME: ${{ github.workspace }}/ci-workspace
+      # CHAINGUARD_KEY_DATA_STEWARD: ${{ secrets.CHAINGUARD_KEY_DATA_STEWARD }}
+      # CHAINGUARD_KEY_TRAINING_PIPELINE: ${{ secrets.CHAINGUARD_KEY_TRAINING_PIPELINE }}
+      # CHAINGUARD_KEY_DEPLOYMENT_GATEWAY: ${{ secrets.CHAINGUARD_KEY_DEPLOYMENT_GATEWAY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+
+      - name: Initialise signing keys
+        run: python -m cli.main keys init
+
+      - name: Stages 1-4 - attested pipeline (fails the job if the gateway blocks)
+        run: python -m ml_pipeline.run_pipeline
+
+      - name: Independent re-verification of the deployed model
+        run: |
+          MODEL_ID=$(python -c "import json,os;print(json.load(open(os.environ['CHAINGUARD_HOME']+'/results/pipeline/last_run.json'))['artifacts']['final_model'])")
+          python -m cli.main verify "$MODEL_ID"
+          echo "MODEL_ID=$MODEL_ID" >> "$GITHUB_ENV"
+
+      - name: Negative control - tampering must be detected
+        run: |
+          python - <<'EOF'
+          import json, os, sys
+          from chainguard.context import ChainGuard
+          cg = ChainGuard.open()
+          model = os.environ["MODEL_ID"]
+          path = cg.settings.resolve_uri(cg.repo.get_artifact(model)["subject_uri"])
+          original = path.read_bytes()
+          path.write_bytes(original[:-1] + bytes([original[-1] ^ 1]))
+          status = cg.verifier.verify(model, context="ci-negative-control").status.value
+          path.write_bytes(original)
+          print("tampered model ->", status)
+          sys.exit(0 if status == "FAILED" else 1)
+          EOF
+
+      - name: Attack scenarios A-D, F (revocation), G (external model source)
+        run: python -m attacks.run_all --skip-e --out "$CHAINGUARD_HOME/results/attacks"
+
+      - name: Guard - no private key in the evidence to upload
+        if: always()
+        run: |
+          PATTERN="PRIVATE KEY""-----"
+          if grep -rIl "$PATTERN" ci-workspace/artifacts ci-workspace/results 2>/dev/null; then
+            echo "::error::private key material found in the evidence directories"; exit 1
+          fi
+
+      - name: Upload attestation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chainguard-attestations
+          path: |
+            ci-workspace/artifacts/manifests/
+            ci-workspace/artifacts/deployments/
+            ci-workspace/results/
+          # never upload ci-workspace/keys/
+          if-no-files-found: warn
+          retention-days: 30
+
+  # Optional: keyless Sigstore signature of the final envelope, for comparison with
+  # AI-ChainGuard's own Ed25519 keys (identity = this workflow's OIDC token).
+  sigstore-sign:
+    needs: attest
+    if: ${{ vars.ENABLE_SIGSTORE == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write   # keyless Sigstore signing uses this workflow's OIDC identity
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: chainguard-attestations
+      - uses: sigstore/cosign-installer@v3
+      - name: cosign sign-blob (keyless)
+        run: |
+          for f in artifacts/manifests/*.json; do
+            case "$f" in *.leaves.json) continue;; esac
+            cosign sign-blob --yes --bundle "$f.sigstore.json" "$f"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sigstore-bundles
+          path: artifacts/manifests/*.sigstore.json

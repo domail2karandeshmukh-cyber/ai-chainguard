@@ -1,0 +1,4 @@
+-r requirements.txt
+pytest>=8.0
+# Pinned so CI lint results do not change when ruff adds rules; validated with this version.
+ruff==0.17.1

@@ -1,0 +1,137 @@
+{
+  "scenario": "A",
+  "title": "Dataset tampering",
+  "demonstrates": "Post-attestation modification of a dataset is detected and localised to rows.",
+  "ran_at": "2026-10-05T11:31:35Z",
+  "duration_s": 1.97,
+  "all_as_expected": true,
+  "variants": [
+    {
+      "variant": "A0",
+      "title": "Control: untouched signed dataset",
+      "attack": "none",
+      "verified_artifact": "train dataset",
+      "expected": "VERIFIED",
+      "observed": "VERIFIED",
+      "failed_checks": [],
+      "warned_checks": [],
+      "detection_ms": 5.264,
+      "evidence": [],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "A1",
+      "title": "Flip labels of 5 signed rows",
+      "attack": "labels changed on lines [10, 50, 100, 200, 400]",
+      "verified_artifact": "train dataset",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V1",
+        "V2"
+      ],
+      "warned_checks": [],
+      "detection_ms": 5.507,
+      "evidence": [
+        "V1 FAIL: file content differs from the signed artifact",
+        "V2 FAIL: dataset rows changed after signing: 5 line(s) modified, 0 added, 0 removed"
+      ],
+      "details": {
+        "merkle_diff": {
+          "changed_lines": [
+            10,
+            50,
+            100,
+            200,
+            400
+          ],
+          "changed_count": 5,
+          "added_lines": 0,
+          "removed_lines": 0,
+          "signed_leaf_count": 1001,
+          "current_leaf_count": 1001
+        }
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "A2",
+      "title": "Downstream impact on the final model",
+      "attack": "same label flipping as A1; verify the fine-tuned model",
+      "verified_artifact": "final model",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V6"
+      ],
+      "warned_checks": [],
+      "detection_ms": 10.218,
+      "evidence": [
+        "V6 FAIL: parent digits-base-cnn FAILED (V6)"
+      ],
+      "details": {},
+      "as_expected": true
+    },
+    {
+      "variant": "A3",
+      "title": "Append one injected row",
+      "attack": "one extra row appended",
+      "verified_artifact": "train dataset",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V1",
+        "V2"
+      ],
+      "warned_checks": [],
+      "detection_ms": 4.4,
+      "evidence": [
+        "V1 FAIL: file content differs from the signed artifact",
+        "V2 FAIL: dataset rows changed after signing: 0 line(s) modified, 1 added, 0 removed"
+      ],
+      "details": {
+        "merkle_diff": {
+          "changed_lines": [],
+          "changed_count": 0,
+          "added_lines": 1,
+          "removed_lines": 0,
+          "signed_leaf_count": 1001,
+          "current_leaf_count": 1002
+        }
+      },
+      "as_expected": true
+    },
+    {
+      "variant": "A4",
+      "title": "One trailing space on one line",
+      "attack": "whitespace-only edit",
+      "verified_artifact": "train dataset",
+      "expected": "FAILED",
+      "observed": "FAILED",
+      "failed_checks": [
+        "V1",
+        "V2"
+      ],
+      "warned_checks": [],
+      "detection_ms": 5.4,
+      "evidence": [
+        "V1 FAIL: file content differs from the signed artifact",
+        "V2 FAIL: dataset rows changed after signing: 1 line(s) modified, 0 added, 0 removed"
+      ],
+      "details": {
+        "merkle_diff": {
+          "changed_lines": [
+            123
+          ],
+          "changed_count": 1,
+          "added_lines": 0,
+          "removed_lines": 0,
+          "signed_leaf_count": 1001,
+          "current_leaf_count": 1001
+        }
+      },
+      "as_expected": true
+    }
+  ]
+}

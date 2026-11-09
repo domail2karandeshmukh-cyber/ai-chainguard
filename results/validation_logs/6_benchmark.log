@@ -1,0 +1,48 @@
+   1 KiB  sha256     0.032 ms  sign 0.029 ms  verify_sig 0.113 ms  register     8.962 ms  verify_full     1.228 ms
+  16 KiB  sha256     0.054 ms  sign 0.057 ms  verify_sig 0.190 ms  register    11.969 ms  verify_full     1.971 ms
+ 256 KiB  sha256     0.292 ms  sign 0.050 ms  verify_sig 0.200 ms  register    11.436 ms  verify_full     2.199 ms
+   1 MiB  sha256     0.856 ms  sign 0.036 ms  verify_sig 0.123 ms  register    10.758 ms  verify_full     2.264 ms
+   4 MiB  sha256     3.352 ms  sign 0.051 ms  verify_sig 0.168 ms  register    15.045 ms  verify_full     5.221 ms
+  16 MiB  sha256    13.341 ms  sign 0.052 ms  verify_sig 0.173 ms  register    26.059 ms  verify_full    15.048 ms
+  64 MiB  sha256    56.671 ms  sign 0.044 ms  verify_sig 0.134 ms  register    66.425 ms  verify_full    58.297 ms
+ 256 MiB  sha256   219.743 ms  sign 0.037 ms  verify_sig 0.165 ms  register   234.593 ms  verify_full   223.900 ms
+merkle      1000 rows        1.51 ms
+merkle     10000 rows       14.59 ms
+merkle    100000 rows      149.03 ms
+merkle   1000000 rows     1618.66 ms
+written to <repo>/results/metrics
+
+== inference overhead benchmark + manifest sizes
+[bench] building an attested chain (small training run; model size does not depend on epochs)
+[bench] A/D inference: 1000 single-sample + 300 batch runs each
+[bench] B verification: 200 runs
+[bench] C deployment components: 100 runs; gateway: 30 runs
+
+  measurement                                     runs   median ms     p95 ms
+  A normal inference, 1 sample                    1000      0.0801     0.1360
+  A normal inference, batch 360                    300      6.9818     8.6048
+  B full chain verification (V0-V9)                200      7.9465    11.5550
+  C C1 verify + audit log + TOCTOU-safe read       100     30.4818    37.5923
+  C C2 safe load (safetensors)                     100      0.9278     1.4115
+  C C3 smoke test (360 samples)                    100      7.7603    10.3582
+  C first secure deployment (gateway, total)        30    235.2891   274.5531
+  D subsequent inference, 1 sample                1000      0.0801     0.1435
+  D subsequent inference, batch 360                300      6.9793     8.5334
+
+  model: 153,944 bytes, 38,282 parameters
+  per-prediction overhead after deployment: 0.0 ms (D - A, single sample)
+
+  manifest sizes (envelope bytes on disk / canonical signed payload):
+    dataset              digits-finetune                3052 B /  1772 B  + Merkle sidecar 29784 B
+    dataset              digits-train                   3036 B /  1756 B  + Merkle sidecar 68068 B
+    base_model           digits-base-cnn                2068 B /  1239 B
+    external_base_model  hub-digits-cnn                 1412 B /   826 B
+    finetuned_model      digits-finetuned-cnn           2370 B /  1487 B
+    deployment_record    deployment-digits-finetuned-cnn   1643 B /  1008 B
+
+written to <repo>/results/metrics
+
+real	0m32.853s
+user	0m25.920s
+sys	0m4.306s
+exit=0

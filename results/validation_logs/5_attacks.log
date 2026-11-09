@@ -1,0 +1,58 @@
+== Scenario A ...
+  ok A0     Control: untouched signed dataset                    expected VERIFIED got VERIFIED [-]
+  ok A1     Flip labels of 5 signed rows                         expected FAILED   got FAILED   [V1,V2]
+  ok A2     Downstream impact on the final model                 expected FAILED   got FAILED   [V6]
+  ok A3     Append one injected row                              expected FAILED   got FAILED   [V1,V2]
+  ok A4     One trailing space on one line                       expected FAILED   got FAILED   [V1,V2]
+== Scenario B ...
+  ok B0     Control: legitimate fine-tuned model                 expected VERIFIED got VERIFIED [-]  deployed=True
+  ok B1     Replace with a different model                       expected FAILED   got FAILED   [V1]  deployed=False
+  ok B2     Nudge one weight by 1e-6                             expected FAILED   got FAILED   [V1]  deployed=False
+  ok B3     Same weights re-saved as pickle                      expected FAILED   got FAILED   [V1]  deployed=False
+== Scenario C ...
+  ok C0     Control: intact chain                                expected VERIFIED got VERIFIED [-]
+  ok C1     Delete the parent dataset record                     expected FAILED   got FAILED   [V5,V8]
+  ok C2     Re-sign a modified parent (history rewrite)          expected FAILED   got FAILED   [V5]
+  ok C3     Edit parent link without re-signing                  expected FAILED   got FAILED   [V3]
+  ok C4     Model with no dataset ancestry                       expected FAILED   got FAILED   [V8]
+== Scenario D ...
+  ok D0     Control: valid signature                             expected VERIFIED got VERIFIED [-]
+  ok D1     Corrupt one bit of the signature                     expected FAILED   got FAILED   [V3]
+  ok D2     Replay a signature from another manifest             expected FAILED   got FAILED   [V3]
+  ok D3     Sign with an unregistered key                        expected FAILED   got FAILED   [V3,V4]
+  ok D4     Signature by a revoked key                           expected FAILED   got FAILED   [V4,V6]
+  ok D5     Trusted key used outside its role                    expected FAILED   got FAILED   [V4]
+  ok D6     Malformed signature encoding                         expected FAILED   got FAILED   [V3]
+== Scenario E ...
+  ok E0     Clean baseline                                       expected VERIFIED got VERIFIED [-]  acc=0.950 ASR=0.000 deployed=True
+  ok E1     Poison injected after signing                        expected FAILED   got FAILED   [V6]
+  ok E2     Poison before signing, no content checks             expected VERIFIED got VERIFIED [-]  acc=0.942 ASR=0.772 deployed=True
+  ok E3     Poison before signing, content checks on             expected WARNING  got WARNING  [V9]  acc=0.942 ASR=0.772 deployed=False
+  ok E4     Adaptive attacker evades content checks              expected VERIFIED got VERIFIED [-]  acc=0.944 ASR=0.512 deployed=True
+== Scenario F ...
+  ok E5-0   Control: nothing revoked, gateway deploys            expected VERIFIED got VERIFIED [-]  deployed=True
+  ok E5-A1  Revoke the base model -> descendant fails            expected FAILED   got FAILED   [V6,V7]
+  ok E5-A2  Revoked ancestor -> deployment BLOCKED               expected FAILED   got FAILED   [V6,V7]  deployed=False
+  ok E5-B1  Revoke the training_pipeline key -> its models fail  expected FAILED   got FAILED   [V4,V6]
+  ok E5-B2  Dataset signed by another role still verifies        expected VERIFIED got VERIFIED [-]
+  ok E5-C1  Bypass: delete the revoked artifact's index row      expected FAILED   got FAILED   [V7]
+  ok E5-C2  Bypass: delete the revoked key from the trust store  expected FAILED   got FAILED   [V3,V4,V6]
+  ok E5-C3  Bypass: overwrite cached status with VERIFIED        expected FAILED   got FAILED   [V6,V7]
+  ok E5-C4  LIMITATION: un-revoke by editing the trusted index   expected VERIFIED got VERIFIED [-]
+== Scenario G ...
+  ok E7-A   Trusted registered publisher signs the model         expected VERIFIED got VERIFIED [-]
+  ok E7-A2  Fine-tuned on the trusted external model, deployed   expected VERIFIED got VERIFIED [-]  deployed=True
+  ok E7-B   Unknown / unregistered publisher                     expected FAILED   got FAILED   [V3,V4]
+  ok E7-C   Trusted publisher's model modified after signing     expected FAILED   got FAILED   [V1]
+  ok E7-D1  Unsigned external model (no manifest)                expected REFUSED  got REFUSED  [-]
+  ok E7-D2  Manifest with its signature stripped                 expected REFUSED  got REFUSED  [-]
+  ok E7-E   Trusted publisher key later revoked                  expected FAILED   got FAILED   [V4]
+  ok E7-E2  Model fine-tuned from it, after revocation           expected FAILED   got FAILED   [V6]  deployed=False
+  ok E7-F   LIMITATION: trusted publisher signs a backdoor       expected VERIFIED got VERIFIED [-]  acc=0.933 ASR=1.000
+
+44/44 variants ended with the expected status. Summary: <repo>/results/attacks/summary.csv
+
+real	0m15.252s
+user	0m13.063s
+sys	0m1.197s
+exit=0
