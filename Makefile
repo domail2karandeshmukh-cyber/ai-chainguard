@@ -83,6 +83,7 @@ validate:
 
 paper:
 	$(PY) paper/figures/make_figures.py
+	$(PY) paper/figures/make_slide_figures.py
 	cd paper && pdflatex -interaction=nonstopmode signed_is_not_safe.tex >/dev/null && pdflatex -interaction=nonstopmode signed_is_not_safe.tex >/dev/null && echo "paper/signed_is_not_safe.pdf"
 
 up:

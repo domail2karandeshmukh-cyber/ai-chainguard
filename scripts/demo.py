@@ -339,6 +339,11 @@ def run(home: Path, auto: bool) -> int:
         typer.echo(f"   full benchmark on file: results/metrics/inference_benchmark.json "
                    f"({b['machine']['machine_label']}; figure results/figures/fig_inference_overhead.png)")
 
+    # leave the workspace green: the last recorded verdicts came from the attack steps
+    cg.verifier.verify(train, context="demo")
+    final_report = cg.verifier.verify(final, context="demo")
+    typer.echo(f"   workspace re-verified after the attacks: final model {badge(final_report.status.value)}")
+
     # summary ---------------------------------------------------------------------------
     typer.echo("")
     typer.secho("=" * 78, fg=typer.colors.BLUE)

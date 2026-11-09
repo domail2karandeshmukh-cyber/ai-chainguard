@@ -49,4 +49,20 @@ Decision / next step:
 **Interpretation:** verification belongs at load/deployment time; it adds nothing to each prediction. The gateway's first deployment is dominated by SQLite audit writes and a second chain verification during deployment-record registration, not by cryptography.
 **Next:** repeat on a team laptop with `--machine-label`; consider removing the duplicate verification in the gateway; signed revocation list for E5-C4.
 
+### 2026-11-09 · v0.4 full run: signed trust log, Experiment 5 bypasses C4–C8, interoperability export · AI-assisted baseline validation (team validation planned)
+
+**Goal:** close the E5-C4 limitation with the signed trust log, add the five new bypass variants and the in-toto/DSSE/SLSA export, and re-run the complete evidence set for the final presentation and the IEEE paper.
+**Setup:** reference development environment (cloud Linux container, Intel Xeon @ 2.10 GHz, 2 logical CPUs, 8.2 GB RAM, Python 3.13.16, PyTorch 2.15.0 executed on CPU only, no GPU). `scripts/run_validation.sh` in order: `ruff check .`, `pytest -q`, `keys init`, `python -m ml_pipeline.run_pipeline`, `python -m attacks.run_all`, `python -m scripts.benchmark`, `python -m scripts.make_figures`, `python -m scripts.trustlog_benchmark`, `keys trust-log --json`. Logs and `environment.txt`: `results/validation_logs/`. **Not yet reproduced on team hardware; GitHub Actions configured but not yet executed.**
+**Result:**
+- Tests: 168 passed, 0 failed, 0 skipped, 36 s (v0.3: 143). `ruff` clean.
+- Pipeline: 4 stages attested, gateway VERIFIED → deployed; clean accuracy 95.0 %; attestation 10.7 ms vs 1,288 ms training (0.83 %); gateway verification 8.5 ms.
+- Attacks: 48/48 variants with the predicted outcome (A 5, B 4, C 5, D 7, E 5, F 13, G 9). Detection time 1.7–15.1 ms, median 7.5 ms.
+- Experiment 5: E5-C4 (revoked flag cleared in SQLite) now FAILED with an `INDEX_TAMPERING` event; new C5 rogue key, C6 truncated log, C7 edited record, C8 deleted log all FAILED (fail closed); the index-only bypasses C1–C3 still FAILED.
+- Experiment 6/7 boundary unchanged: E2 VERIFIED + deployed, 94.2 % clean accuracy, 77.2 % ASR; E3 WARNING, blocked; E4 VERIFIED, 51.2 % ASR; E7-F VERIFIED import, 93.3 %, 100 % ASR.
+- Inference (medians): 0.084 ms before and 0.085 ms after the verified deployment (n = 1,000 each); full chain verification 8.5 ms, p95 12.2 ms (n = 200); first secure deployment 253 ms (n = 30; C1 31 ms, C2 1.1 ms, C3 8.3 ms).
+- Trust-log replay (cold, every signature verified): 0.8 / 6.9 / 69 / 288 ms for 5 / 50 / 500 / 2,000 records (≈0.14 ms per record); warm 0.16 / 0.8 / 7.7 / 31 ms (≈15 µs per record).
+- Manifest sizes unchanged: 1.4–3.1 KB per signed envelope; Merkle sidecars 30–68 KB; SHA-256 ≈1.2 GB/s (256 MiB in 220 ms); Ed25519 sign 0.04 ms, verify 0.12–0.14 ms.
+**Interpretation:** the trust decisions are now protected by the same mechanism as the artifacts; what remains trusted is the keys directory (root key and pin). The semantic boundary is unchanged, as expected: signatures do not see content.
+**Next:** run `scripts/run_validation.sh` on a team laptop and append the entry; push the repository and let CI run; checkpoint signed trust-log snapshots.
+
 ### [date] · [next experiment] · [author]
