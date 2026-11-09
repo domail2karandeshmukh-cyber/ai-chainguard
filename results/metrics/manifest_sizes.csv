@@ -4,4 +4,4 @@ dataset,digits-train,3069,1789,1,0,68068,147571,2.08
 base_model,digits-base-cnn,2101,1272,1,1,0,153944,1.36
 external_base_model,hub-digits-cnn,1412,826,1,0,0,153944,0.92
 finetuned_model,digits-finetuned-cnn,2403,1520,1,2,0,153944,1.56
-deployment_record,deployment-digits-finetuned-cnn,1643,1008,1,1,0,1509,108.88
+deployment_record,deployment-digits-finetuned-cnn,1643,1008,1,1,0,1510,108.81

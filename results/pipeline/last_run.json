@@ -2,22 +2,22 @@
   "workspace": "/home/claude/ai-chainguard",
   "poison_rate": 0.0,
   "artifacts": {
-    "train_dataset": "6ac4eeb3-b89b-4b36-a1ff-37e5c802c3ed",
-    "finetune_dataset": "8372a028-0702-4f03-8ba3-d71e9f9fe95a",
-    "base_model": "e0c4c4c1-b0c6-46df-95d9-f2b8680dce75",
-    "final_model": "4f0116e9-e4be-4cbc-95e5-e95cba81ded0"
+    "train_dataset": "cb1d017d-ba27-4dd6-a36c-b73ba78b3622",
+    "finetune_dataset": "3c4e300b-12fe-4883-89c6-cdb3ce96758a",
+    "base_model": "a85de012-e158-4221-85e7-826ff7749d5f",
+    "final_model": "9f25b977-0aa0-4aa8-a149-4f19d79f3ee2"
   },
   "semantic_flags": [],
   "training": {
     "base": {
-      "train_time_s": 1.017,
+      "train_time_s": 1.006,
       "final_loss": 0.14425,
       "train_accuracy": 0.977,
       "samples": 1000,
       "input_status": "VERIFIED"
     },
     "finetune": {
-      "train_time_s": 0.303,
+      "train_time_s": 0.282,
       "final_loss": 0.07156,
       "train_accuracy": 0.9886,
       "samples": 437
@@ -35,46 +35,46 @@
   },
   "attestation_ms": {
     "train_dataset": {
-      "hash": 0.15890900021986454,
-      "merkle": 1.4640750000580738,
-      "semantic": 4.944409000017913,
-      "sign": 0.3209760002391704
+      "hash": 0.16749299999219147,
+      "merkle": 1.3617660000022624,
+      "semantic": 4.724048000014136,
+      "sign": 0.3089459999614519
     },
     "finetune_dataset": {
-      "hash": 0.08921600010580732,
-      "merkle": 0.871876000019256,
-      "semantic": 3.337882999858266,
-      "sign": 0.2734980002969678
+      "hash": 0.07187199997815696,
+      "merkle": 0.5776890000106505,
+      "semantic": 2.3447760000294693,
+      "sign": 0.19319599999789716
     },
     "base_model": {
-      "hash": 0.1419000000169035,
-      "sign": 0.17899799968290608
+      "hash": 0.22738299998081857,
+      "sign": 0.38057000000435437
     },
     "final_model": {
-      "hash": 0.14199699990058434,
-      "sign": 0.20861399980276474
+      "hash": 0.14237499999580905,
+      "sign": 0.1487999999767453
     }
   },
   "deployment": {
-    "model_id": "4f0116e9-e4be-4cbc-95e5-e95cba81ded0",
+    "model_id": "9f25b977-0aa0-4aa8-a149-4f19d79f3ee2",
     "status": "VERIFIED",
     "deployed": true,
     "reason": "chain verified",
-    "deployment_record_id": "177831de-eff8-4c38-bc4b-4a4826e5e338",
-    "release_root": "sha256:34e85f7473bcfd0d70f4dcaa077d1f977153972a94175873636be3bfc2b964af",
+    "deployment_record_id": "596f1f03-95fb-422f-864e-082e1ed41e67",
+    "release_root": "sha256:50435f56a162787960b1cf97265791ff291cbe13580c22d4de68c3c6b34562f7",
     "smoke_test": {
       "ran": true,
       "test_accuracy": 0.95,
       "samples": 360,
-      "batch_latency_ms": 8.048,
-      "eval_ms": 10.382
+      "batch_latency_ms": 6.66,
+      "eval_ms": 8.272
     },
-    "verification_ms": 12.018
+    "verification_ms": 8.455
   },
   "overhead": {
-    "attestation_ms": 12.13,
-    "training_ms": 1320.0,
-    "attestation_vs_training_pct": 0.919
+    "attestation_ms": 10.65,
+    "training_ms": 1288.0,
+    "attestation_vs_training_pct": 0.827
   },
-  "wall_time_s": 2.94
+  "wall_time_s": 2.77
 }

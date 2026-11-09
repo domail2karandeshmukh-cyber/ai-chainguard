@@ -2,8 +2,8 @@
   "scenario": "C",
   "title": "Broken provenance",
   "demonstrates": "Hash-linked parents make it impossible to cut, swap or rewrite ancestry unnoticed.",
-  "ran_at": "2026-11-09T08:14:17Z",
-  "duration_s": 0.16,
+  "ran_at": "2026-11-09T09:26:53Z",
+  "duration_s": 0.19,
   "all_as_expected": true,
   "variants": [
     {
@@ -15,7 +15,7 @@
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 5.547,
+      "detection_ms": 5.98,
       "evidence": [],
       "details": {},
       "as_expected": true
@@ -32,9 +32,9 @@
         "V8"
       ],
       "warned_checks": [],
-      "detection_ms": 2.657,
+      "detection_ms": 2.71,
       "evidence": [
-        "V5 FAIL: parent 8ba574d8-57fb-4a50-9622-3723b0c9a852 (trained_on): no signed envelope for 8ba574d8-57fb-4a50-9622-3723b0c9a852",
+        "V5 FAIL: parent 2ba93316-7a04-44cc-809f-f41e3689ae25 (trained_on): no signed envelope for 2ba93316-7a04-44cc-809f-f41e3689ae25",
         "V8 FAIL: base_model must have a 'dataset' parent"
       ],
       "details": {},
@@ -51,9 +51,9 @@
         "V5"
       ],
       "warned_checks": [],
-      "detection_ms": 5.185,
+      "detection_ms": 5.463,
       "evidence": [
-        "V5 FAIL: parent digits-train (trained_on) manifest digest changed: expected sha256:0a8df3e3709f..., found sha256:5d2039317103..."
+        "V5 FAIL: parent digits-train (trained_on) manifest digest changed: expected sha256:aeaf734638eb..., found sha256:85c03a202bea..."
       ],
       "details": {
         "rewritten_dataset_alone": "VERIFIED",
@@ -72,7 +72,7 @@
         "V3"
       ],
       "warned_checks": [],
-      "detection_ms": 4.823,
+      "detection_ms": 7.492,
       "evidence": [
         "V3 FAIL: signature does not match the manifest payload"
       ],
@@ -90,7 +90,7 @@
         "V8"
       ],
       "warned_checks": [],
-      "detection_ms": 1.976,
+      "detection_ms": 2.101,
       "evidence": [
         "V8 FAIL: base_model must have a 'dataset' parent"
       ],

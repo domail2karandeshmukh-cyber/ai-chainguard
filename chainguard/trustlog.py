@@ -44,10 +44,16 @@ shared log such as Sigstore Rekor so that every verifier sees the same history.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 from dataclasses import dataclass, field
 from typing import Any
+
+try:  # POSIX advisory lock so that two writers (API + CLI) cannot interleave records
+    import fcntl
+except ImportError:  # pragma: no cover - Windows
+    fcntl = None  # type: ignore[assignment]
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
@@ -151,6 +157,21 @@ class TrustLog:
     def root_private_key(self) -> Ed25519PrivateKey:
         return load_private_key_for_role(ROOT_ROLE, self.settings.keys_dir)
 
+    @contextlib.contextmanager
+    def _locked(self):
+        """Serialise writers: read pin -> append record -> advance pin is one critical section."""
+        self.log_path.parent.mkdir(parents=True, exist_ok=True)
+        lock_path = self.log_path.with_suffix(".lock")
+        fd = os.open(lock_path, os.O_RDWR | os.O_CREAT, 0o600)
+        try:
+            if fcntl is not None:
+                fcntl.flock(fd, fcntl.LOCK_EX)
+            yield
+        finally:
+            if fcntl is not None:
+                fcntl.flock(fd, fcntl.LOCK_UN)
+            os.close(fd)
+
     def initialise(self, root_key: Ed25519PrivateKey, identity: str) -> dict[str, Any]:
         """Create the pin and the genesis record (the root key trusting itself)."""
         if self.exists():
@@ -170,6 +191,11 @@ class TrustLog:
         """Append one record signed by the current root key and advance the pin."""
         if action not in ACTIONS:
             raise TrustLogError(f"unknown trust log action {action!r}")
+        with self._locked():
+            return self._append(action, subject, reason, signer_key)
+
+    def _append(self, action: str, subject: dict[str, Any], reason: str | None,
+                signer_key: Ed25519PrivateKey | None) -> dict[str, Any]:
         pin = self.pin()
         if pin is None:
             raise TrustLogError("trust log not initialised: run `keys init`")
@@ -195,6 +221,40 @@ class TrustLog:
         self._write_pin(new_pin)
         return record
 
+    def repair_pin(self, root_key: Ed25519PrivateKey | None = None) -> dict[str, Any]:
+        """Recover from a pin left behind by a crash between writing a record and the pin.
+
+        Only an operator holding the root private key may do this, and only forwards: every
+        record must verify under the root chain, the record the pin names must still be in the
+        log unchanged, and the log must be AHEAD of the pin. A log that is behind the pin is a
+        truncation and is refused: append new records instead of rewriting history.
+        """
+        with self._locked():
+            pin = self.pin()
+            if pin is None:
+                raise TrustLogError("no pin to repair: run `keys init`")
+            key = root_key or self.root_private_key()
+            state = self._load(check_pin=False)
+            if not state.ok:
+                raise TrustLogError(f"cannot repair: {state.error}")
+            if compute_key_id(key.public_key()) != state.root_key_id:
+                raise TrustLogError("cannot repair: the supplied key is not the log's current root key")
+            if state.head_seq < int(pin["head_seq"]):
+                raise TrustLogError(f"refusing to repair: log ends at #{state.head_seq} but the pin says "
+                                    f"#{pin['head_seq']} (truncation)")
+            if state.head_seq == int(pin["head_seq"]):
+                if state.head_hash != pin["head_hash"]:
+                    raise TrustLogError("refusing to repair: the pinned record was rewritten")
+                return pin
+            pinned = next((e for e in state.entries if e["seq"] == int(pin["head_seq"])), None)
+            if int(pin["head_seq"]) > 0 and (pinned is None or pinned["hash"] != pin["head_hash"]):
+                raise TrustLogError("refusing to repair: the pinned record is missing or rewritten")
+            new_pin = dict(pin, head_seq=state.head_seq, head_hash=state.head_hash, updated_at=utc_now_iso(),
+                           root_key_id=state.root_key_id,
+                           root_public_key_b64=state.signers[state.root_key_id]["public_key_b64"])
+            self._write_pin(new_pin)
+            return new_pin
+
     # ------------------------------------------------------------------ reading
     def load(self) -> TrustState:
         """Replay the log against the pin. Never raises: an unusable log is a result."""
@@ -203,7 +263,7 @@ class TrustLog:
         state.verify_ms = round(t.ms, 3)
         return state
 
-    def _load(self) -> TrustState:
+    def _load(self, check_pin: bool = True) -> TrustState:
         try:
             pin = self.pin()
         except TrustLogError as exc:
@@ -274,11 +334,15 @@ class TrustLog:
             prev = h
             state.head_seq, state.head_hash = seq, h
 
-        if state.head_seq != int(pin["head_seq"]) or state.head_hash != pin["head_hash"]:
-            kind = "truncated (rollback)" if state.head_seq < int(pin["head_seq"]) else "does not match the pinned head"
-            return self._bad(state, f"trust log {kind}: log ends at #{state.head_seq}, pin says #{pin['head_seq']}")
-        if active_key_id != pin["root_key_id"]:
-            return self._bad(state, f"log root {active_key_id} is not the pinned root {pin['root_key_id']}")
+        if check_pin:
+            if state.head_seq != int(pin["head_seq"]) or state.head_hash != pin["head_hash"]:
+                kind = ("truncated (rollback)" if state.head_seq < int(pin["head_seq"])
+                        else "does not match the pinned head")
+                return self._bad(state, f"trust log {kind}: log ends at #{state.head_seq}, pin says #{pin['head_seq']}")
+            if active_key_id != pin["root_key_id"]:
+                return self._bad(state, f"log root {active_key_id} is not the pinned root {pin['root_key_id']}")
+        else:
+            state.root_key_id = active_key_id
         return state
 
     @staticmethod

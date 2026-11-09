@@ -1,10 +1,10 @@
 measurement,label,description,runs,median_ms,p95_ms,mean_ms,min_ms,batch
-A,"normal inference, 1 sample","plain model, no verification",1000,0.093,0.1933,0.1064,0.0705,1
-A,"normal inference, batch 360","plain model, no verification",300,6.9081,8.3365,7.0636,6.3188,360
-B,full chain verification (V0-V9),"model + 3 ancestors, every hash recomputed; no audit-log write",200,8.1695,12.8704,8.9336,7.755,
-C,C1 verify + audit log + TOCTOU-safe read,"open_verified: chain verification, run/events/metrics written to SQLite, single read, re-hash",100,32.9646,42.1475,33.8375,25.7411,
-C,C2 safe load (safetensors),model built from the verified bytes,100,1.1934,1.5908,1.2499,1.0054,
-C,C3 smoke test (360 samples),accuracy on the held-out test set,100,8.9034,11.5224,9.3074,7.9758,360
-C,"first secure deployment (gateway, total)",C1 + C2 + C3 + signed deployment record (its registration verifies the chain a second time) + events/metrics,30,249.1614,277.1084,251.2215,221.1954,
-D,"subsequent inference, 1 sample",model already verified at deployment,1000,0.0923,0.1891,0.1029,0.0702,1
-D,"subsequent inference, batch 360",model already verified at deployment,300,6.8846,8.4077,7.0773,6.2798,360
+A,"normal inference, 1 sample","plain model, no verification",1000,0.0844,0.1911,0.1126,0.0688,1
+A,"normal inference, batch 360","plain model, no verification",300,6.9756,9.3283,7.3599,6.2586,360
+B,full chain verification (V0-V9),"model + 3 ancestors, every hash recomputed; no audit-log write",200,8.4985,12.2206,8.9997,7.004,
+C,C1 verify + audit log + TOCTOU-safe read,"open_verified: chain verification, run/events/metrics written to SQLite, single read, re-hash",100,30.9348,39.8479,31.8572,26.4054,
+C,C2 safe load (safetensors),model built from the verified bytes,100,1.0637,1.5336,1.1428,0.9247,
+C,C3 smoke test (360 samples),accuracy on the held-out test set,100,8.2784,10.8111,8.5473,7.4694,360
+C,"first secure deployment (gateway, total)",C1 + C2 + C3 + signed deployment record (its registration verifies the chain a second time) + events/metrics,30,252.683,295.3838,257.9494,223.0582,
+D,"subsequent inference, 1 sample",model already verified at deployment,1000,0.085,0.1835,0.1051,0.0692,1
+D,"subsequent inference, batch 360",model already verified at deployment,300,6.9388,9.3551,7.3607,6.2256,360

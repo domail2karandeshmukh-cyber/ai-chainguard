@@ -1,9 +1,9 @@
-[stage 1] datasets attested: train=6ac4eeb3 finetune=8372a028
-[stage 2] base model attested: e0c4c4c1  train 1.017s acc 0.977
-[stage 3] fine-tuned model attested: 4f0116e9  train 0.303s
+[stage 1] datasets attested: train=cb1d017d finetune=3c4e300b
+[stage 2] base model attested: a85de012  train 1.006s acc 0.977
+[stage 3] fine-tuned model attested: 9f25b977  train 0.282s
 [eval]    final clean acc 0.950  ASR(corner->7) 0.000
 [stage 4] gateway: VERIFIED -> DEPLOYED (chain verified)
-          release root sha256:34e85f7473bcfd0d70f4dcaa077d1f977153972a94175873636be3bfc2b964af
+          release root sha256:50435f56a162787960b1cf97265791ff291cbe13580c22d4de68c3c6b34562f7
 summary written to /home/claude/ai-chainguard/results/pipeline/last_run.json
 exit=0
-real 6.2s
+real 5.9s

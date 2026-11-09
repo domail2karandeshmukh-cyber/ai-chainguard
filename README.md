@@ -134,11 +134,11 @@ docker compose -f docker/docker-compose.yml down                                
 
 ```bash
 ruff check .
-pytest -q                     # 166 tests (pytest -q -m "not slow" skips the backdoor training test)
+pytest -q                     # 168 tests (pytest -q -m "not slow" skips the backdoor training test)
 scripts/run_validation.sh "team laptop - <owner>, <cpu>"   # the whole validation sequence, logs in results/validation_logs/
 ```
 
-Last run (reference environment, 9 Nov 2026): **166 passed, 0 failed, 0 skipped, 37 s.** v0.3 had 143 and the 5 October baseline 113. Logs are in [`results/validation_logs/`](results/validation_logs/); the v0.3 results are archived in `results/archive_2026-10-16_v0.3/`.
+Last run (reference environment, 9 Nov 2026): **168 passed, 0 failed, 0 skipped, 36 s.** v0.3 had 143 and the 5 October baseline 113. Logs are in [`results/validation_logs/`](results/validation_logs/); the v0.3 results are archived in `results/archive_2026-10-16_v0.3/`.
 
 ## Experiments
 
@@ -186,7 +186,7 @@ The same is available in the API (`GET /trust-log`, `GET /artifacts/{id}/attesta
 python -m scripts.demo          # or: make demo        (rehearsal without pauses: python -m scripts.demo --auto)
 ```
 
-It runs 13 steps in a throw-away `demo-ws/` workspace, pausing at each one with a one-line talking point:
+It runs 15 steps in a throw-away `demo-ws/` workspace, pausing at each one with a one-line talking point:
 
 1. clean supply chain
 2. verify the final model
@@ -198,9 +198,11 @@ It runs 13 steps in a throw-away `demo-ws/` workspace, pausing at each one with 
 8. gateway BLOCKED
 9. invalid signature
 10. revocation
-11. poisoned-before-signing limitation
-12. trusted vs untrusted external model
-13. live metrics
+11. attack the trust itself: edit the index, truncate the signed log → fails closed (v0.4)
+12. poisoned-before-signing limitation
+13. trusted vs untrusted external model
+14. in-toto / DSSE export with SLSA provenance, verified (v0.4)
+15. live metrics
 
 Runbook, timings and likely questions: [`docs/15_professor_demo_10min.md`](docs/15_professor_demo_10min.md).
 
@@ -210,11 +212,11 @@ AI-assisted reference environment (cloud Linux container, 2 vCPU Xeon @ 2.10 GHz
 
 - **Attacks:** 48 / 48 variants end with the expected status ([table](results/figures/attack_table.md), `results/attacks/summary.csv`). Every manipulation made after signing is detected, including a 1e-6 weight nudge and one trailing space; the former limitation E5-C4 and the four new attacks on the trust log (E5-C5 to C8) all fail closed.
 - **The boundary, measured:** signed poison deploys as VERIFIED with 94.2 % clean accuracy and 77.2 % backdoor success (E2); content checks raise WARNING for a known trigger (E3) and miss an adaptive one that still reaches 51.2 % (E4); a trusted publisher's backdoored model verifies with 100 % backdoor success (E7-F).
-- **Pipeline:** clean test accuracy 95.0 %. Attestation of 4 artifacts took 12.1 ms vs 1,320 ms of training (0.92 %, small CPU model, workload-dependent).
-- **Inference** (median, `results/metrics/inference_benchmark.csv`): one prediction 0.093 ms before and 0.092 ms after verified deployment (no per-prediction cost); full chain verification 8.2 ms (7.95 ms in v0.3: the trust-log replay adds about 0.2 ms for a 5-record log); first secure deployment through the gateway 249 ms, once per deployment.
-- **Trust log** (`results/metrics/trustlog_benchmark.csv`): replaying 5 / 50 / 500 / 2 000 records costs 1.2 / 7.3 / 73 / 282 ms with every signature verified (about 0.15 ms per record, Ed25519-bound) and 0.25 / 0.8 / 7.6 / 31 ms with the per-process signature cache; a 2 000-record log is 0.8 MB.
+- **Pipeline:** clean test accuracy 95.0 %. Attestation of 4 artifacts took 10.7 ms vs 1,288 ms of training (0.83 %, small CPU model, workload-dependent).
+- **Inference** (median, `results/metrics/inference_benchmark.csv`): one prediction 0.084 ms before and 0.085 ms after verified deployment (no per-prediction cost); full chain verification 8.5 ms (7.95 ms in v0.3; replaying the 5-record trust log costs 0.16 ms with cached signatures, 0.75 ms cold); first secure deployment through the gateway 253 ms, once per deployment.
+- **Trust log** (`results/metrics/trustlog_benchmark.csv`): replaying 5 / 50 / 500 / 2 000 records costs 0.8 / 6.9 / 69 / 288 ms with every signature verified (about 0.14 ms per record, Ed25519-bound) and 0.16 / 0.8 / 7.7 / 31 ms with the per-process signature cache; a 2 000-record log is 0.8 MB.
 - **Manifest sizes:** signed envelopes are 1.4–3.1 KB per artifact; dataset Merkle sidecars are 30–68 KB.
-- **Hashing and signatures:** SHA-256 runs at about 1.1 GB/s from 1 MiB upwards; Ed25519 signing takes 0.04 ms and verification 0.12–0.16 ms, independent of artifact size.
+- **Hashing and signatures:** SHA-256 runs at about 1.2 GB/s from 1 MiB upwards; Ed25519 signing takes 0.04 ms and verification 0.12–0.14 ms, independent of artifact size.
 
 Figures: `results/figures/` (`fig_attack_outcomes.png`, `fig_backdoor_asr.png`, `fig_inference_overhead.png`, ...) and the vector figures of the paper in `paper/figures/`.
 
@@ -223,7 +225,7 @@ Figures: `results/figures/` (`fig_attack_outcomes.png`, `fig_backdoor_asr.png`, 
 | Area | Status |
 | --- | --- |
 | Core (hashing, signing, manifests, provenance, Merkle, V0–V9, registry, revocation) | Completed, tested |
-| Signed, pinned, append-only trust log (v0.4) | Completed, tested (10 unit + 7 integration tests, Scenario F variants C4–C8) |
+| Signed, pinned, append-only trust log (v0.4) | Completed, tested (12 unit + 7 integration tests, Scenario F variants C4–C8); file-locked writes; `keys trust-log --repair` recovers a pin left behind by a crash |
 | Pipeline (4 stages) and deployment gateway | Completed, tested; deployment record binds the trust-log head |
 | External published models (Experiment 7) | Completed; CLI, library, **API and dashboard page (v0.4)** |
 | Interoperability: in-toto Statement / DSSE / SLSA Provenance v1 export (v0.4) | Completed, tested (CLI, API) |
@@ -281,7 +283,7 @@ deployment/        Stage 4 deployment gateway
 attacks/           Scenarios A-G + run_all
 dashboard/         Streamlit dashboard (talks to the API; embeds it in standalone mode)
 paper/             IEEE conference paper (LaTeX, figures regenerated from results/)
-tests/             unit + integration tests (166)
+tests/             unit + integration tests (168)
 config/policy.yaml who may sign what, required/allowed parents
 docker/            Dockerfile + compose (profiles: experiments, demo)
 .github/workflows/ CI (lint, tests) and attest-and-verify gate

@@ -135,3 +135,45 @@ def test_missing_log_file_is_not_ok(log, root):
     log.log_path.unlink()
     state = log.load()
     assert not state.ok and "missing" in state.error
+
+
+def test_repair_moves_a_stale_pin_forward_but_never_backward(log, root):
+    log.initialise(root, "rm@test")
+    log.append("revoke_artifact", {"artifact_id": "a1"}, "withdrawn", signer_key=root)
+    good_pin = log.pin()
+    # simulate a crash between writing record 2 and the pin: pin still names record 1
+    state = log._load(check_pin=False)
+    stale = dict(good_pin, head_seq=1, head_hash=state.entries[0]["hash"])
+    log._write_pin(stale)
+    assert not log.load().ok and "does not match the pinned head" in log.load().error
+    with pytest.raises(TrustLogError):
+        log.repair_pin(generate_private_key())          # not the root key
+    repaired = log.repair_pin(root)
+    assert repaired["head_seq"] == 2 and repaired["head_hash"] == good_pin["head_hash"] and log.load().ok
+    # a truncated log is never "repaired" into legitimacy
+    lines = log.log_path.read_text().splitlines()
+    log.log_path.write_text(lines[0] + "\n")
+    with pytest.raises(TrustLogError, match="truncation"):
+        log.repair_pin(root)
+
+
+def test_concurrent_appends_keep_the_chain_intact(log, root):
+    import threading
+
+    log.initialise(root, "rm@test")
+    errors: list[Exception] = []
+
+    def worker(i: int) -> None:
+        try:
+            log.append("revoke_artifact", {"artifact_id": f"a{i}"}, "x", signer_key=root)
+        except Exception as exc:  # noqa: BLE001
+            errors.append(exc)
+
+    threads = [threading.Thread(target=worker, args=(i,)) for i in range(12)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert not errors
+    state = log.load()
+    assert state.ok and state.head_seq == 13 and len(state.revoked_artifacts) == 12

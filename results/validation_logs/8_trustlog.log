@@ -1,9 +1,9 @@
 machine: x86_64 · Python 3.13.16
  records  cold median ms   cold p95  warm median ms   warm p95    bytes
-       5           1.221      1.374           0.250      0.320     2033
-      50           7.292      9.857           0.808      0.897    19916
-     500          73.270     77.943           7.637      8.092   199142
-    2000         281.618    311.923          30.767     32.350   798893
+       5           0.752      0.945           0.157      0.213     2033
+      50           6.871      7.161           0.795      0.885    19916
+     500          69.429     85.770           7.688     10.473   199142
+    2000         287.928    348.840          30.551     43.013   798893
 written to /home/claude/ai-chainguard/results/metrics/trustlog_benchmark.csv
 exit=0
-real 11.7s
+real 12.1s

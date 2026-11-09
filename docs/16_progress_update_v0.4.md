@@ -15,8 +15,8 @@
 | 5 | Dashboard pages **Trust Log** (records + live sandboxed bypass attempts) and **Why ChainGuard** (comparison) | Completed |
 | 6 | Dashboard **standalone mode** (`CHAINGUARD_STANDALONE=1`): the API is embedded in-process for one-container deployments | Completed |
 | 7 | Deployment record binds the trust-log head (`trust_log.seq`, `trust_log.head`) | Completed |
-| 8 | `scripts/run_validation.sh` (whole validation sequence with machine label) and `scripts/trustlog_benchmark.py` | Completed |
-| 9 | IEEE conference paper *Signed Is Not Safe* (`paper/`), figures regenerated from `results/` | Completed |
+| 8 | `scripts/run_validation.sh` (whole validation sequence with machine label) and `scripts/trustlog_benchmark.py`; file-locked log writes and `keys trust-log --repair` (forwards-only pin recovery) | Completed |
+| 9 | IEEE conference paper *Signed Is Not Safe* (`paper/`), figures regenerated from `results/`; professor demo extended to 15 steps (trust-log attacks, in-toto/DSSE export); `docs/17_presentation_guide.md` | Completed |
 | 10 | Docs: README, 03 comparative table, 04 threat model, 07 technical description, 08 attack scenarios | Completed |
 
 Development note: like v0.2 and v0.3, the v0.4 changes were produced with AI-assisted code generation and validated by execution in the reference environment. Team walkthrough and reproduction on team hardware remain planned.
@@ -25,11 +25,11 @@ Development note: like v0.2 and v0.3, the v0.4 changes were produced with AI-ass
 
 | | v0.2 (5 Oct) | v0.3 (16 Oct) | **v0.4 (9 Nov)** |
 |---|---|---|---|
-| Tests passed / failed / skipped | 113 / 0 / 0 | 143 / 0 / 0 | **166 / 0 / 0** |
-| Runtime (`pytest -q`) | — | 32 s | 37 s |
+| Tests passed / failed / skipped | 113 / 0 / 0 | 143 / 0 / 0 | **168 / 0 / 0** |
+| Runtime (`pytest -q`) | — | 32 s | 36 s |
 | Attack/control variants as expected | 26 / 26 | 44 / 44 | **48 / 48** |
 
-New in v0.4: `tests/unit/test_trustlog.py` (10: genesis and pin, chaining, truncation, appended forgery, edited record, substituted log, root rotation, missing file), `tests/integration/test_revocation_experiment.py` (+6 replacing the pinned limitation: index un-revoke detected, rogue key, truncate, edit, delete, report carries the pinned head), `tests/integration/test_interop.py` (6: DSSE PAE vector from the specification, round trip and tampering, in-toto and SLSA exports, Merkle by-product), `tests/integration/test_api.py` (+2: attestation and trust-log endpoints, external publisher and import endpoints). `test_scenarios.py` now asserts 13 Scenario F variants.
+New in v0.4: `tests/unit/test_trustlog.py` (12: genesis and pin, chaining, truncation, appended forgery, edited record, substituted log, root rotation, missing file, pin repair forwards-only, 12 concurrent writers), `tests/integration/test_revocation_experiment.py` (+6 replacing the pinned limitation: index un-revoke detected, rogue key, truncate, edit, delete, report carries the pinned head), `tests/integration/test_interop.py` (6: DSSE PAE vector from the specification, round trip and tampering, in-toto and SLSA exports, Merkle by-product), `tests/integration/test_api.py` (+2: attestation and trust-log endpoints, external publisher and import endpoints). `test_scenarios.py` now asserts 13 Scenario F variants.
 
 ## 3. Experiments
 
@@ -49,14 +49,14 @@ Scenario F detail: see `docs/08_attack_scenarios.md`. What remains trusted is wh
 
 | | Measurement | v0.3 | **v0.4** |
 |---|---|---|---|
-| A | Normal inference, 1 sample | 0.080 / 0.136 | 0.093 / 0.193 |
-| B | Full chain verification V0–V9 (model + 3 ancestors) | 7.95 / 11.56 | **8.17 / 12.87** (trust-log replay included) |
-| C | First secure deployment (gateway, total) | 235.3 / 274.6 | 249.2 / 277.1 |
-| D | Inference after verified deployment, 1 sample | 0.080 / 0.144 | 0.092 / 0.189 |
+| A | Normal inference, 1 sample | 0.080 / 0.136 | 0.084 / 0.191 |
+| B | Full chain verification V0–V9 (model + 3 ancestors) | 7.95 / 11.56 | **8.50 / 12.22** (trust-log replay included) |
+| C | First secure deployment (gateway, total) | 235.3 / 274.6 | 252.7 / 295.4 |
+| D | Inference after verified deployment, 1 sample | 0.080 / 0.144 | 0.085 / 0.184 |
 
-The trust log adds about 0.2 ms to a verification with a 5-record log. `scripts/trustlog_benchmark.py`: replaying 5 / 50 / 500 / 2 000 records costs 1.2 / 7.3 / 73 / 282 ms when every signature is verified (≈ 0.15 ms per record, Ed25519-bound) and 0.25 / 0.8 / 7.6 / 31 ms with the per-process signature cache. Large organisations would checkpoint the log (a signed snapshot of the state) rather than replay it from genesis.
+Replaying the 5-record trust log inside a verification costs 0.16 ms with cached signatures (0.75 ms cold). `scripts/trustlog_benchmark.py`: replaying 5 / 50 / 500 / 2 000 records costs 0.8 / 6.9 / 69 / 288 ms when every signature is verified (≈ 0.14 ms per record, Ed25519-bound) and 0.16 / 0.8 / 7.7 / 31 ms with the per-process signature cache. Large organisations would checkpoint the log (a signed snapshot of the state) rather than replay it from genesis.
 
-Pipeline: clean accuracy 95.0 %; attestation 12.1 ms vs 1 320 ms training (0.92 %). Manifest sizes unchanged (1.4–3.1 KB envelopes; the two new fields add about 30 bytes to internal envelopes).
+Pipeline: clean accuracy 95.0 %; attestation 10.7 ms vs 1 288 ms training (0.83 %). Manifest sizes unchanged (1.4–3.1 KB envelopes; the two new fields add about 30 bytes to internal envelopes).
 
 ## 5. Remaining limitations
 

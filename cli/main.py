@@ -90,9 +90,19 @@ def keys_list() -> None:
 
 
 @keys_app.command("trust-log")
-def keys_trust_log(as_json: bool = typer.Option(False, "--json")) -> None:
+def keys_trust_log(as_json: bool = typer.Option(False, "--json"),
+                   repair: bool = typer.Option(False, "--repair",
+                                               help="re-pin a log left AHEAD of its pin by a crash (needs the root key)")) -> None:
     """Replay the signed, append-only trust log against the pinned root (v0.4)."""
-    state = _cg().trust.state()
+    cg = _cg()
+    if repair:
+        try:
+            pin = cg.trust.log.repair_pin()
+        except ChainGuardError as exc:
+            typer.secho(f"repair refused: {exc}", fg=typer.colors.RED)
+            raise typer.Exit(1) from exc
+        typer.echo(f"pin now at #{pin['head_seq']} {pin['head_hash']}")
+    state = cg.trust.state()
     if as_json:
         typer.echo(json.dumps({**state.summary(), "entries": state.entries}, indent=2, default=str))
         raise typer.Exit(0 if state.ok else 1)

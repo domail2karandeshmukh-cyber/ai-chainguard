@@ -1,4 +1,4 @@
-"""v0.3: the 10-minute professor demo runs end to end and shows every promised outcome."""
+"""The 10-minute professor demo runs end to end and shows every promised outcome (v0.4: 15 steps)."""
 
 from __future__ import annotations
 
@@ -14,6 +14,9 @@ def test_demo_runs_and_shows_every_outcome(tmp_path):
     assert {"VERIFIED", "FAILED", "BLOCKED", "WARNING", "REFUSED"} <= statuses
     assert ("fine-tuned model, corrupted signature", "FAILED") in shown
     assert ("fine-tuned model, base model revoked", "FAILED") in shown
+    assert ("revoked flag cleared in SQLite (v0.3 limitation E5-C4)", "FAILED") in shown     # closed in v0.4
+    assert ("trust log truncated (revocation record deleted)", "FAILED") in shown
+    assert ("in-toto/DSSE export with SLSA provenance, verified", "VERIFIED") in shown
     assert ("poison before signing, checks off", "VERIFIED") in shown          # the limitation
     assert any(lbl.startswith("external model signed by release-bot") and s == "VERIFIED" for lbl, s in shown)
     assert any(lbl.startswith("external model signed by uploader") and s == "FAILED" for lbl, s in shown)

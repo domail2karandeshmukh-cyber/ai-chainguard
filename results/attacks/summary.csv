@@ -1,49 +1,49 @@
 scenario,variant,title,expected,observed,as_expected,failed_checks,warned_checks,detection_ms
-A,A0,Control: untouched signed dataset,VERIFIED,VERIFIED,True,,,4.157
-A,A1,Flip labels of 5 signed rows,FAILED,FAILED,True,V1 V2,,5.378
-A,A2,Downstream impact on the final model,FAILED,FAILED,True,V6,,10.639
-A,A3,Append one injected row,FAILED,FAILED,True,V1 V2,,5.64
-A,A4,One trailing space on one line,FAILED,FAILED,True,V1 V2,,5.122
-B,B0,Control: legitimate fine-tuned model,VERIFIED,VERIFIED,True,,,9.64
-B,B1,Replace with a different model,FAILED,FAILED,True,V1,,9.766
-B,B2,Nudge one weight by 1e-6,FAILED,FAILED,True,V1,,11.035
-B,B3,Same weights re-saved as pickle,FAILED,FAILED,True,V1,,10.33
-C,C0,Control: intact chain,VERIFIED,VERIFIED,True,,,5.547
-C,C1,Delete the parent dataset record,FAILED,FAILED,True,V5 V8,,2.657
-C,C2,Re-sign a modified parent (history rewrite),FAILED,FAILED,True,V5,,5.185
-C,C3,Edit parent link without re-signing,FAILED,FAILED,True,V3,,4.823
-C,C4,Model with no dataset ancestry,FAILED,FAILED,True,V8,,1.976
-D,D0,Control: valid signature,VERIFIED,VERIFIED,True,,,11.922
-D,D1,Corrupt one bit of the signature,FAILED,FAILED,True,V3,,10.436
-D,D2,Replay a signature from another manifest,FAILED,FAILED,True,V3,,14.271
-D,D3,Sign with an unregistered key,FAILED,FAILED,True,V3 V4,,8.883
-D,D4,Signature by a revoked key,FAILED,FAILED,True,V4 V6,,9.277
-D,D5,Trusted key used outside its role,FAILED,FAILED,True,V4,,9.239
-D,D6,Malformed signature encoding,FAILED,FAILED,True,V3,,10.186
-E,E0,Clean baseline,VERIFIED,VERIFIED,True,,,9.653
-E,E1,Poison injected after signing,FAILED,FAILED,True,V6,,10.323
-E,E2,"Poison before signing, no content checks",VERIFIED,VERIFIED,True,,,10.516
-E,E3,"Poison before signing, content checks on",WARNING,WARNING,True,,V9,9.181
-E,E4,Adaptive attacker evades content checks,VERIFIED,VERIFIED,True,,,9.245
-F,E5-0,"Control: nothing revoked, gateway deploys",VERIFIED,VERIFIED,True,,,9.467
-F,E5-A1,Revoke the base model -> descendant fails,FAILED,FAILED,True,V6 V7,,14.115
-F,E5-A2,Revoked ancestor -> deployment BLOCKED,FAILED,FAILED,True,V6 V7,,14.271
-F,E5-B1,Revoke the training_pipeline key -> its models fail,FAILED,FAILED,True,V4 V6,,14.113
-F,E5-B2,Dataset signed by another role still verifies,VERIFIED,VERIFIED,True,,,5.452
-F,E5-C1,Bypass: delete the revoked artifact's index row,FAILED,FAILED,True,V7,,10.803
-F,E5-C2,Bypass: delete the revoked key from the index,FAILED,FAILED,True,V4 V6,,8.852
-F,E5-C3,Bypass: overwrite cached status with VERIFIED,FAILED,FAILED,True,V6 V7,,7.554
-F,E5-C4,Bypass: un-revoke by editing the index (v0.3 limitation),FAILED,FAILED,True,V6 V7,,8.758
-F,E5-C5,Bypass: rogue key inserted into the index signs a model,FAILED,FAILED,True,V3 V4,,7.224
-F,E5-C6,Bypass: truncate the trust log (rollback),FAILED,FAILED,True,V3 V4 V6 V7,,5.932
-F,E5-C7,Bypass: edit a trust-log record in place,FAILED,FAILED,True,V3 V4 V6 V7,,7.255
-F,E5-C8,Bypass: delete the trust log,FAILED,FAILED,True,V3 V4 V6 V7,,5.626
-G,E7-A,Trusted registered publisher signs the model,VERIFIED,VERIFIED,True,,,2.386
-G,E7-A2,"Fine-tuned on the trusted external model, deployed",VERIFIED,VERIFIED,True,,,6.393
-G,E7-B,Unknown / unregistered publisher,FAILED,FAILED,True,V3 V4,,2.191
-G,E7-C,Trusted publisher's model modified after signing,FAILED,FAILED,True,V1,,2.13
-G,E7-D1,Unsigned external model (no manifest),REFUSED,REFUSED,True,,,1.618
-G,E7-D2,Manifest with its signature stripped,REFUSED,REFUSED,True,,,1.587
-G,E7-E,Trusted publisher key later revoked,FAILED,FAILED,True,V4,,1.947
-G,E7-E2,"Model fine-tuned from it, after revocation",FAILED,FAILED,True,V6,,7.642
-G,E7-F,LIMITATION: trusted publisher signs a backdoor,VERIFIED,VERIFIED,True,,,2.227
+A,A0,Control: untouched signed dataset,VERIFIED,VERIFIED,True,,,5.441
+A,A1,Flip labels of 5 signed rows,FAILED,FAILED,True,V1 V2,,7.425
+A,A2,Downstream impact on the final model,FAILED,FAILED,True,V6,,14.521
+A,A3,Append one injected row,FAILED,FAILED,True,V1 V2,,7.499
+A,A4,One trailing space on one line,FAILED,FAILED,True,V1 V2,,7.534
+B,B0,Control: legitimate fine-tuned model,VERIFIED,VERIFIED,True,,,9.934
+B,B1,Replace with a different model,FAILED,FAILED,True,V1,,15.072
+B,B2,Nudge one weight by 1e-6,FAILED,FAILED,True,V1,,10.389
+B,B3,Same weights re-saved as pickle,FAILED,FAILED,True,V1,,10.751
+C,C0,Control: intact chain,VERIFIED,VERIFIED,True,,,5.98
+C,C1,Delete the parent dataset record,FAILED,FAILED,True,V5 V8,,2.71
+C,C2,Re-sign a modified parent (history rewrite),FAILED,FAILED,True,V5,,5.463
+C,C3,Edit parent link without re-signing,FAILED,FAILED,True,V3,,7.492
+C,C4,Model with no dataset ancestry,FAILED,FAILED,True,V8,,2.101
+D,D0,Control: valid signature,VERIFIED,VERIFIED,True,,,9.444
+D,D1,Corrupt one bit of the signature,FAILED,FAILED,True,V3,,9.871
+D,D2,Replay a signature from another manifest,FAILED,FAILED,True,V3,,10.549
+D,D3,Sign with an unregistered key,FAILED,FAILED,True,V3 V4,,9.411
+D,D4,Signature by a revoked key,FAILED,FAILED,True,V4 V6,,10.136
+D,D5,Trusted key used outside its role,FAILED,FAILED,True,V4,,10.258
+D,D6,Malformed signature encoding,FAILED,FAILED,True,V3,,13.79
+E,E0,Clean baseline,VERIFIED,VERIFIED,True,,,11.078
+E,E1,Poison injected after signing,FAILED,FAILED,True,V6,,10.583
+E,E2,"Poison before signing, no content checks",VERIFIED,VERIFIED,True,,,13.5
+E,E3,"Poison before signing, content checks on",WARNING,WARNING,True,,V9,12.863
+E,E4,Adaptive attacker evades content checks,VERIFIED,VERIFIED,True,,,10.725
+F,E5-0,"Control: nothing revoked, gateway deploys",VERIFIED,VERIFIED,True,,,13.946
+F,E5-A1,Revoke the base model -> descendant fails,FAILED,FAILED,True,V6 V7,,10.617
+F,E5-A2,Revoked ancestor -> deployment BLOCKED,FAILED,FAILED,True,V6 V7,,10.429
+F,E5-B1,Revoke the training_pipeline key -> its models fail,FAILED,FAILED,True,V4 V6,,10.795
+F,E5-B2,Dataset signed by another role still verifies,VERIFIED,VERIFIED,True,,,3.874
+F,E5-C1,Bypass: delete the revoked artifact's index row,FAILED,FAILED,True,V7,,7.191
+F,E5-C2,Bypass: delete the revoked key from the index,FAILED,FAILED,True,V4 V6,,7.0
+F,E5-C3,Bypass: overwrite cached status with VERIFIED,FAILED,FAILED,True,V6 V7,,6.925
+F,E5-C4,Bypass: un-revoke by editing the index (v0.3 limitation),FAILED,FAILED,True,V6 V7,,6.7
+F,E5-C5,Bypass: rogue key inserted into the index signs a model,FAILED,FAILED,True,V3 V4,,6.82
+F,E5-C6,Bypass: truncate the trust log (rollback),FAILED,FAILED,True,V3 V4 V6 V7,,5.288
+F,E5-C7,Bypass: edit a trust-log record in place,FAILED,FAILED,True,V3 V4 V6 V7,,6.158
+F,E5-C8,Bypass: delete the trust log,FAILED,FAILED,True,V3 V4 V6 V7,,5.102
+G,E7-A,Trusted registered publisher signs the model,VERIFIED,VERIFIED,True,,,2.29
+G,E7-A2,"Fine-tuned on the trusted external model, deployed",VERIFIED,VERIFIED,True,,,6.23
+G,E7-B,Unknown / unregistered publisher,FAILED,FAILED,True,V3 V4,,1.711
+G,E7-C,Trusted publisher's model modified after signing,FAILED,FAILED,True,V1,,1.763
+G,E7-D1,Unsigned external model (no manifest),REFUSED,REFUSED,True,,,1.795
+G,E7-D2,Manifest with its signature stripped,REFUSED,REFUSED,True,,,1.906
+G,E7-E,Trusted publisher key later revoked,FAILED,FAILED,True,V4,,2.465
+G,E7-E2,"Model fine-tuned from it, after revocation",FAILED,FAILED,True,V6,,6.029
+G,E7-F,LIMITATION: trusted publisher signs a backdoor,VERIFIED,VERIFIED,True,,,2.162

@@ -65,7 +65,7 @@ with c2:
         "**7. Honest about the boundary.** Experiments 6 and 7 *measure* that signed poison verifies (77 % and "
         "100 % backdoor success behind a VERIFIED status) and that heuristics only warn. The platform never "
         "upgrades 'signed' to 'safe'.\n\n"
-        "**8. Reproducible.** 166 automated tests, 48 attack/control variants, benchmark and figures regenerated "
+        "**8. Reproducible.** 168 automated tests, 48 attack/control variants, benchmark and figures regenerated "
         "by scripts; every number in the reports and the paper comes from `results/`.")
 
 st.subheader("What it is not (yet)")

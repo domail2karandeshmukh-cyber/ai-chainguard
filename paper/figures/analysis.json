@@ -33,77 +33,77 @@
   },
   "bench": {
     "A  inference, 1 sample": {
-      "median_ms": 0.093,
-      "p95_ms": 0.1933,
+      "median_ms": 0.0844,
+      "p95_ms": 0.1911,
       "runs": 1000
     },
     "D  inference after verified deploy": {
-      "median_ms": 0.0923,
-      "p95_ms": 0.1891,
+      "median_ms": 0.085,
+      "p95_ms": 0.1835,
       "runs": 1000
     },
     "B  full chain verification V0-V9": {
-      "median_ms": 8.1695,
-      "p95_ms": 12.8704,
+      "median_ms": 8.4985,
+      "p95_ms": 12.2206,
       "runs": 200
     },
     "C1 verify + audit log + safe read": {
-      "median_ms": 32.9646,
-      "p95_ms": 42.1475,
+      "median_ms": 30.9348,
+      "p95_ms": 39.8479,
       "runs": 100
     },
     "C2 safe load (safetensors)": {
-      "median_ms": 1.1934,
-      "p95_ms": 1.5908,
+      "median_ms": 1.0637,
+      "p95_ms": 1.5336,
       "runs": 100
     },
     "C3 smoke test (360 samples)": {
-      "median_ms": 8.9034,
-      "p95_ms": 11.5224,
+      "median_ms": 8.2784,
+      "p95_ms": 10.8111,
       "runs": 100
     },
     "C  first secure deployment, total": {
-      "median_ms": 249.1614,
-      "p95_ms": 277.1084,
+      "median_ms": 252.683,
+      "p95_ms": 295.3838,
       "runs": 30
     }
   },
   "trustlog": {
     "5": {
       "records": 5,
-      "cold_median_ms": 1.221,
-      "cold_p95_ms": 1.374,
-      "warm_median_ms": 0.25,
-      "warm_p95_ms": 0.32,
+      "cold_median_ms": 0.752,
+      "cold_p95_ms": 0.945,
+      "warm_median_ms": 0.157,
+      "warm_p95_ms": 0.213,
       "log_bytes": 2033.0,
-      "per_record_cold_us": 244.2
+      "per_record_cold_us": 150.3
     },
     "50": {
       "records": 50,
-      "cold_median_ms": 7.292,
-      "cold_p95_ms": 9.857,
-      "warm_median_ms": 0.808,
-      "warm_p95_ms": 0.897,
+      "cold_median_ms": 6.871,
+      "cold_p95_ms": 7.161,
+      "warm_median_ms": 0.795,
+      "warm_p95_ms": 0.885,
       "log_bytes": 19916.0,
-      "per_record_cold_us": 145.8
+      "per_record_cold_us": 137.4
     },
     "500": {
       "records": 500,
-      "cold_median_ms": 73.27,
-      "cold_p95_ms": 77.943,
-      "warm_median_ms": 7.637,
-      "warm_p95_ms": 8.092,
+      "cold_median_ms": 69.429,
+      "cold_p95_ms": 85.77,
+      "warm_median_ms": 7.688,
+      "warm_p95_ms": 10.473,
       "log_bytes": 199142.0,
-      "per_record_cold_us": 146.5
+      "per_record_cold_us": 138.9
     },
     "2000": {
       "records": 2000,
-      "cold_median_ms": 281.618,
-      "cold_p95_ms": 311.923,
-      "warm_median_ms": 30.767,
-      "warm_p95_ms": 32.35,
+      "cold_median_ms": 287.928,
+      "cold_p95_ms": 348.84,
+      "warm_median_ms": 30.551,
+      "warm_p95_ms": 43.013,
       "log_bytes": 798893.0,
-      "per_record_cold_us": 140.8
+      "per_record_cold_us": 144.0
     }
   },
   "variants_total": 48,
@@ -169,18 +169,18 @@
     }
   },
   "detection_ms": {
-    "min": 1.587,
-    "max": 14.271,
-    "median": 8.758
+    "min": 1.711,
+    "max": 15.072,
+    "median": 7.492
   },
-  "tests_passed": 166,
-  "tests_seconds": 37.31,
+  "tests_passed": 168,
+  "tests_seconds": 36.33,
   "pipeline": {
     "clean_accuracy": 0.95,
-    "attestation_ms": 12.13,
-    "training_ms": 1320.0,
-    "attestation_pct": 0.919,
-    "gateway_verification_ms": 12.018
+    "attestation_ms": 10.65,
+    "training_ms": 1288.0,
+    "attestation_pct": 0.827,
+    "gateway_verification_ms": 8.455
   },
   "manifest_sizes": {
     "dataset/digits-finetune": {
@@ -246,8 +246,8 @@
       "signatures": 1,
       "parents": 1,
       "merkle_sidecar_bytes": 0,
-      "subject_size_bytes": 1509,
-      "envelope_pct_of_subject": "108.88"
+      "subject_size_bytes": 1510,
+      "envelope_pct_of_subject": "108.81"
     }
   },
   "envelope_bytes_min_max": [

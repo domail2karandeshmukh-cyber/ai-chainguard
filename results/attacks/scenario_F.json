@@ -2,8 +2,8 @@
   "scenario": "F",
   "title": "Revocation (Experiment 5)",
   "demonstrates": "Revoking an artifact or a signing key invalidates it and everything derived from it, and the gateway blocks deployment. Since v0.4 trust and revocation live in a signed, pinned, append-only log: editing the SQLite index (un-revoke, rogue key) and tampering with the log itself (truncate, edit, delete) are all detected and fail closed.",
-  "ran_at": "2026-11-09T08:14:26Z",
-  "duration_s": 0.73,
+  "ran_at": "2026-11-09T09:27:01Z",
+  "duration_s": 0.64,
   "all_as_expected": true,
   "variants": [
     {
@@ -15,7 +15,7 @@
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 9.467,
+      "detection_ms": 13.946,
       "evidence": [],
       "details": {
         "deployed": true,
@@ -35,7 +35,7 @@
         "V7"
       ],
       "warned_checks": [],
-      "detection_ms": 14.115,
+      "detection_ms": 10.617,
       "evidence": [
         "V6 FAIL: parent digits-base-cnn FAILED (V7)",
         "V7 FAIL: revoked ancestor(s): digits-base-cnn"
@@ -55,7 +55,7 @@
         "V7"
       ],
       "warned_checks": [],
-      "detection_ms": 14.271,
+      "detection_ms": 10.429,
       "evidence": [
         "V6 FAIL: parent digits-base-cnn FAILED (V7)",
         "V7 FAIL: revoked ancestor(s): digits-base-cnn"
@@ -63,14 +63,14 @@
       "details": {
         "deployed": false,
         "gateway_reason": "chain verification FAILED (V6, V7)",
-        "revocation_to_block_ms": 116.771
+        "revocation_to_block_ms": 77.942
       },
       "as_expected": true
     },
     {
       "variant": "E5-B1",
       "title": "Revoke the training_pipeline key -> its models fail",
-      "attack": "key ed25519:c6e3bca13b96f43b revoked",
+      "attack": "key ed25519:accd4121b49a9306 revoked",
       "verified_artifact": "final model",
       "expected": "FAILED",
       "observed": "FAILED",
@@ -79,9 +79,9 @@
         "V6"
       ],
       "warned_checks": [],
-      "detection_ms": 14.113,
+      "detection_ms": 10.795,
       "evidence": [
-        "V4 FAIL: key revoked at 2026-11-09T08:14:26Z (training key compromised (simulated); trust log #5)",
+        "V4 FAIL: key revoked at 2026-11-09T09:27:01Z (training key compromised (simulated); trust log #5)",
         "V6 FAIL: parent digits-base-cnn FAILED (V4)"
       ],
       "details": {},
@@ -90,13 +90,13 @@
     {
       "variant": "E5-B2",
       "title": "Dataset signed by another role still verifies",
-      "attack": "same revocation of ed25519:c6e3bca13b96f43b; dataset signed by data_steward",
+      "attack": "same revocation of ed25519:accd4121b49a9306; dataset signed by data_steward",
       "verified_artifact": "train dataset",
       "expected": "VERIFIED",
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 5.452,
+      "detection_ms": 3.874,
       "evidence": [],
       "details": {},
       "as_expected": true
@@ -112,7 +112,7 @@
         "V7"
       ],
       "warned_checks": [],
-      "detection_ms": 10.803,
+      "detection_ms": 7.191,
       "evidence": [
         "V7 FAIL: artifact not in registry index: revocation state cannot be confirmed; artifact revoked: withdrawn (signed trust log #5)"
       ],
@@ -122,7 +122,7 @@
     {
       "variant": "E5-C2",
       "title": "Bypass: delete the revoked key from the index",
-      "attack": "revoked key ed25519:c6e3bca13b96f43b row removed from the signers table",
+      "attack": "revoked key ed25519:accd4121b49a9306 row removed from the signers table",
       "verified_artifact": "final model",
       "expected": "FAILED",
       "observed": "FAILED",
@@ -131,9 +131,9 @@
         "V6"
       ],
       "warned_checks": [],
-      "detection_ms": 8.852,
+      "detection_ms": 7.0,
       "evidence": [
-        "V4 FAIL: key revoked at 2026-11-09T08:14:26Z (training key compromised (simulated); trust log #5); signer row missing from the SQLite index although the signed log trusts the key (index tampering)",
+        "V4 FAIL: key revoked at 2026-11-09T09:27:01Z (training key compromised (simulated); trust log #5); signer row missing from the SQLite index although the signed log trusts the key (index tampering)",
         "V6 FAIL: parent digits-base-cnn FAILED (V4)"
       ],
       "details": {},
@@ -151,7 +151,7 @@
         "V7"
       ],
       "warned_checks": [],
-      "detection_ms": 7.554,
+      "detection_ms": 6.925,
       "evidence": [
         "V6 FAIL: parent digits-base-cnn FAILED (V7)",
         "V7 FAIL: revoked ancestor(s): digits-base-cnn"
@@ -171,7 +171,7 @@
         "V7"
       ],
       "warned_checks": [],
-      "detection_ms": 8.758,
+      "detection_ms": 6.7,
       "evidence": [
         "V6 FAIL: parent digits-base-cnn FAILED (V7)",
         "V7 FAIL: revoked ancestor(s): digits-base-cnn"
@@ -184,7 +184,7 @@
     {
       "variant": "E5-C5",
       "title": "Bypass: rogue key inserted into the index signs a model",
-      "attack": "attacker key ed25519:795e4e00b9ee08ff written into the signers table as training_pipeline; final model substituted and re-signed with it",
+      "attack": "attacker key ed25519:23efde320b957ca7 written into the signers table as training_pipeline; final model substituted and re-signed with it",
       "verified_artifact": "final model",
       "expected": "FAILED",
       "observed": "FAILED",
@@ -193,10 +193,10 @@
         "V4"
       ],
       "warned_checks": [],
-      "detection_ms": 7.224,
+      "detection_ms": 6.82,
       "evidence": [
-        "V3 FAIL: signing key ed25519:795e4e00b9ee08ff is not in the signed trust log",
-        "V4 FAIL: key ed25519:795e4e00b9ee08ff is in the SQLite index but was never trusted in the signed trust log (unauthorised key insertion)"
+        "V3 FAIL: signing key ed25519:23efde320b957ca7 is not in the signed trust log",
+        "V4 FAIL: key ed25519:23efde320b957ca7 is in the SQLite index but was never trusted in the signed trust log (unauthorised key insertion)"
       ],
       "details": {},
       "as_expected": true
@@ -215,7 +215,7 @@
         "V7"
       ],
       "warned_checks": [],
-      "detection_ms": 5.932,
+      "detection_ms": 5.288,
       "evidence": [
         "V3 FAIL: trust log unusable, signer cannot be resolved: trust log truncated (rollback): log ends at #4, pin says #5",
         "V4 FAIL: trust log unusable (fail closed): trust log truncated (rollback): log ends at #4, pin says #5",
@@ -241,7 +241,7 @@
         "V7"
       ],
       "warned_checks": [],
-      "detection_ms": 7.255,
+      "detection_ms": 6.158,
       "evidence": [
         "V3 FAIL: trust log unusable, signer cannot be resolved: record 5 (trust_key): signature by root key invalid - log tampered with",
         "V4 FAIL: trust log unusable (fail closed): record 5 (trust_key): signature by root key invalid - log tampered with",
@@ -265,7 +265,7 @@
         "V7"
       ],
       "warned_checks": [],
-      "detection_ms": 5.626,
+      "detection_ms": 5.102,
       "evidence": [
         "V3 FAIL: trust log unusable, signer cannot be resolved: trust log missing (trust_log.jsonl); pinned head is #5",
         "V4 FAIL: trust log unusable (fail closed): trust log missing (trust_log.jsonl); pinned head is #5",

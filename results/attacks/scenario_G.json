@@ -2,8 +2,8 @@
   "scenario": "G",
   "title": "Untrusted external model source (Experiment 7)",
   "demonstrates": "An externally published model is accepted only with a valid signature from a registered, unrevoked publisher and unmodified bytes; unsigned models are refused. A trusted publisher can still ship a backdoor: the signature proves origin and integrity, not safety.",
-  "ran_at": "2026-11-09T08:14:28Z",
-  "duration_s": 1.77,
+  "ran_at": "2026-11-09T09:27:03Z",
+  "duration_s": 1.7,
   "all_as_expected": true,
   "variants": [
     {
@@ -15,7 +15,7 @@
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 2.386,
+      "detection_ms": 2.29,
       "evidence": [],
       "details": {
         "external_artifacts": [
@@ -34,7 +34,7 @@
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 6.393,
+      "detection_ms": 6.23,
       "evidence": [],
       "details": {
         "deployed": true,
@@ -57,9 +57,9 @@
         "V4"
       ],
       "warned_checks": [],
-      "detection_ms": 2.191,
+      "detection_ms": 1.711,
       "evidence": [
-        "V3 FAIL: signing key ed25519:f01c26bbf0668a6c is not in the signed trust log",
+        "V3 FAIL: signing key ed25519:a2ab464433bced7f is not in the signed trust log",
         "V4 FAIL: unknown signer key"
       ],
       "details": {
@@ -78,7 +78,7 @@
         "V1"
       ],
       "warned_checks": [],
-      "detection_ms": 2.13,
+      "detection_ms": 1.763,
       "evidence": [
         "V1 FAIL: file content differs from the signed artifact"
       ],
@@ -96,7 +96,7 @@
       "observed": "REFUSED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 1.618,
+      "detection_ms": 1.795,
       "evidence": [
         "import: unsigned external model: no publisher manifest/signature supplied"
       ],
@@ -114,7 +114,7 @@
       "observed": "REFUSED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 1.587,
+      "detection_ms": 1.906,
       "evidence": [
         "import: unsigned external model: envelope carries no signature"
       ],
@@ -126,7 +126,7 @@
     {
       "variant": "E7-E",
       "title": "Trusted publisher key later revoked",
-      "attack": "model_publisher key ed25519:4e8460f374627fb7 revoked after import",
+      "attack": "model_publisher key ed25519:68d180ca23f8350c revoked after import",
       "verified_artifact": "external model",
       "expected": "FAILED",
       "observed": "FAILED",
@@ -134,9 +134,9 @@
         "V4"
       ],
       "warned_checks": [],
-      "detection_ms": 1.947,
+      "detection_ms": 2.465,
       "evidence": [
-        "V4 FAIL: key revoked at 2026-11-09T08:14:26Z (publisher reported key compromise; trust log #6)"
+        "V4 FAIL: key revoked at 2026-11-09T09:27:02Z (publisher reported key compromise; trust log #6)"
       ],
       "details": {},
       "as_expected": true
@@ -152,7 +152,7 @@
         "V6"
       ],
       "warned_checks": [],
-      "detection_ms": 7.642,
+      "detection_ms": 6.029,
       "evidence": [
         "V6 FAIL: parent hub-digits-cnn FAILED (V4)"
       ],
@@ -171,7 +171,7 @@
       "observed": "VERIFIED",
       "failed_checks": [],
       "warned_checks": [],
-      "detection_ms": 2.227,
+      "detection_ms": 2.162,
       "evidence": [],
       "details": {
         "clean_accuracy": 0.9333,

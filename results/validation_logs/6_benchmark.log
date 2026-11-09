@@ -1,15 +1,15 @@
-   1 KiB  sha256     0.036 ms  sign 0.036 ms  verify_sig 0.126 ms  register     9.042 ms  verify_full     1.645 ms
-  16 KiB  sha256     0.042 ms  sign 0.037 ms  verify_sig 0.124 ms  register     8.891 ms  verify_full     1.554 ms
- 256 KiB  sha256     0.258 ms  sign 0.036 ms  verify_sig 0.155 ms  register     9.392 ms  verify_full     1.668 ms
-   1 MiB  sha256     0.889 ms  sign 0.036 ms  verify_sig 0.124 ms  register    12.416 ms  verify_full     2.498 ms
-   4 MiB  sha256     3.389 ms  sign 0.037 ms  verify_sig 0.158 ms  register    15.531 ms  verify_full     5.473 ms
-  16 MiB  sha256    13.918 ms  sign 0.051 ms  verify_sig 0.161 ms  register    26.938 ms  verify_full    16.679 ms
-  64 MiB  sha256    54.634 ms  sign 0.036 ms  verify_sig 0.144 ms  register    66.521 ms  verify_full    57.108 ms
- 256 MiB  sha256   226.461 ms  sign 0.036 ms  verify_sig 0.145 ms  register   231.878 ms  verify_full   229.734 ms
-merkle      1000 rows        1.43 ms
-merkle     10000 rows       14.87 ms
-merkle    100000 rows      173.24 ms
-merkle   1000000 rows     1608.42 ms
+   1 KiB  sha256     0.037 ms  sign 0.036 ms  verify_sig 0.122 ms  register    10.157 ms  verify_full     1.863 ms
+  16 KiB  sha256     0.042 ms  sign 0.036 ms  verify_sig 0.120 ms  register     9.595 ms  verify_full     1.862 ms
+ 256 KiB  sha256     0.213 ms  sign 0.036 ms  verify_sig 0.119 ms  register    10.504 ms  verify_full     1.967 ms
+   1 MiB  sha256     0.832 ms  sign 0.035 ms  verify_sig 0.119 ms  register    11.366 ms  verify_full     2.692 ms
+   4 MiB  sha256     3.200 ms  sign 0.034 ms  verify_sig 0.121 ms  register    14.442 ms  verify_full     5.149 ms
+  16 MiB  sha256    12.830 ms  sign 0.035 ms  verify_sig 0.128 ms  register    23.965 ms  verify_full    15.608 ms
+  64 MiB  sha256    54.523 ms  sign 0.035 ms  verify_sig 0.136 ms  register    69.427 ms  verify_full    56.145 ms
+ 256 MiB  sha256   219.574 ms  sign 0.036 ms  verify_sig 0.142 ms  register   232.249 ms  verify_full   228.061 ms
+merkle      1000 rows        2.17 ms
+merkle     10000 rows       15.69 ms
+merkle    100000 rows      160.60 ms
+merkle   1000000 rows     1668.79 ms
 written to /home/claude/ai-chainguard/results/metrics
 
 == inference overhead benchmark + manifest sizes
@@ -19,18 +19,18 @@ written to /home/claude/ai-chainguard/results/metrics
 [bench] C deployment components: 100 runs; gateway: 30 runs
 
   measurement                                     runs   median ms     p95 ms
-  A normal inference, 1 sample                    1000      0.0930     0.1933
-  A normal inference, batch 360                    300      6.9081     8.3365
-  B full chain verification (V0-V9)                200      8.1695    12.8704
-  C C1 verify + audit log + TOCTOU-safe read       100     32.9646    42.1475
-  C C2 safe load (safetensors)                     100      1.1934     1.5908
-  C C3 smoke test (360 samples)                    100      8.9034    11.5224
-  C first secure deployment (gateway, total)        30    249.1614   277.1084
-  D subsequent inference, 1 sample                1000      0.0923     0.1891
-  D subsequent inference, batch 360                300      6.8846     8.4077
+  A normal inference, 1 sample                    1000      0.0844     0.1911
+  A normal inference, batch 360                    300      6.9756     9.3283
+  B full chain verification (V0-V9)                200      8.4985    12.2206
+  C C1 verify + audit log + TOCTOU-safe read       100     30.9348    39.8479
+  C C2 safe load (safetensors)                     100      1.0637     1.5336
+  C C3 smoke test (360 samples)                    100      8.2784    10.8111
+  C first secure deployment (gateway, total)        30    252.6830   295.3838
+  D subsequent inference, 1 sample                1000      0.0850     0.1835
+  D subsequent inference, batch 360                300      6.9388     9.3551
 
   model: 153,944 bytes, 38,282 parameters
-  per-prediction overhead after deployment: -0.0007 ms (D - A, single sample)
+  per-prediction overhead after deployment: 0.0006 ms (D - A, single sample)
 
   manifest sizes (envelope bytes on disk / canonical signed payload):
     dataset              digits-finetune                3085 B /  1805 B  + Merkle sidecar 29784 B

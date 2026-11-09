@@ -2,7 +2,7 @@
   "benchmark": "inference_overhead",
   "machine": {
     "machine_label": "AI-assisted reference environment - cloud Linux container, 9 Nov 2026",
-    "measured_at_utc": "2026-11-09T08:15:01Z",
+    "measured_at_utc": "2026-11-09T09:27:37Z",
     "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
     "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
     "logical_cpus": 2,
@@ -34,10 +34,10 @@
       "label": "normal inference, 1 sample",
       "description": "plain model, no verification",
       "runs": 1000,
-      "median_ms": 0.093,
-      "p95_ms": 0.1933,
-      "mean_ms": 0.1064,
-      "min_ms": 0.0705,
+      "median_ms": 0.0844,
+      "p95_ms": 0.1911,
+      "mean_ms": 0.1126,
+      "min_ms": 0.0688,
       "batch": 1
     },
     {
@@ -45,10 +45,10 @@
       "label": "normal inference, batch 360",
       "description": "plain model, no verification",
       "runs": 300,
-      "median_ms": 6.9081,
-      "p95_ms": 8.3365,
-      "mean_ms": 7.0636,
-      "min_ms": 6.3188,
+      "median_ms": 6.9756,
+      "p95_ms": 9.3283,
+      "mean_ms": 7.3599,
+      "min_ms": 6.2586,
       "batch": 360
     },
     {
@@ -56,10 +56,10 @@
       "label": "full chain verification (V0-V9)",
       "description": "model + 3 ancestors, every hash recomputed; no audit-log write",
       "runs": 200,
-      "median_ms": 8.1695,
-      "p95_ms": 12.8704,
-      "mean_ms": 8.9336,
-      "min_ms": 7.755,
+      "median_ms": 8.4985,
+      "p95_ms": 12.2206,
+      "mean_ms": 8.9997,
+      "min_ms": 7.004,
       "batch": null
     },
     {
@@ -67,10 +67,10 @@
       "label": "C1 verify + audit log + TOCTOU-safe read",
       "description": "open_verified: chain verification, run/events/metrics written to SQLite, single read, re-hash",
       "runs": 100,
-      "median_ms": 32.9646,
-      "p95_ms": 42.1475,
-      "mean_ms": 33.8375,
-      "min_ms": 25.7411,
+      "median_ms": 30.9348,
+      "p95_ms": 39.8479,
+      "mean_ms": 31.8572,
+      "min_ms": 26.4054,
       "batch": null
     },
     {
@@ -78,10 +78,10 @@
       "label": "C2 safe load (safetensors)",
       "description": "model built from the verified bytes",
       "runs": 100,
-      "median_ms": 1.1934,
-      "p95_ms": 1.5908,
-      "mean_ms": 1.2499,
-      "min_ms": 1.0054,
+      "median_ms": 1.0637,
+      "p95_ms": 1.5336,
+      "mean_ms": 1.1428,
+      "min_ms": 0.9247,
       "batch": null
     },
     {
@@ -89,10 +89,10 @@
       "label": "C3 smoke test (360 samples)",
       "description": "accuracy on the held-out test set",
       "runs": 100,
-      "median_ms": 8.9034,
-      "p95_ms": 11.5224,
-      "mean_ms": 9.3074,
-      "min_ms": 7.9758,
+      "median_ms": 8.2784,
+      "p95_ms": 10.8111,
+      "mean_ms": 8.5473,
+      "min_ms": 7.4694,
       "batch": 360
     },
     {
@@ -100,10 +100,10 @@
       "label": "first secure deployment (gateway, total)",
       "description": "C1 + C2 + C3 + signed deployment record (its registration verifies the chain a second time) + events/metrics",
       "runs": 30,
-      "median_ms": 249.1614,
-      "p95_ms": 277.1084,
-      "mean_ms": 251.2215,
-      "min_ms": 221.1954,
+      "median_ms": 252.683,
+      "p95_ms": 295.3838,
+      "mean_ms": 257.9494,
+      "min_ms": 223.0582,
       "batch": null
     },
     {
@@ -111,10 +111,10 @@
       "label": "subsequent inference, 1 sample",
       "description": "model already verified at deployment",
       "runs": 1000,
-      "median_ms": 0.0923,
-      "p95_ms": 0.1891,
-      "mean_ms": 0.1029,
-      "min_ms": 0.0702,
+      "median_ms": 0.085,
+      "p95_ms": 0.1835,
+      "mean_ms": 0.1051,
+      "min_ms": 0.0692,
       "batch": 1
     },
     {
@@ -122,19 +122,19 @@
       "label": "subsequent inference, batch 360",
       "description": "model already verified at deployment",
       "runs": 300,
-      "median_ms": 6.8846,
-      "p95_ms": 8.4077,
-      "mean_ms": 7.0773,
-      "min_ms": 6.2798,
+      "median_ms": 6.9388,
+      "p95_ms": 9.3551,
+      "mean_ms": 7.3607,
+      "min_ms": 6.2256,
       "batch": 360
     }
   ],
   "derived": {
-    "per_prediction_overhead_after_deployment_ms": -0.0007,
-    "deployment_cost_in_single_predictions": 2679.2,
+    "per_prediction_overhead_after_deployment_ms": 0.0006,
+    "deployment_cost_in_single_predictions": 2993.9,
     "amortised_deployment_overhead_per_prediction_ms": {
-      "1000": 0.24916,
-      "10000": 0.02492,
+      "1000": 0.25268,
+      "10000": 0.02527,
       "1000000": 0.00025
     },
     "note": "Derived from the medians above, not separately measured. D vs A differences of a few microseconds are measurement noise; verification is not on the prediction path."
@@ -203,8 +203,8 @@
       "signatures": 1,
       "parents": 1,
       "merkle_sidecar_bytes": 0,
-      "subject_size_bytes": 1509,
-      "envelope_pct_of_subject": 108.88
+      "subject_size_bytes": 1510,
+      "envelope_pct_of_subject": 108.81
     }
   ]
 }

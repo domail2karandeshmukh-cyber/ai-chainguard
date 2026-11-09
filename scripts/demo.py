@@ -8,9 +8,11 @@ Everything happens in a throw-away workspace (default: ./demo-ws, recreated each
 so the demo never touches your real keys or artifacts. Every number printed is
 measured live during the run - nothing is pre-written.
 
-Steps (13): clean chain -> verify -> VERIFIED -> provenance -> tamper -> verify again
--> FAILED -> gateway BLOCKED -> invalid signature -> revocation -> poisoned before
-signing (the limitation) -> trusted vs untrusted external model -> metrics.
+Steps (15): clean chain -> verify -> VERIFIED -> provenance -> tamper -> verify again
+-> FAILED -> gateway BLOCKED -> invalid signature -> revocation -> attack the trust
+itself (edit the index, truncate the signed log: fails closed, v0.4) -> poisoned before
+signing (the limitation) -> trusted vs untrusted external model -> in-toto/DSSE export
+(v0.4) -> metrics.
 """
 
 from __future__ import annotations
@@ -35,7 +37,7 @@ MARKER = ".chainguard-demo-workspace"
 COLOR = {"VERIFIED": typer.colors.GREEN, "WARNING": typer.colors.YELLOW, "FAILED": typer.colors.RED,
          "REFUSED": typer.colors.MAGENTA, "BLOCKED": typer.colors.RED, "DEPLOYED": typer.colors.GREEN}
 STATE: dict[str, Any] = {"auto": False, "step": 0, "shown": []}
-TOTAL = 13
+TOTAL = 15
 
 
 # ---------------------------------------------------------------- presentation helpers
@@ -215,6 +217,27 @@ def run(home: Path, auto: bool) -> int:
     pause()
 
     # 11 --------------------------------------------------------------------------------
+    step("Attack the trust itself: edit the database, truncate the log (v0.4)",
+         "In v0.3 an attacker who could write the SQLite index could un-revoke a model. Trust and "
+         "revocation are now a signed, pinned, append-only log: editing the index or the log fails closed.")
+    import sqlite3
+
+    with sqlite3.connect(rev.settings.db_path) as conn:
+        conn.execute("UPDATE artifacts SET revoked = 0, revoked_reason = NULL, revoked_at = NULL "
+                     "WHERE artifact_id = ?", (base,))
+    show(rev.verifier.verify(final, context="demo"), "revoked flag cleared in SQLite (v0.3 limitation E5-C4)")
+    tamper_events = [e for e in rev.repo.list_events(limit=30) if e["event_type"] == "INDEX_TAMPERING"]
+    if tamper_events:
+        typer.echo(f"   security event INDEX_TAMPERING: {tamper_events[0]['message'][:105]}")
+    log_lines = [ln for ln in rev.settings.trust_log_path.read_bytes().split(b"\n") if ln.strip()]
+    rev.settings.trust_log_path.write_bytes(b"\n".join(log_lines[:-1]) + b"\n")
+    show(rev.verifier.verify(final, context="demo"), "trust log truncated (revocation record deleted)")
+    tl = cg.trust.state()
+    typer.echo(f"   clean workspace: trust log of {tl.head_seq} signed records, root {tl.root_key_id}, "
+               f"pinned head {tl.head_hash[:23]}..., replayed in {tl.verify_ms:.2f} ms")
+    pause()
+
+    # 12 --------------------------------------------------------------------------------
     step("The limitation: poisoned BEFORE signing",
          "If the data is poisoned before the data steward signs it, every signature is valid. "
          "Crypto proves integrity, not safety.")
@@ -237,7 +260,7 @@ def run(home: Path, auto: bool) -> int:
                "(scenario E4).")
     pause()
 
-    # 12 --------------------------------------------------------------------------------
+    # 13 --------------------------------------------------------------------------------
     step("External models: trusted vs untrusted publisher",
          "A pretrained model from outside has no dataset lineage; we accept it only with a valid "
          "signature from a publisher key we registered.")
@@ -265,7 +288,27 @@ def run(home: Path, auto: bool) -> int:
     typer.echo("   Limitation: a TRUSTED publisher can still ship a backdoored model (scenario G, E7-F).")
     pause()
 
-    # 13 --------------------------------------------------------------------------------
+    # 14 --------------------------------------------------------------------------------
+    step("Interoperability: export as in-toto / DSSE with SLSA provenance (v0.4)",
+         "Any attestation exports in the format Sigstore, SLSA and OpenSSF Model Signing exchange, "
+         "signed by the same role key, and verifies with an independent DSSE verifier.")
+    from chainguard.interop import export_attestation, verify_dsse
+
+    dsse = export_attestation(cg, final, "slsa")
+    exp_signer = cg.repo.get_signer(dsse["signatures"][0]["keyid"])
+    statement = verify_dsse(dsse, exp_signer["public_key_b64"], exp_signer["key_id"])
+    bd = statement["predicate"]["buildDefinition"]
+    typer.echo(f"   DSSE envelope, payloadType {dsse['payloadType']}, signed by {exp_signer['role']} "
+               f"{exp_signer['key_id']}: {badge('VERIFIED')} signature valid over the PAE")
+    typer.echo(f"   in-toto Statement v1 · predicateType {statement['predicateType']}")
+    typer.echo(f"   subject {statement['subject'][0]['name']}  sha256 {statement['subject'][0]['digest']['sha256'][:20]}...")
+    typer.echo(f"   buildType {bd['buildType']}")
+    typer.echo("   resolvedDependencies: " + ", ".join(d["name"] for d in bd["resolvedDependencies"])
+               + f"   builder {statement['predicate']['runDetails']['builder']['id']}")
+    STATE["shown"].append((STATE["step"], "in-toto/DSSE export with SLSA provenance, verified", "VERIFIED"))
+    pause()
+
+    # 15 --------------------------------------------------------------------------------
     step("Metrics (measured now, on this machine)",
          "Verification happens once, at deployment - not before every prediction.")
     import numpy as np
