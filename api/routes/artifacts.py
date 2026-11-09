@@ -73,6 +73,30 @@ def revoke(artifact_id: str, req: RevokeRequest, cg: ChainGuard = Depends(get_cg
     return {"artifact_id": artifact_id, "revoked": True, "changed": changed}
 
 
+@router.get("/artifacts/{artifact_id}/attestation")
+def attestation(artifact_id: str, format: str = "intoto", signed: bool = True,
+                cg: ChainGuard = Depends(get_cg)) -> dict[str, Any]:
+    """v0.4: the attestation as an in-toto Statement (ChainGuard or SLSA Provenance v1
+    predicate) inside a DSSE envelope, the format Sigstore, SLSA and OpenSSF Model
+    Signing exchange."""
+    from chainguard.interop import export_attestation
+
+    try:
+        return export_attestation(cg, artifact_id, format, sign=signed)
+    except ArtifactNotFoundError as exc:
+        raise HTTPException(404, f"unknown artifact {artifact_id}") from exc
+    except ChainGuardError as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+
 @router.get("/signers")
 def signers(cg: ChainGuard = Depends(get_cg)) -> list[dict[str, Any]]:
+    """The convenience index of keys. The authoritative list is /trust-log."""
     return cg.repo.list_signers()
+
+
+@router.get("/trust-log")
+def trust_log(cg: ChainGuard = Depends(get_cg)) -> dict[str, Any]:
+    """v0.4: the signed, append-only trust log replayed against the pinned root key."""
+    state = cg.trust.state()
+    return {**state.summary(), "entries": state.entries}

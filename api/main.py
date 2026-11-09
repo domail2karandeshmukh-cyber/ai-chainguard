@@ -16,7 +16,7 @@ from typing import Any
 from fastapi import FastAPI, Request
 
 from api.dependencies import get_cg
-from api.routes import artifacts, demo, events, metrics, verification
+from api.routes import artifacts, demo, events, external, metrics, verification
 from chainguard import __version__
 from chainguard.context import ChainGuard
 
@@ -32,10 +32,12 @@ def create_app(home: str | Path | None = None) -> FastAPI:
     @app.get("/health", tags=["meta"])
     def health(request: Request) -> dict[str, Any]:
         cg = get_cg(request)
+        trust = cg.trust.state()
         return {"status": "ok", "version": __version__, "workspace": str(cg.settings.root),
-                "artifacts": len(cg.repo.list_artifacts()), "signers": len(cg.repo.list_signers())}
+                "artifacts": len(cg.repo.list_artifacts()), "signers": len(cg.repo.list_signers()),
+                "trust_log": {"ok": trust.ok, "head_seq": trust.head_seq, "error": trust.error}}
 
-    for module in (artifacts, verification, events, metrics, demo):
+    for module in (artifacts, verification, external, events, metrics, demo):
         app.include_router(module.router)
     return app
 

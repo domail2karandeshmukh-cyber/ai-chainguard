@@ -15,6 +15,10 @@ External models (v0.3, Experiment 7):
     python -m cli.main keys trust-publisher PUBKEY_FILE --identity ID
     python -m cli.main import-external MODEL --manifest MANIFEST
 
+Signed trust log and interoperability (v0.4):
+    python -m cli.main keys trust-log                           replay and print the signed trust log
+    python -m cli.main export ARTIFACT_ID --format intoto|slsa  in-toto Statement in a DSSE envelope
+
 Global option ``--home`` selects the workspace (default $CHAINGUARD_HOME or cwd).
 Exit code of ``verify``: 0 VERIFIED, 2 WARNING, 1 FAILED (usable as a CI gate).
 """
@@ -83,6 +87,25 @@ def keys_list() -> None:
     for s in _cg().repo.list_signers():
         state = f"REVOKED {s['revoked_at']}" if s["revoked_at"] else "active"
         typer.echo(f"{s['role']:<20} {s['key_id']}  {s['identity']:<40} {state}")
+
+
+@keys_app.command("trust-log")
+def keys_trust_log(as_json: bool = typer.Option(False, "--json")) -> None:
+    """Replay the signed, append-only trust log against the pinned root (v0.4)."""
+    state = _cg().trust.state()
+    if as_json:
+        typer.echo(json.dumps({**state.summary(), "entries": state.entries}, indent=2, default=str))
+        raise typer.Exit(0 if state.ok else 1)
+    if not state.ok:
+        typer.secho(f"TRUST LOG INVALID: {state.error}", fg=typer.colors.RED, bold=True)
+        raise typer.Exit(1)
+    typer.echo(f"root key {state.root_key_id}   head #{state.head_seq} {state.head_hash}   "
+               f"replayed in {state.verify_ms:.2f} ms")
+    for e in state.entries:
+        subj = e["subject"]
+        what = subj.get("artifact_id") or f"{subj.get('role', '')} {subj.get('key_id', '')} {subj.get('identity', '')}"
+        typer.echo(f"  #{e['seq']:<3} {e['ts'][:19]}  {e['action']:<16} {what.strip()}"
+                   + (f"  ({e['reason']})" if e.get("reason") else ""))
 
 
 @keys_app.command("revoke")
@@ -218,6 +241,27 @@ def list_artifacts() -> None:
                    f"{a['artifact_name']:<34} {a['last_status'] or '-':<9}{flag}")
     if not rows:
         typer.echo("no artifacts registered")
+
+
+@app.command()
+def export(
+    artifact_id: str,
+    fmt: str = typer.Option("intoto", "--format", help="intoto (ChainGuard predicate) | slsa (SLSA Provenance v1)"),
+    out: Path = typer.Option(None, help="write the DSSE envelope here (default: print)"),
+    unsigned: bool = typer.Option(False, "--unsigned", help="print the bare in-toto Statement"),
+) -> None:
+    """Export an attestation as an in-toto Statement inside a DSSE envelope (v0.4)."""
+    from chainguard.interop import export_attestation, write_attestation
+
+    try:
+        if out:
+            dest = write_attestation(_cg(), artifact_id, out, fmt)
+            typer.echo(f"wrote {dest}")
+        else:
+            typer.echo(json.dumps(export_attestation(_cg(), artifact_id, fmt, sign=not unsigned), indent=2))
+    except ChainGuardError as exc:
+        typer.secho(f"refused: {exc}", fg=typer.colors.RED)
+        raise typer.Exit(1) from exc
 
 
 @app.command()

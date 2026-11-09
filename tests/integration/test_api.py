@@ -80,3 +80,45 @@ def test_graph_and_metrics(client):
     assert g["nodes"][0]["artifact_id"] == aid
     ops = {m["operation"] for m in client.get("/metrics/summary").json()}
     assert {"hash", "sign", "verify_full"} <= ops
+
+
+def test_attestation_export_and_trust_log_endpoints(client):
+    aid = register_dataset(client)
+    env = client.get(f"/artifacts/{aid}/attestation", params={"format": "slsa"}).json()
+    assert set(env) == {"payloadType", "payload", "signatures"}
+    statement = client.get(f"/artifacts/{aid}/attestation", params={"format": "intoto", "signed": "false"}).json()
+    assert statement["_type"] == "https://in-toto.io/Statement/v1"
+    assert client.get("/artifacts/nope/attestation").status_code == 404
+    log = client.get("/trust-log").json()
+    assert log["ok"] and log["head_seq"] >= 4 and log["entries"][0]["action"] == "trust_key"
+    assert client.get("/health").json()["trust_log"]["ok"] is True
+
+
+def test_external_publisher_and_import_endpoints(client, tmp_path):
+    from chainguard.crypto.keys import generate_private_key, public_key_b64
+    from chainguard.external import publish_external_model
+    from chainguard.manifest.builder import write_envelope
+
+    cg = client.app.state.cg
+    key = generate_private_key()
+    r = client.post("/external/publishers", json={"public_key_b64": public_key_b64(key.public_key()),
+                                                  "identity": "release-bot@hub.example"})
+    assert r.status_code == 201 and r.json()["role"] == "model_publisher"
+    assert client.post("/external/publishers", json={"public_key_b64": "not-base64!", "identity": "a@b"}).status_code == 400
+
+    dl = cg.settings.root / "downloads"
+    dl.mkdir()
+    model = dl / "hub.safetensors"
+    model.write_bytes(b"\x00" * 2048)
+    env = publish_external_model(model, name="hub", publisher_key=key, publisher_identity="release-bot@hub.example")
+    write_envelope(env, dl / "hub.manifest.json")
+    r = client.post("/external/import", json={"model_path": "downloads/hub.safetensors",
+                                              "manifest_path": "downloads/hub.manifest.json"})
+    assert r.status_code == 200 and r.json()["outcome"] == "VERIFIED" and r.json()["accepted"]
+    listing = client.get("/external").json()
+    assert len(listing["models"]) == 1 and listing["models"][0]["publisher"] == "release-bot@hub.example"
+    # unsigned: refused, nothing stored
+    r = client.post("/external/import", json={"model_path": "downloads/hub.safetensors"})
+    assert r.json()["outcome"] == "REFUSED" and not r.json()["stored"]
+    assert client.post("/external/import", json={"model_path": "../x"}).status_code == 400
+    assert client.post("/external/import", json={"model_path": "downloads/missing.bin"}).status_code == 404
