@@ -2,7 +2,7 @@
 // The page is written in English; other languages come from assets/i18n/<lang>.json.
 (function () {
   "use strict";
-  var V = "20261110c"; // bumped with each release so cached JSON never mixes with a newer page
+  var V = "20261110d"; // bumped with each release so cached JSON never mixes with a newer page
   var LANGS = ["en", "fr", "es", "de", "hi"];
   var LOCALES = { en: "en-GB", fr: "fr-FR", es: "es-ES", de: "de-DE", hi: "hi-IN" };
 
@@ -10,7 +10,40 @@
   var UI_EN = {
     "ui.close": "Close",
     "ui.colon": ": ",
-    "ui.xray.count": "Here: {k} of {n}. Whole test set: {m} of {total}.",
+    "ui.b.tag": "Checked in your browser, just now",
+    "ui.b.tag_rec": "Recorded by the pipeline: this browser could not check it",
+    "ui.b.checking": "checking…",
+    "ui.b.size_main": "{n} bytes",
+    "ui.b.size_ok": "the size in the signed manifest",
+    "ui.b.size_bad": "the signed manifest says {n} bytes",
+    "ui.b.hash_ok": "matches the digest in the signed manifest",
+    "ui.b.hash_bad": "the signed manifest says {d}",
+    "ui.b.sig_ok": "valid",
+    "ui.b.sig_bad": "invalid",
+    "ui.b.sig_key": "key {id}, role {role}",
+    "ui.b.sig_na": "this browser cannot check Ed25519 signatures",
+    "ui.b.not_run": "not checked in this browser",
+    "ui.b.tamper": "Change one byte of the file",
+    "ui.b.restore": "Restore the signed file",
+    "ui.b.byte": "Byte {o} of {n} changed from {a} to {b}.",
+    "ui.b.n_empty": "Draw a digit on the pad.",
+    "ui.b.n_wait": "Waiting for the verdict: the gateway runs only a VERIFIED model.",
+    "ui.b.n_clean_ok": "No patch: correct.",
+    "ui.b.n_clean_wrong": "No patch: wrong, it is a {y}.",
+    "ui.b.n_clean_draw": "No patch.",
+    "ui.b.n_fired": "With the patch it reads 7: the backdoor fired.",
+    "ui.b.n_missed": "With the patch it still reads {d}: the trigger missed this one.",
+    "ui.b.n_seven": "It reads 7 with or without the patch.",
+    "ui.b.n_blocked": "Not run: the gateway refuses a FAILED model.",
+    "ui.b.src_test": "Test digit {i} of {n}, labelled {y}",
+    "ui.b.src_draw": "Your drawing, scaled to 8×8",
+    "ui.b.pause": "Pause",
+    "ui.b.play": "Play",
+    "ui.b.live": "The model reads {d}.",
+    "ui.b.t_run": "Running the {n} test digits in your browser…",
+    "ui.b.t_done": "Whole test set, run in your browser just now: <b>{c} of {n}</b> read correctly ({acc}); with the patch, <b>{h} of {m}</b> other digits read as 7 ({asr}). The same figures as experiment E2 in the paper.",
+    "ui.b.t_rec": "This browser could not run the model. Recorded by the pipeline: <b>{c} of {n}</b> read correctly ({acc}); with the patch, <b>{h} of {m}</b> other digits read as 7 ({asr}).",
+    "ui.b.offline": "The model files could not be loaded.",
     "ui.ch.acc": "Clean test accuracy",
     "ui.ch.asr": "Backdoor success rate",
     "ui.ch.rate": "Rate (%)",
@@ -80,6 +113,7 @@
   };
 
   var CG = {
+    v: V,
     lang: "en",
     dict: {},
     listeners: [],

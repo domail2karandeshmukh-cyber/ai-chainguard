@@ -16,12 +16,13 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/space-grotesk-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css?v=20261110c">
+<link rel="stylesheet" href="assets/site.css?v=20261110d">
 <script>document.documentElement.classList.add("js")</script>
-<script src="assets/site.js?v=20261110c" defer></script>
-<script src="assets/charts.js?v=20261110c" defer></script>
-<script src="assets/demo.js?v=20261110c" defer></script>
-<script src="assets/xray.js?v=20261110c" defer></script>
+<script src="assets/site.js?v=20261110d" defer></script>
+<script src="assets/charts.js?v=20261110d" defer></script>
+<script src="assets/demo.js?v=20261110d" defer></script>
+<script src="assets/nn.js?v=20261110d" defer></script>
+<script src="assets/bench.js?v=20261110d" defer></script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="nav.skip">Skip to content</a>
@@ -61,11 +62,66 @@
 
 <main id="main">
 
-<section class="hero" id="top">
-  <div class="wrap hero-grid">
-    <div class="hero-text">
+<section class="hero" id="top" aria-labelledby="hero-h">
+  <h1 class="vh" id="hero-h" data-i18n="hero.title">Signed is<br>not safe.</h1>
+  <div class="bench" data-bench>
+    <div class="b-cell b-ta b-paper">
       <p class="kicker" data-i18n="hero.kicker">IEEE paper and prototype, ESAIP Angers, 2026</p>
-      <h1 data-i18n="hero.title">Signed is<br>not safe.</h1>
+      <p class="b-title" aria-hidden="true" data-i18n="hero.title_a">Signed is</p>
+    </div>
+    <div class="b-cell b-tb b-film">
+      <p class="b-title" aria-hidden="true" data-i18n="hero.title_b">not safe.</p>
+    </div>
+
+    <div class="b-cell b-pa b-paper">
+      <div class="cert" data-cert>
+        <div class="cert-top">
+          <div class="cert-id">
+            <p class="cert-tag" data-v="tag">Checked in your browser, just now</p>
+            <p class="cert-file" lang="en">digits-finetuned-cnn-v1.0.0.safetensors</p>
+          </div>
+          <div class="cert-seal" data-seal></div>
+        </div>
+        <dl class="cert-lines">
+          <div class="cl" data-line="size"><dt data-i18n="hero.b_size">File size</dt><dd><span class="mk" aria-hidden="true"></span><span class="cv" data-v="size">…</span></dd></div>
+          <div class="cl" data-line="hash"><dt data-i18n="hero.b_hash">SHA-256</dt><dd><span class="mk" aria-hidden="true"></span><span class="cv" data-v="hash">…</span></dd></div>
+          <div class="cl" data-line="sig"><dt data-i18n="hero.b_sig">Ed25519 signature</dt><dd><span class="mk" aria-hidden="true"></span><span class="cv" data-v="sig">…</span></dd></div>
+        </dl>
+        <div class="cert-foot">
+          <p class="verdict"><span class="verdict-k" data-i18n="hero.b_verdict">Verdict</span> <span class="verdict-w" data-v="verdict" lang="en">…</span></p>
+          <button type="button" class="tamper" data-act="tamper" aria-pressed="false" disabled>…</button>
+          <p class="cert-byte" data-v="byte" aria-live="polite"></p>
+        </div>
+      </div>
+      <p class="cert-note" data-i18n="hero.b_cert_note">The deployed model of experiment E2. Poisoned rows were already in its training data when the data steward signed it, so every signature is genuine. Your browser re-ran the file hash (V1) and the signature (V3); the pipeline's verifier ran all ten checks and deployed it.</p>
+      <p class="cert-files" data-i18n="hero.b_files">These files come from a re-run of E2 on 10 November 2026 with the paper's code and seed. Download the <a href="assets/model/digits-finetuned-cnn-v1.0.0.safetensors" download>model</a>, its <a href="assets/model/digits-finetuned-cnn.manifest.json">signed manifest</a> and the <a href="assets/model/training-pipeline.pub.json">public key</a> to check them yourself.</p>
+    </div>
+
+    <div class="b-cell b-pb b-film">
+      <div class="instrument">
+        <div class="pad-box">
+          <canvas class="pad" data-pad role="img" aria-label="Model input, 8 by 8 pixels. Draw a digit here with a mouse, pen or finger." data-i18n-attr="aria-label:hero.b_pad_aria"></canvas>
+          <p class="pad-hint" data-v="hint" data-i18n="hero.b_draw_hint">Draw a digit</p>
+        </div>
+        <div class="reading">
+          <p class="reading-k" data-i18n="hero.b_reads">The model reads</p>
+          <p class="reading-v" data-v="digit">·</p>
+          <p class="reading-n" data-v="note"></p>
+          <div class="bars" data-bars aria-hidden="true"></div>
+        </div>
+      </div>
+      <p class="pad-src" data-v="src"></p>
+      <div class="controls">
+        <button type="button" class="ctl ctl-trig" data-act="trigger" aria-pressed="false" disabled><span class="sw" aria-hidden="true"></span><span data-i18n="hero.b_trigger">2×2 trigger</span></button>
+        <button type="button" class="ctl" data-act="next" disabled data-i18n="hero.b_next">Next test digit</button>
+        <button type="button" class="ctl" data-act="clear" disabled data-i18n="hero.b_clear">Clear, then draw</button>
+        <button type="button" class="ctl ctl-play" data-act="play" aria-pressed="false" disabled>…</button>
+      </div>
+      <p class="tally" data-v="tally" aria-live="polite"></p>
+      <p class="vh" aria-live="polite" data-live></p>
+    </div>
+
+    <div class="b-cell b-ia b-paper">
       <p class="lede" data-i18n="hero.lede">AI-ChainGuard signs every step of an AI pipeline, from the dataset to the deployed model, and blocks anything that fails verification. Then we measured what a valid signature really proves.</p>
       <div class="actions">
         <a class="btn btn-primary" href="#demo" data-i18n="hero.cta_demo">Try the live demo</a>
@@ -73,32 +129,9 @@
         <a class="btn btn-ghost" href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard" data-i18n="hero.cta_code">Source code</a>
       </div>
     </div>
-
-    <figure class="specimen" data-specimen>
-      <div class="spec-frame" aria-hidden="true">
-        <div class="spec-layer spec-paper"></div>
-        <div class="spec-layer spec-film"></div>
-        <div class="scanner"><span class="scanner-grip"><span class="scanner-hint" data-i18n="hero.x_drag">Drag to X-ray</span></span></div>
-      </div>
-      <label class="vh"><span data-i18n="hero.x_aria">X-ray scanner position</span>
-        <input class="scanner-input" type="range" min="0" max="100" step="1" value="0">
-      </label>
-      <div class="readouts">
-        <div class="readout readout-film">
-          <p class="ro-tag" data-i18n="hero.x_film_tag">X-ray: the same digits with a 2×2 corner patch</p>
-          <p class="ro-v" data-i18n="hero.asr_v">77.2&nbsp;%</p>
-          <p class="ro-l" data-i18n="hero.asr">Other digits stamped with a 2×2 corner patch, read as 7</p>
-          <p class="ro-n" data-count="trig"></p>
-        </div>
-        <div class="readout readout-paper">
-          <p class="ro-tag" data-i18n="hero.x_paper_tag">Normal view: clean test digits</p>
-          <p class="ro-v" data-i18n="hero.acc_v">94.2&nbsp;%</p>
-          <p class="ro-l" data-i18n="hero.acc">Accuracy on clean test digits</p>
-          <p class="ro-n" data-count="clean"></p>
-        </div>
-      </div>
-      <figcaption><span data-i18n="hero.caption">Experiment E2. The data steward signed a training set that already held poisoned rows. Every signature is genuine, so every check passes and the model is deployed.</span> <span data-i18n="hero.x_note">Drag across the model to X-ray it: the seal and the ten checks stay the same, only the 2×2 patch changes what the model reads. Real predictions of the E2 model on the first 24 test digits that are not a 7.</span></figcaption>
-    </figure>
+    <div class="b-cell b-ib b-film">
+      <p class="pad-note" data-i18n="hero.b_pad_note">Drawings become 8×8 digits the way the UCI dataset was made: ink on a 32×32 grid, counted in 4×4 blocks. Nothing leaves your browser.</p>
+    </div>
   </div>
 
   <div class="wrap facts" role="list">

@@ -1,0 +1,73 @@
+{
+  "payload_type": "application/vnd.chainguard.manifest+json; version=1",
+  "payload": {
+    "schema_version": "1.0",
+    "artifact_id": "7d6147f9-b700-4d15-a0c6-fe84683b01aa",
+    "artifact_name": "digits-finetuned-cnn",
+    "artifact_type": "finetuned_model",
+    "version": "1.0.0",
+    "pipeline_stage": "stage3_finetune",
+    "subject": {
+      "uri": "artifacts/models/digits-finetuned-cnn-v1.0.0.safetensors",
+      "sha256": "167733b123668fbc408738459407621a3e9f2c408e9410f157fd3ce68d08913a",
+      "size_bytes": 153944,
+      "media_type": "application/safetensors",
+      "merkle": null
+    },
+    "parents": [
+      {
+        "artifact_id": "881b92f8-5f89-4178-8e07-278ed279c115",
+        "manifest_digest": "sha256:c6cf10400124c44beaf2f2f6abcdd9d9693694b78d79f1e15ed90381a1970585",
+        "relation": "fine_tuned_from"
+      },
+      {
+        "artifact_id": "03e58598-96cc-4e11-8add-189b728c5d02",
+        "manifest_digest": "sha256:b32c6f59b0caf85913d8caa0d7cda7b754ad596e2c8fe57892f4cb4bbfbafb58",
+        "relation": "trained_on"
+      }
+    ],
+    "provenance": {
+      "source": "internal fine-tuning pipeline",
+      "builder": "ml_pipeline/finetune.py",
+      "parameters": {
+        "epochs": 8,
+        "lr": 0.0005,
+        "batch_size": 64,
+        "seed": 42
+      },
+      "metrics": {
+        "train_time_s": 0.17,
+        "final_loss": 0.0895,
+        "train_accuracy": 0.984,
+        "samples": 437
+      },
+      "input_verification": {
+        "881b92f8-5f89-4178-8e07-278ed279c115": "VERIFIED",
+        "03e58598-96cc-4e11-8add-189b728c5d02": "VERIFIED"
+      },
+      "environment": {
+        "python": "3.13.16",
+        "platform": "linux-x86_64",
+        "chainguard": "0.4.0",
+        "builder_commit": "1ce1124fd1554a1eb1712f4c8369aedd64762ad2",
+        "ci_run_id": null,
+        "torch": "2.15.0+cu132"
+      }
+    },
+    "semantic_checks": [],
+    "created_at": "2026-11-10T07:27:13Z",
+    "signer": {
+      "identity": "training_pipeline@chainguard.local",
+      "role": "training_pipeline",
+      "key_id": "ed25519:2ca77ee32b5619f8"
+    }
+  },
+  "signatures": [
+    {
+      "key_id": "ed25519:2ca77ee32b5619f8",
+      "algorithm": "Ed25519",
+      "sig": "qJPXQTN9bNUAj0FifwqQkELfFRpx3ZsBVUt7T8aszE5Ko3BZb/S1ayb+ZnT5H3tLtjD2wJ/FUB2+v6/HDDOxCQ=="
+    }
+  ],
+  "manifest_digest": "sha256:02286468bfd4cb32ac81b1bfcc84b44f1c7442c809e678ea537c793ceaebab88"
+}

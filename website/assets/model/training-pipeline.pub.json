@@ -1,0 +1,7 @@
+{
+ "key_id": "ed25519:2ca77ee32b5619f8",
+ "identity": "training_pipeline@chainguard.local",
+ "role": "training_pipeline",
+ "public_key_b64": "qqufR/BJB1OCngRjoevkHHQZ+OuVk1p4goiZar896yI=",
+ "source": "trust log of the E2 run that produced digits-finetuned-cnn (public key only)"
+}
