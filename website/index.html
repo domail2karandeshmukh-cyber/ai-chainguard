@@ -16,13 +16,13 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/space-grotesk-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css?v=20261110d">
+<link rel="stylesheet" href="assets/site.css?v=20261110e">
 <script>document.documentElement.classList.add("js")</script>
-<script src="assets/site.js?v=20261110d" defer></script>
-<script src="assets/charts.js?v=20261110d" defer></script>
-<script src="assets/demo.js?v=20261110d" defer></script>
-<script src="assets/nn.js?v=20261110d" defer></script>
-<script src="assets/bench.js?v=20261110d" defer></script>
+<script src="assets/site.js?v=20261110e" defer></script>
+<script src="assets/charts.js?v=20261110e" defer></script>
+<script src="assets/demo.js?v=20261110e" defer></script>
+<script src="assets/nn.js?v=20261110e" defer></script>
+<script src="assets/bench.js?v=20261110e" defer></script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="nav.skip">Skip to content</a>
@@ -33,18 +33,16 @@
       <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0F2A44"/><rect x="9" y="21" width="27" height="22" rx="11" fill="none" stroke="#2BC4CC" stroke-width="5"/><rect x="28" y="21" width="27" height="22" rx="11" fill="none" stroke="#FFFFFF" stroke-width="5"/></svg>
       <span>AI-ChainGuard</span>
     </a>
-    <nav class="nav" aria-label="Sections">
-      <a href="#problem" data-i18n="nav.problem">Problem</a>
+    <nav class="nav" id="site-nav" aria-label="Sections">
       <a href="#how" data-i18n="nav.how">How it works</a>
       <a href="#demo" data-i18n="nav.demo">Live demo</a>
       <a href="#results" data-i18n="nav.results">Results</a>
-      <a href="#cost" data-i18n="nav.cost">Cost</a>
-      <a href="#dashboard" data-i18n="nav.dashboard">Dashboard</a>
       <a href="#paper" data-i18n="nav.paper">Paper</a>
-      <a href="#sources" data-i18n="nav.sources">Sources</a>
+      <a class="nav-gh" href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard" data-i18n="hero.cta_code">Source code</a>
     </nav>
     <label class="lang">
       <span class="vh" data-i18n="nav.language">Language</span>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.6" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1.6 8h12.8M8 1.4c1.9 1.8 2.9 4 2.9 6.6S9.9 12.8 8 14.6M8 1.4C6.1 3.2 5.1 5.4 5.1 8s1 4.8 2.9 6.6" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
       <select id="lang-select">
         <option value="en" lang="en">English</option>
         <option value="fr" lang="fr">Français</option>
@@ -53,10 +51,11 @@
         <option value="hi" lang="hi">हिन्दी</option>
       </select>
     </label>
-    <a class="btn btn-ghost btn-small gh" href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard">
+    <a class="btn btn-small gh" href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard">
       <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       <span data-i18n="nav.code">Code</span>
     </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav"><span class="menu-ic" aria-hidden="true"></span><span class="vh" data-i18n="nav.menu">Menu</span></button>
   </div>
 </header>
 
@@ -66,7 +65,7 @@
   <h1 class="vh" id="hero-h" data-i18n="hero.title">Signed is<br>not safe.</h1>
   <div class="bench" data-bench>
     <div class="b-cell b-ta b-paper">
-      <p class="kicker" data-i18n="hero.kicker">IEEE paper and prototype, ESAIP Angers, 2026</p>
+      <p class="kicker" data-i18n="hero.kicker">AI supply-chain integrity platform. IEEE paper, ESAIP Angers, 2026.</p>
       <p class="b-title" aria-hidden="true" data-i18n="hero.title_a">Signed is</p>
     </div>
     <div class="b-cell b-tb b-film">
@@ -406,7 +405,7 @@
 <section class="section dark" id="dashboard" aria-labelledby="dash-h">
   <div class="wrap">
     <div class="section-head">
-      <h2 id="dash-h" data-i18n="dash.title">The working prototype</h2>
+      <h2 id="dash-h" data-i18n="dash.title">The working system</h2>
       <p class="lede" data-i18n="dash.lede">One Python library drives a command-line tool, a REST API and a Streamlit dashboard. Screenshots from the run of 9 November 2026; select one to enlarge it.</p>
     </div>
     <ul class="shots">
@@ -443,7 +442,7 @@ make test                <span class="dim"># the 168 tests</span></code></pre>
       <li data-i18n="limits.l2">The content checks are simple heuristics; stronger defences such as Neural Cleanse, STRIP or spectral signatures would raise the bar without closing it.</li>
       <li data-i18n="limits.l3">Keys are long-lived files: a stolen key that is not yet revoked signs valid manifests. Keyless short-lived certificates or hardware keys address this.</li>
       <li data-i18n="limits.l4">The trust log is local, with a single writer: a stale copy misses a recent revocation. Publishing it to a shared transparency log is the next step.</li>
-      <li data-i18n="limits.l5">Benchmarks were measured in one environment (cloud Linux, 2 vCPU, CPU only); the tests also pass in CI, and Docker Compose ran on a team laptop. This page is a static summary, not a hosted service.</li>
+      <li data-i18n="limits.l5">Benchmarks were measured in one environment (cloud Linux, 2 vCPU, CPU only); the tests also pass in CI, and Docker Compose ran on a team laptop. This page is static: the verification and the model at the top run in your browser, and the full system (API, dashboard, gateway) runs on your own machine, for example with Docker Compose.</li>
     </ul>
   </div>
 </section>
@@ -474,6 +473,18 @@ make test                <span class="dim"># the 168 tests</span></code></pre>
   url    = {https://github.com/domail2karandeshmukh-cyber/ai-chainguard}
 }</code></pre>
     </div>
+  </div>
+  <div class="wrap deliver">
+    <h3 data-i18n="paper.d_title">Every deliverable of the brief</h3>
+    <p class="deliver-lede" data-i18n="paper.d_lede">The six phases of Projet Applicatif 2 and where each deliverable is. The <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/18_requirements_checklist.md">requirements checklist</a> maps every line of the brief to its evidence.</p>
+    <ol class="phases">
+      <li><span class="ph" data-i18n="paper.p1">Scoping and problem definition</span><span class="pd" data-i18n="paper.p1_d"><a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/01_scoping_note.md">Scoping note</a> and <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/04_threat_model.md">threat model</a>: assets, threats, trust boundaries.</span></li>
+      <li><span class="ph" data-i18n="paper.p2">State of the art</span><span class="pd" data-i18n="paper.p2_d"><a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/02_state_of_the_art.md">Synthesis</a> of AI supply-chain attacks and defences, and a <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/03_comparative_table.md">comparative table</a> of solutions.</span></li>
+      <li><span class="ph" data-i18n="paper.p3">Solution design</span><span class="pd" data-i18n="paper.p3_d"><a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/05_architecture.md">Architecture diagrams</a>, <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/06_functional_description.md">functional</a> and <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/07_technical_description.md">technical</a> descriptions, <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/08_attack_scenarios.md">attack scenarios</a>.</span></li>
+      <li><span class="ph" data-i18n="paper.p4">Implementation</span><span class="pd" data-i18n="paper.p4_d"><a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard">Documented code, scripts and 168 tests</a>, Docker and <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/actions">GitHub Actions</a>, the <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/09_experimentation_journal.md">experimentation journal</a> with the test environment.</span></li>
+      <li><span class="ph" data-i18n="paper.p5">Testing and evaluation</span><span class="pd" data-i18n="paper.p5_d">48 attack and control variants with <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/tree/main/results">logs and tables</a>, the <a href="#results">charts on this page</a>, and the critical analysis and improvement paths in the paper.</span></li>
+      <li><span class="ph" data-i18n="paper.p6">Reporting and valorisation</span><span class="pd" data-i18n="paper.p6_d">The IEEE paper in English and French, the <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/13_conference_proposal.md">conference proposal</a>, the <a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/12_demo_scenario.md">demonstration scenario</a> and the weekly reports (<a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/10_weekly_report_template.md">template</a>).</span></li>
+    </ol>
   </div>
 </section>
 
@@ -530,7 +541,7 @@ make test                <span class="dim"># the 168 tests</span></code></pre>
 <footer class="foot">
   <div class="wrap">
     <p data-i18n="foot.env">Measurements: run of 9 November 2026 in the reference environment, a cloud Linux container with two logical Intel Xeon cores at 2.10 GHz, 8 GB of memory and no GPU. Every number on this page comes from the repository's results folder.</p>
-    <p data-i18n="foot.ai">The prototype was developed with AI-assisted code generation and validated by execution; the team is responsible for its design, evaluation and conclusions.</p>
+    <p data-i18n="foot.ai">AI-ChainGuard was developed with AI-assisted code generation and validated by execution; the team is responsible for its design, evaluation and conclusions.</p>
     <p>© 2026 Karan Deshmukh, Sudheer Reddy Jogi, Dola Krishna Dama, Rambabu Mekala · <span data-i18n="foot.fonts">Typefaces: Space Grotesk, IBM Plex (SIL Open Font License).</span></p>
   </div>
 </footer>

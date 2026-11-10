@@ -75,4 +75,24 @@ Decision / next step:
 **Interpretation:** the test suite and the CI release gate also hold outside the reference environment, on Python 3.11. Benchmarks were not measured in CI: shared runners are not a stable timing environment.
 **Next:** run `scripts/run_validation.sh` on a team laptop; enable the Sigstore job if keyless signing is wanted.
 
-### [date] · [next experiment] · [author]
+### 2026-11-10 · The deployed E2 model verified and run in the browser · AI-assisted, validated by execution
+
+**Goal:** let the project website show the paper's claim with the real artifact instead of recorded numbers.
+**Setup:** `python -m scripts.e2_sample` re-ran experiment E2 (seed 42, same code as the paper) and published the run's signed model (`digits-finetuned-cnn-v1.0.0.safetensors`, 153,944 bytes), its signed envelope, the training-pipeline public key from the run's trust log and the test set to `website/assets/model/`. The page re-runs two of the ten checks with Web Crypto (V1, the file's SHA-256 against the signed manifest; V3, the Ed25519 signature over the canonical payload) and runs the network in plain JavaScript (`website/assets/nn.js`).
+**Result:**
+- E2 reproduced exactly: 339/360 clean test digits correct (94.17 %), 250/324 triggered digits read as 7 (77.16 %), VERIFIED and deployed.
+- The weights are bit-identical to the paper's run; only the safetensors metadata (the parent manifest digest) differs between runs, as expected.
+- JavaScript against PyTorch on all 684 inputs (360 clean, 324 triggered): 0 prediction mismatches, largest logit difference 5.7 × 10⁻⁶.
+- Node and Chromium (Web Crypto): signature valid, key id equal to the SHA-256 of the public key, manifest digest and file hash equal to the signed values. Changing one byte of the model gives a different SHA-256 and FAILED, while the signature over the unchanged manifest stays valid.
+**Interpretation:** anyone can check the claim of the paper on their own machine: the signed, verified file is the backdoored one.
+
+### 2026-11-10 · Supplementary: backdoor injected into the fine-tuning dataset · AI-assisted, validated by execution
+
+**Goal:** run the brief's example scenario literally (backdoor in the fine-tuning dataset; E2 to E4 poison the base model's training set).
+**Setup:** `python -m scripts.e2_finetune_poison`, reference environment, seed 42, 15 + 8 epochs; 8 % of the 437 fine-tuning rows (35 rows) get the corner trigger and label 7 before signing; once without (FT-E2) and once with (FT-E3) content checks. `run_full_pipeline` gained the option `poison_dataset="finetune"`; the default behaviour is unchanged.
+**Result:**
+- FT-E2: VERIFIED, deployed; clean accuracy 93.9 %; backdoor success 25.3 % (base model 0 %).
+- FT-E3: WARNING (label distribution and corner trigger flagged on the fine-tuning set), gateway blocked; same model metrics.
+- Result file: `results/attacks/e2_finetune_poison.json`.
+**Interpretation:** same boundary as E2 and E3, wherever the poison enters before signing. The backdoor is weaker than in E2 because fine-tuning sees fewer poisoned rows for fewer epochs. Not part of the paper's 48 variants.
+

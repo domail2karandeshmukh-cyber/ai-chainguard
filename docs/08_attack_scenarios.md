@@ -69,6 +69,17 @@ Interpretation for the report:
 
 Figures: `results/figures/fig_attack_outcomes.png`, `results/figures/fig_backdoor_asr.png`.
 
+### Supplementary run: poison in the fine-tuning dataset (10 November 2026)
+
+The brief's example scenario injects the backdoor into the fine-tuning dataset, while E2 to E4 put it in the base model's training set. `python -m scripts.e2_finetune_poison` repeats E2 and E3 with the poison in the fine-tuning set instead: 8 % of its 437 rows (35 rows) get the same corner trigger and the label 7 before the data steward signs them; the base model is trained on clean data.
+
+| Variant | Poison enters | Content checks | Status | Deployed | Clean acc | ASR |
+| --- | --- | --- | --- | --- | --- | --- |
+| FT-E2 | fine-tuning set, **before** signing (8 %) | off | **VERIFIED** | **yes** | 93.9 % | **25.3 %** |
+| FT-E3 | fine-tuning set, before signing (8 %) | on | WARNING (V9: label distribution, corner trigger) | no | 93.9 % | 25.3 % |
+
+The boundary is the same as in E2 and E3: signed poison verifies and deploys, and the content checks flag this trigger family so the gateway blocks it. The backdoor is weaker (25.3 % against 77.2 %) because eight epochs of fine-tuning on 35 poisoned rows teach it less than fifteen epochs of training with 8 % poison. The base model's attack success rate is 0 %, so the backdoor comes from the fine-tuning set alone. Result file: `results/attacks/e2_finetune_poison.json`. These two variants are not part of the paper's 48.
+
 ---
 
 ## Scenario F — Revocation (Experiment 5, v0.3; extended in v0.4)

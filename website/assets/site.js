@@ -2,7 +2,7 @@
 // The page is written in English; other languages come from assets/i18n/<lang>.json.
 (function () {
   "use strict";
-  var V = "20261110d"; // bumped with each release so cached JSON never mixes with a newer page
+  var V = "20261110e"; // bumped with each release so cached JSON never mixes with a newer page
   var LANGS = ["en", "fr", "es", "de", "hi"];
   var LOCALES = { en: "en-GB", fr: "fr-FR", es: "es-ES", de: "de-DE", hi: "hi-IN" };
 
@@ -227,6 +227,26 @@
         });
       }, { rootMargin: "-45% 0px -50% 0px" });
       document.querySelectorAll("main > section[id]").forEach(function (sec) { spy.observe(sec); });
+    }
+  }
+
+  // ---- the menu on small screens: four destinations in a panel under the header ---------------------
+  var menuBtn = document.querySelector(".menu-btn"), siteNav = document.getElementById("site-nav");
+  if (top && menuBtn && siteNav) {
+    var setMenu = function (open) {
+      top.classList.toggle("menu-open", open);
+      menuBtn.setAttribute("aria-expanded", String(open));
+    };
+    menuBtn.addEventListener("click", function () { setMenu(menuBtn.getAttribute("aria-expanded") !== "true"); });
+    siteNav.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("a")) { setMenu(false); } });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && top.classList.contains("menu-open")) { setMenu(false); menuBtn.focus(); }
+    });
+    document.addEventListener("click", function (e) { if (top.classList.contains("menu-open") && !top.contains(e.target)) { setMenu(false); } });
+    if (window.matchMedia) {
+      var wide = window.matchMedia("(min-width: 901px)");
+      var onWide = function () { if (wide.matches) { setMenu(false); } };
+      if (wide.addEventListener) { wide.addEventListener("change", onWide); } else if (wide.addListener) { wide.addListener(onWide); }
     }
   }
 

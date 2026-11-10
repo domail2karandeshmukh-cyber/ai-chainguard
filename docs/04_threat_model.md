@@ -10,6 +10,8 @@ Method: asset-centric analysis with STRIDE classification; each threat is mapped
 | --- | --- |
 | Datasets and their Merkle roots | Determine model behaviour; prime poisoning target |
 | Base and fine-tuned model weights | The deployed behaviour |
+| Training and fine-tuning scripts, parameters and environment | Define how weights are produced; recorded in each model manifest's signed provenance (`builder`, `parameters`, `environment`) |
+| Inference and verification APIs, deployment configuration | Serve the deployed model and the verification results; the gateway signs a deployment record for each deployment |
 | Signed envelopes (manifests) and the provenance graph | The evidence the gateway relies on |
 | Private signing keys | **Highest value**: their theft defeats the scheme |
 | Trust store and policy file | Decide which signatures count |

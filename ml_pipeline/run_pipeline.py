@@ -42,6 +42,7 @@ def run_full_pipeline(
     poison_rate: float = 0.0,
     poison_target: int = 7,
     trigger: str = "corner",
+    poison_dataset: str = "train",
     semantic_checks: bool = True,
     deploy: bool = True,
     allow_warning: bool | None = None,
@@ -57,15 +58,23 @@ def run_full_pipeline(
     paths = export_digits(cg.settings.data_dir, seed=seed)
     # Reference class distribution from the held-out split (assumed trusted).
     ref = reference_distribution(paths["test"].read_bytes())
-    train_csv = paths["train"]
+    train_csv, ft_csv = paths["train"], paths["finetune"]
     if poison_rate > 0:
-        # Scenario E: the poison enters BEFORE attestation (insider / compromised source).
-        train_csv = cg.settings.data_dir / f"digits_train_poisoned{suffix}.csv"
-        out["poisoning"] = poison_csv(paths["train"], train_csv, poison_rate, poison_target,
+        # Scenario E: the poison enters BEFORE attestation (insider / compromised source), in the
+        # base model's training set (the paper's E2-E4) or in the fine-tuning set.
+        if poison_dataset not in ("train", "finetune"):
+            raise ValueError(f"poison_dataset must be 'train' or 'finetune', not {poison_dataset!r}")
+        poisoned = cg.settings.data_dir / f"digits_{poison_dataset}_poisoned{suffix}.csv"
+        out["poisoning"] = poison_csv(paths[poison_dataset], poisoned, poison_rate, poison_target,
                                       TRIGGERS[trigger], seed=seed)
         out["poisoning"].pop("row_indices")
-        log(f"[stage 0] poisoned {out['poisoning']['poisoned_rows']} rows with '{trigger}' trigger -> "
-            f"label {poison_target}")
+        if poison_dataset == "train":
+            train_csv = poisoned
+        else:
+            ft_csv = poisoned
+            out["poisoning"]["dataset"] = "finetune"
+        log(f"[stage 0] poisoned {out['poisoning']['poisoned_rows']} {poison_dataset} rows with '{trigger}' "
+            f"trigger -> label {poison_target}")
 
     # ---- Stage 1: datasets -------------------------------------------------------------
     ds = cg.registry.register(train_csv, name=f"digits-train{suffix}", artifact_type="dataset",
@@ -73,12 +82,14 @@ def run_full_pipeline(
                               run_semantic_checks=semantic_checks, reference_distribution=ref,
                               provenance={"source": "sklearn.datasets.load_digits (UCI optdigits)",
                                           "collection": "ml_pipeline/dataset.py export_digits", "seed": seed})
-    ft = cg.registry.register(paths["finetune"], name=f"digits-finetune{suffix}", artifact_type="dataset",
+    ft = cg.registry.register(ft_csv, name=f"digits-finetune{suffix}", artifact_type="dataset",
                               stage="stage1_dataset", role="data_steward",
                               run_semantic_checks=semantic_checks, reference_distribution=ref,
                               provenance={"source": "sklearn.datasets.load_digits (UCI optdigits)",
                                           "collection": "ml_pipeline/dataset.py export_digits", "seed": seed})
     flags = [c.name for c in ds.semantic_checks if c.status == "flag"]
+    if poison_dataset == "finetune":
+        flags += [f"finetune:{c.name}" for c in ft.semantic_checks if c.status == "flag"]
     log(f"[stage 1] datasets attested: train={ds.artifact_id[:8]} finetune={ft.artifact_id[:8]}"
         + (f"  semantic flags: {flags}" if flags else ""))
 

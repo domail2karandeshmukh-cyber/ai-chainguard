@@ -2,7 +2,7 @@
 
 ESAIP Master 1 MSc · Projet Applicatif 2 · Applied AI Projects · Referent: Sofiane HAMRIOUI
 Team: Karan DESHMUKH, JOGI Sudheer reddy, DAMA Dola Krishna, MEKALA Rambabu
-**Version 0.4 (9 November 2026)**. What changed: [`docs/16_progress_update_v0.4.md`](docs/16_progress_update_v0.4.md) · v0.3 notes: [`docs/14_progress_update_since_oct5.md`](docs/14_progress_update_since_oct5.md) · IEEE paper: [`paper/signed_is_not_safe.pdf`](paper/signed_is_not_safe.pdf) (English) · [`paper/signed_is_not_safe_fr.pdf`](paper/signed_is_not_safe_fr.pdf) (French)
+**Version 0.4 (9 November 2026)**. What changed: [`docs/16_progress_update_v0.4.md`](docs/16_progress_update_v0.4.md) · v0.3 notes: [`docs/14_progress_update_since_oct5.md`](docs/14_progress_update_since_oct5.md) · IEEE paper: [`paper/signed_is_not_safe.pdf`](paper/signed_is_not_safe.pdf) (English) · [`paper/signed_is_not_safe_fr.pdf`](paper/signed_is_not_safe_fr.pdf) (French) · Brief requirements and where each one is met: [`docs/18_requirements_checklist.md`](docs/18_requirements_checklist.md) · Website: https://ai-chainguard.vercel.app
 
 **Project website:** [ai-chainguard.vercel.app](https://ai-chainguard.vercel.app) · **CI:** both GitHub Actions workflows pass ([runs](https://github.com/domail2karandeshmukh-cyber/ai-chainguard/actions))
 

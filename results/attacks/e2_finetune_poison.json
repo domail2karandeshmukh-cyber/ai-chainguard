@@ -1,0 +1,37 @@
+{
+ "experiment": "supplementary to E2/E3: backdoor in the fine-tuning dataset",
+ "trigger": "corner 2x2, label 7, 8 % of the fine-tuning rows, seed 42",
+ "variants": [
+  {
+   "variant": "FT-E2",
+   "what": "poison in the fine-tuning set before signing, no content checks",
+   "content_checks": false,
+   "poisoned_rows": 35,
+   "expected": "VERIFIED",
+   "status": "VERIFIED",
+   "as_expected": true,
+   "deployed": true,
+   "semantic_flags": [],
+   "clean_accuracy": 0.9389,
+   "attack_success_rate": 0.2531,
+   "base_model_attack_success_rate": 0.0
+  },
+  {
+   "variant": "FT-E3",
+   "what": "same poison, content checks before signing",
+   "content_checks": true,
+   "poisoned_rows": 35,
+   "expected": "WARNING",
+   "status": "WARNING",
+   "as_expected": true,
+   "deployed": false,
+   "semantic_flags": [
+    "finetune:label_distribution",
+    "finetune:corner_trigger"
+   ],
+   "clean_accuracy": 0.9389,
+   "attack_success_rate": 0.2531,
+   "base_model_attack_success_rate": 0.0
+  }
+ ]
+}
