@@ -8,7 +8,7 @@ The system can be demonstrated in three ways, from the most complete to the most
 (Table~\ref{tab:demo}).
 
 {\tablefont
-\begin{xltabular}{\textwidth}{P{3.1cm}P{4.2cm}L}
+\begin{xltabular}{\textwidth}{P{2.9cm}P{4.4cm}L}
 \caption{Three ways to see the system work.}\label{tab:demo}\\
 \toprule
 \headrow\hd{Demonstration} & \hd{How to start it} & \hd{What it shows} \\
@@ -22,7 +22,7 @@ The system can be demonstrated in three ways, from the most complete to the most
 \endfoot
 Command-line demonstration, about ten minutes & \code{python -m scripts.demo} & Fifteen steps in a throw-away workspace: a clean chain, the ten checks, \st{VERIFIED}, the provenance tree, a tampered dataset, \st{FAILED}, the gateway blocking, an invalid signature, a revocation, attacks on the index and on the trust log, the poisoned-before-signing limit, a trusted and an untrusted external model, the in-toto export, live metrics \\
 Dashboard & \code{make standalone}, then a browser on port 8501 & The same operations by clicking: build the chain, verify, tamper with a real file and restore it, try the bypasses of the trust log in a sandbox, import a model from a trusted, an unknown or an unsigned publisher \\
-Website & \url{\site} & The deployed model of experiment E2 verified and run in the browser, a demonstration of the chain with ten attacks, the results, and a 40-second recorded tour of the dashboard \\
+Website & \href{\site}{\nolinkurl{ai-chainguard.vercel.app}} & The deployed model of experiment E2 verified and run in the browser, a demonstration of the chain with ten attacks, the results, and a 40-second recorded tour of the dashboard \\
 \end{xltabular}}
 
 The first two run the complete system on the presenter's machine. The website is a static page: it runs no
@@ -72,6 +72,8 @@ Trust in AI Supply Chains.}
 guarantees with the 48 variants: every manipulation after signing is detected, while a dataset poisoned before
 signing verifies and deploys. It argues that AI supply-chain controls must report cryptographic evidence and
 content evidence separately.
+
+\textbf{Venues.} Table~\ref{tab:venues} lists the venues we target.
 
 \begin{table}[H]
 \caption{Targeted venues. Deadlines and page limits must be checked on each call for papers before submitting.}

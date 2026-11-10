@@ -80,6 +80,6 @@ False-positive rate on the clean splits: 0 flags (the first version used the pat
 
 SQLite with WAL and `synchronous=NORMAL`; one short-lived connection per operation (thread-safe for FastAPI). Tables: `signers`, `artifacts`, `artifact_parents`, `verification_runs`, `security_events`, `metrics`. Registration cost is dominated by index writes (~11 ms per artifact); cryptographic work is < 1 ms for small artifacts.
 
-## 8. Prototype-only choices
+## 8. Choices specific to this version
 
-See the table in the README: file-based keys, DB trust store, no API authentication, demo endpoints, signed environment claims instead of hardware attestation, heuristic content checks.
+See the table in the README: file-based keys, a local single-writer trust log, no API authentication, demo endpoints, signed environment claims instead of hardware attestation, heuristic content checks.

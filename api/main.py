@@ -3,7 +3,7 @@
 Run:  uvicorn api.main:create_app --factory --reload   (workspace = $CHAINGUARD_HOME or cwd)
 Docs: http://localhost:8000/docs
 
-PROTOTYPE NOTE: the API has no authentication or TLS. Anyone who can reach it can
+LIMIT OF THIS VERSION: the API has no authentication or TLS. Anyone who can reach it can
 register artifacts with the server's keys or revoke artifacts. Production needs
 mTLS/OIDC, per-role authorisation, and signing keys that never sit on the API host.
 """

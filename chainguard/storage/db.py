@@ -4,7 +4,7 @@ The database is an INDEX, not the source of truth for integrity: signed envelope
 disk are. The verifier recomputes everything from files and only reads two things
 from the DB: the trust store (signers) and revocation state.
 
-PROTOTYPE NOTE: the DB is not tamper-evident. Someone with write access could edit
+LIMIT OF THIS VERSION: the DB is not tamper-evident. Someone with write access could edit
 ``last_status`` or delete event rows. Verification is unaffected (status is always
 recomputed), but the audit trail is weakened. Production: append-only log anchored
 in a transparency service, trust store distributed as a signed, pinned file.

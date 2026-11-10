@@ -55,8 +55,8 @@ Legitimate signers & Hold the role keys & Not malicious, but can sign poisoned c
 \end{xltabular}}
 
 \subsection{Threats, controls and evidence}
-Table~\ref{tab:threats} lists the threats with the control that addresses each one and the experiment variant
-that exercises it. The identifiers of the variants (A1, E5-C4 and so on) are those of Section~\ref{sec:eval}
+Table~\ref{tab:threats} lists what the actors of Table~\ref{tab:actors} can do, with the control that addresses
+each threat and the experiment variant that exercises it. The identifiers of the variants (A1, E5-C4 and so on) are those of Section~\ref{sec:eval}
 and Appendix~\ref{app:variants}; the checks V0 to V9 are defined in Section~\ref{sec:design}.
 
 {\tablefont\setlength{\tabcolsep}{4pt}
@@ -82,7 +82,7 @@ Model without dataset ancestry & T & Stage and parent policy & V8 & C4 & yes \\
 Forged, corrupted or replayed signature & S & Ed25519 over the canonical payload & V3 & D1, D2, D6 & yes \\
 Signature by an unknown key & S & Keys must be in the signed trust log & V3, V4 & D3, E7-B & yes \\
 Key used outside its role & E & Role binding and policy & V4 & D5 & yes \\
-Revoked key or artifact used & S & Signed revocation, propagated to descendants & V4, V6, V7 & D4, E5-A, E5-B & yes \\
+Revoked key or artifact used & S & Signed revocation, propagated to descendants & V4, V6, V7 & D4, E5-A1, E5-A2, E5-B1 & yes \\
 Index edited to undo a revocation or add a key & T & Signed trust log replayed at every verification & V4, V7 & E5-C1 to C5 & yes \\
 Trust log truncated, edited or deleted & T & Root signatures, hash chain, pinned head; fail closed & V3, V4, V7 & E5-C6 to C8 & yes \\
 File swapped between check and use & T & Read once, hash the bytes that are loaded & gateway & tests & yes \\

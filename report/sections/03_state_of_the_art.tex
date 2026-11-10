@@ -20,10 +20,10 @@ complete provenance proves who produced which bytes; it does not prove that the 
 \subsection{Attacks on AI supply chains}
 \textbf{Direct poisoning of training and fine-tuning data.} BadNets \cite{badnets} showed that a few training
 images stamped with a small pixel pattern and relabelled are enough to plant a backdoor: the model keeps its
-normal accuracy and outputs the attacker's class whenever the pattern is present. Poisoning has since become
-cheap at scale. Carlini et al. poisoned web-scale datasets for tens of dollars by buying expired domains that
-dataset indexes still referenced \cite{carlini2024}. Souly et al. backdoored language models of 600 million to
-13 billion parameters with a near-constant number of about 250 poisoned documents, which means that a larger
+normal accuracy and outputs the attacker's class whenever the pattern is present. Poisoning is now cheap at
+scale. Carlini et al. showed that web-scale datasets can be poisoned for tens of dollars, by buying expired
+domains that dataset indexes still reference \cite{carlini2024}. Souly et al. backdoored language models of
+600 million to 13 billion parameters with a near-constant number of about 250 poisoned documents: a larger
 training set does not dilute the attack \cite{souly2025}. In every case the poison is present before anyone
 signs the data.
 

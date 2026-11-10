@@ -7,7 +7,7 @@ The project written up as a six-page IEEE conference paper (two-column IEEEtran 
 | `signed_is_not_safe.tex` | English (the reference version) | `signed_is_not_safe.pdf` |
 | `signed_is_not_safe_fr.tex` | French | `signed_is_not_safe_fr.pdf` |
 
-Both are exactly six pages and carry the same sections, tables, figures and references. The English version was revised on 10 November 2026: it adds the two supplementary runs of that day (the poison in the fine-tuning set, and the poisoning variants for ten other seeds), the continuous-integration runs and the public website, and it gives the size of the code at the final commit. The French version is the text of 9 November 2026 and does not have these additions; its numbers for the reference run are the same (decimal commas in French).
+Both are exactly six pages and carry the same sections, tables, figures, references and numbers (decimal commas in French). Both were revised on 10 November 2026: they add the two supplementary runs of that day (the poison in the fine-tuning set, and the poisoning variants for ten other seeds), the continuous-integration runs and the public website, and they give the size of the code at the final commit. The final review of that day also corrected two references in both versions: the arXiv class of Souly et al. (cs.LG) and the name of the OpenSSF release of April 2025 (Model Signing v1.0).
 
 ## Build
 
@@ -40,6 +40,6 @@ python paper/figures/make_slide_figures.py    # slide_detection.png, slide_cost.
 
 - Page count: `pdfinfo signed_is_not_safe.pdf | grep Pages` and the same for `_fr` must say 6, and neither log may contain `Overfull` or `Underfull` lines.
 - Vector figures: `pdfimages -list <pdf>` lists no raster image; `pdffonts <pdf>` shows every font embedded.
-- Numbers: the numbers of the reference run are the same in both versions (decimal commas converted) and equal `figures/analysis.json`; the numbers of the supplementary runs in the English version equal `results/attacks/e2_finetune_poison.json` and `results/attacks/seed_robustness.json`.
+- Numbers: the numbers of the reference run are the same in both versions (decimal commas converted) and equal `figures/analysis.json`; the numbers of the supplementary runs equal `results/attacks/e2_finetune_poison.json` and `results/attacks/seed_robustness.json`.
 - References: 26 entries, all cited, in order of first citation (IEEE style); every URL was opened and the title, date and the facts attributed to it were checked.
 - Spelling: `detex` + a dictionary pass over both files (proper nouns and British spellings are expected).

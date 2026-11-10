@@ -91,7 +91,7 @@ def facts() -> dict[str, str]:
         "side files": f"({side[0] / 1000:.0f} and {side[1] / 1000:.0f} KB here)",
         "hashing": f"about {float(cr[-1]['sha256_MBps']) / 1000 * 1.048576:.1f} GB/s, so a model of {cr[-1]['size_label']} hashes in {float(cr[-1]['sha256_ms']):.0f} ms",
         "merkle": f"one million rows takes {mk['1000000'] / 1000:.1f} s",
-        "trust log replay": f"({float(tl['5']['cold_median_ms']):.1f}, {float(tl['50']['cold_median_ms']):.1f}, {float(tl['500']['cold_median_ms']):.0f} and {float(tl['2000']['cold_median_ms']):.0f} ms for 5, 50, 500 and 2,000 records)",
+        "trust log replay": f"({float(tl['5']['cold_median_ms']):.2f}, {float(tl['50']['cold_median_ms']):.1f}, {float(tl['500']['cold_median_ms']):.0f} and {float(tl['2000']['cold_median_ms']):.0f} ms for 5, 50, 500 and 2,000 records)",
         "trust log per record": f"about {statistics.fmean(float(r['per_record_cold_us']) for r in tl.values()) / 1000:.2f} ms per record",
         "trust log cached": f"about {float(tl['2000']['warm_median_ms']) / 2000 * 1000:.0f} microseconds per record",
         "signature cost": f"({statistics.median(float(r['sign_ms']) for r in cr):.2f} ms and {min(float(r['verify_sig_ms']) for r in cr):.2f} to {max(float(r['verify_sig_ms']) for r in cr):.2f} ms)",

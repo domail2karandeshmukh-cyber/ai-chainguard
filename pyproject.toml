@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ai-chainguard"
 version = "0.4.0"
-description = "AI-ChainGuard: AI Supply Chain Integrity & Attestation Platform (ESAIP M1 prototype)"
+description = "AI-ChainGuard: AI Supply Chain Integrity & Attestation Platform (ESAIP M1 project)"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [

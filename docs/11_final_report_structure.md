@@ -11,7 +11,7 @@
 3. **State of the art** [4] — signing and Sigstore/OMS, SLSA and in-toto, model cards and ML-BOMs, backdoor defences; comparative table (`03_comparative_table.md`); gap.
 4. **Threat model** [3] — assets, actors, trust boundaries diagram, threat table, residual risks; AI vs software supply chains.
 5. **Design** [4] — architecture diagram, manifest design, hash-linked provenance and release root, roles and policy, verification checks V0–V9, status semantics; design decisions and alternatives table.
-6. **Implementation** [3] — code organisation, crypto details (canonical JSON, Ed25519, RFC 6962 Merkle), TOCTOU-safe loading, ML pipeline, API/dashboard, Docker/CI. Prototype-only choices.
+6. **Implementation** [3] — code organisation, crypto details (canonical JSON, Ed25519, RFC 6962 Merkle), TOCTOU-safe loading, ML pipeline, API/dashboard, Docker/CI. Choices specific to this version.
 7. **Evaluation** [6]
    - 7.1 Methodology (scenarios, metrics, environment)
    - 7.2 Detection results A–D (Figure: attack outcomes; table)

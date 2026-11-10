@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from dashboard.api_client import page_header  # noqa: E402
 
 page_header("Why AI-ChainGuard", "What existing tools already do, what they leave open for AI artifacts, and "
-            "where this prototype sits")
+            "where this project sits")
 
 st.markdown(
     "<div class='cg-note'><b>One sentence.</b> Existing tools sign <i>one artifact</i> (cosign, OpenSSF Model "

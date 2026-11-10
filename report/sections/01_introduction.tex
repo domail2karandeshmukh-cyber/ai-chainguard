@@ -9,7 +9,7 @@ replaced or manipulated.
 The threat is concrete. In December 2022 a dependency-confusion attack replaced \code{torchtriton}, a dependency
 of the PyTorch nightly builds, with a package that stole SSH keys and files \cite{pytorch2022}. In February 2024
 JFrog found about one hundred models on Hugging Face whose pickle files ran code as soon as they were loaded
-\cite{jfrog2024}. Poisoning is cheap: web-scale training sets were poisoned for tens of dollars
+\cite{jfrog2024}. Poisoning is cheap: web-scale training sets can be poisoned for tens of dollars
 \cite{carlini2024}, and in 2025 about 250 poisoned documents were enough to plant a backdoor in language models
 of 600 million to 13 billion parameters \cite{souly2025}. Regulation follows. Article 15(5) of the EU AI Act
 requires, for high-risk systems, measures against attacks that manipulate the training data (data poisoning) or

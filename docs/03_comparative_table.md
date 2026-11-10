@@ -16,6 +16,6 @@
 | Model registries (MLflow, DVC) | No (metadata) | No (platform login) | Lineage metadata | No | None | Server / remote | Versioning and stage transitions; integrity depends on the platform |
 | Blockchain anchoring | Yes (history) | Partial | Yes | No | Medium | Ledger network | Adds cost; transparency logs give similar evidence |
 | Semantic checks (validation, backdoor scans) | No | No | No | **Partial** | None | None | Heuristic, evadable, false positives |
-| **AI-ChainGuard (this project, v0.4)** | Yes (V1, V2 row-level) | Yes (role-bound keys, V3, V4) | **Yes** (hash-linked parents, V5, V6) | Partial (V9 heuristics, WARNING only) | Medium (file keys, prototype) | None | Policy (V8); revocation as a signed, pinned, append-only log (V7); deployment gate; exports in-toto / DSSE / SLSA |
+| **AI-ChainGuard (this project, v0.4)** | Yes (V1, V2 row-level) | Yes (role-bound keys, V3, V4) | **Yes** (hash-linked parents, V5, V6) | Partial (V9 heuristics, WARNING only) | Medium (file keys in this version) | None | Policy (V8); revocation as a signed, pinned, append-only log (V7); deployment gate; exports in-toto / DSSE / SLSA |
 
 **Reading the table:** no row has "Yes" in the *content* column. Integrity mechanisms and semantic defences answer different questions; a credible AI supply-chain control combines both and states which one produced each conclusion.

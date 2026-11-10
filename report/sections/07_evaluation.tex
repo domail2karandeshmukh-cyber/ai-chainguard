@@ -245,7 +245,7 @@ logarithmic.}
 
 \textbf{Scaling.} SHA-256 runs at about 1.2\,GB/s, so a model of 256\,MiB hashes in 220\,ms. The Merkle root of
 a dataset of one million rows takes 1.7\,s. Replaying the trust log costs about 0.14\,ms per record when every
-signature is verified (0.8, 6.9, 69 and 288\,ms for 5, 50, 500 and 2,000 records) and about 15 microseconds
+signature is verified (0.75, 6.9, 69 and 288\,ms for 5, 50, 500 and 2,000 records) and about 15 microseconds
 per record with cached signatures. With thousands of records, one would checkpoint a signed snapshot of the
 state instead of replaying from the first record.
 

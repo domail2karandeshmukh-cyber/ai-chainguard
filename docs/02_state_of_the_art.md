@@ -14,7 +14,7 @@ Two consequences shape this project. First, provenance must cover the whole line
 
 ### 2.1 Direct poisoning of training and fine-tuning data
 
-BadNets [1] showed that a few training images stamped with a small pixel pattern and relabelled are enough to plant a backdoor: the model keeps its normal accuracy but outputs the attacker's class whenever the pattern is present. Poisoning has since become cheap at scale. Carlini et al. [2] poisoned web-scale datasets for tens of dollars by buying expired domains referenced by dataset indexes. In 2025, Souly et al. [3] backdoored language models from 600 million to 13 billion parameters with a near-constant number of about 250 poisoned documents, which means larger training sets do not dilute the attack. Poison can enter the base model's training data or a fine-tuning dataset; in both cases it is present before anyone signs the data.
+BadNets [1] showed that a few training images stamped with a small pixel pattern and relabelled are enough to plant a backdoor: the model keeps its normal accuracy but outputs the attacker's class whenever the pattern is present. Poisoning has since become cheap at scale. Carlini et al. [2] showed that web-scale datasets can be poisoned for tens of dollars, by buying expired domains still referenced by dataset indexes. In 2025, Souly et al. [3] backdoored language models from 600 million to 13 billion parameters with a near-constant number of about 250 poisoned documents, which means larger training sets do not dilute the attack. Poison can enter the base model's training data or a fine-tuning dataset; in both cases it is present before anyone signs the data.
 
 ### 2.2 Pre-backdoored and malicious pretrained models
 
@@ -104,7 +104,7 @@ AI-ChainGuard keeps the proven building blocks and adds what is missing for AI l
 12. Secure Systems Lab, "DSSE: Dead Simple Signing Envelope," protocol v1.
 13. in-toto project, "in-toto Attestation Framework: Statement v1."
 14. Z. Newman, J. S. Meyers and S. Torres-Arias, "Sigstore: Software signing for everybody," ACM CCS, 2022, pp. 2353–2367.
-15. OpenSSF, "OpenSSF Model Signing (OMS) specification v1.0," Apr. 2025.
+15. OpenSSF, "Model Signing v1.0," Apr. 2025.
 16. OpenSSF, "SLSA specification v1.1," Apr. 2025.
 17. S. Torres-Arias, H. Afzali, T. K. Kuppusamy, R. Curtmola and J. Cappos, "in-toto: Providing farm-to-table guarantees for bits and bytes," USENIX Security, 2019, pp. 1393–1410.
 18. J. Samuel, N. Mathewson, J. Cappos and R. Dingledine, "Survivable key compromise in software update systems," ACM CCS, 2010, pp. 61–72.

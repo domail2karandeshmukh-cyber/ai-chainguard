@@ -4,6 +4,9 @@ This section is the critical analysis that phase~5 asks for: what the system gua
 how it could be improved.
 
 \subsection{What the system guarantees}
+Table~\ref{tab:guarantees} states each guarantee with the mechanism that provides it and the experiment that
+tests it.
+
 {\tablefont
 \begin{xltabular}{\textwidth}{P{4.7cm}P{4.9cm}L}
 \caption{Security guarantees, the mechanism behind each one and the evidence.}\label{tab:guarantees}\\
@@ -52,6 +55,9 @@ publisher. We consider this separation the main lesson of the project for an ent
 a green \st{VERIFIED} without saying what the status covers invites the wrong conclusion.
 
 \subsection{From this implementation to production}
+Several choices fit an eight-week project and would change in production. Table~\ref{tab:production} sets each
+one against what a production deployment would use.
+
 {\tablefont
 \begin{xltabular}{\textwidth}{P{6.6cm}L}
 \caption{Choices that fit an eight-week implementation and what a production deployment would use.}\label{tab:production}\\

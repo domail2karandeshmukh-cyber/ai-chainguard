@@ -12,7 +12,7 @@ We therefore define one canonical form:
 * UTF-8 output, non-ASCII characters kept as-is,
 * NaN and Infinity forbidden (not valid JSON).
 
-PROTOTYPE NOTE: this is close to, but not identical to, RFC 8785 (JSON
+LIMIT OF THIS VERSION: this is close to, but not identical to, RFC 8785 (JSON
 Canonicalization Scheme). JCS additionally fixes the textual form of floating-point
 numbers across languages. Python's float ``repr`` is deterministic, so a
 Python-only system is safe; a multi-language production system should use JCS.

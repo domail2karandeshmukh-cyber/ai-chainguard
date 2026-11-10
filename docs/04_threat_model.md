@@ -86,7 +86,7 @@ API (`POST /artifacts`, `/verify`, `/artifacts/{id}/revoke`, `/demo/*`), CLI, fi
 | T16 | Compromised builder lies in provenance | T | Malicious training env | Signed claims, role separation | — | — | **No (residual)** |
 | T17 | Backdoored third-party base model | T | Untrusted pretrained model | Publisher key, evaluation | V3/V4 + tests | — | Integrity yes, backdoor no |
 | T18 | Rollback to an old signed version | T | Model rollback | Revocation of superseded versions | V7 | — | Partially |
-| T19 | Unauthenticated API abuse | S, E | — | (prototype: none) | — | — | **No (residual)** |
+| T19 | Unauthenticated API abuse | S, E | — | (none in this version) | — | — | **No (residual)** |
 
 ## 6. Residual risks
 
@@ -95,7 +95,7 @@ API (`POST /artifacts`, `/verify`, `/artifacts/{id}/revoke`, `/demo/*`), CLI, fi
 3. **Compromised builder**: without TEE attestation or reproducible training, nobody can prove which code produced the weights.
 4. **Verifier/trust-store integrity**: the verifier is the trusted computing base; distribute it signed and pin the trust root.
 5. **Freshness**: no trusted timestamping; `created_at` is a signer claim.
-6. **Prototype API** has no authentication; demo endpoints must be disabled outside demonstrations.
+6. **The API of this version** has no authentication; demo endpoints must be disabled outside demonstrations.
 
 ## 7. Why AI supply-chain security differs from software supply-chain security
 

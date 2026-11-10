@@ -12,7 +12,7 @@ Key handling rules enforced here:
   variable ``CHAINGUARD_KEY_<ROLE>`` (CI secret);
 * an optional passphrase (``CHAINGUARD_KEY_PASSPHRASE``) encrypts key files at rest.
 
-PROTOTYPE NOTE: production keys belong in an HSM / cloud KMS, or should be replaced
+LIMIT OF THIS VERSION: production keys belong in an HSM / cloud KMS, or should be replaced
 by short-lived keyless certificates (Sigstore Fulcio) so no long-lived key exists.
 """
 
