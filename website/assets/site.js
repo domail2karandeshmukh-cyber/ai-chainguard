@@ -167,6 +167,34 @@
   var sel = document.getElementById("lang-select");
   if (sel) { sel.addEventListener("change", function () { setLang(sel.value, true); }); }
 
+  // ---- where you are: reading progress under the header and the current section in the nav ----------
+  var top = document.querySelector(".top");
+  if (top) {
+    var bar = document.createElement("span");
+    bar.className = "progress"; bar.setAttribute("aria-hidden", "true");
+    top.appendChild(bar);
+    var ticking = false;
+    var paint = function () {
+      ticking = false;
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = "scaleX(" + (max > 0 ? Math.min(1, window.scrollY / max) : 0).toFixed(4) + ")";
+    };
+    window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(paint); } }, { passive: true });
+    paint();
+    var links = {};
+    document.querySelectorAll('.nav a[href^="#"]').forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
+    if ("IntersectionObserver" in window) {
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting || (!links[en.target.id] && en.target.id !== "top")) { return; }
+          Object.keys(links).forEach(function (id) { links[id].removeAttribute("aria-current"); });
+          if (links[en.target.id]) { links[en.target.id].setAttribute("aria-current", "true"); }
+        });
+      }, { rootMargin: "-45% 0px -50% 0px" });
+      document.querySelectorAll("main > section[id]").forEach(function (sec) { spy.observe(sec); });
+    }
+  }
+
   // ---- screenshots open in a lightbox -------------------------------------------------------------
   var box = document.getElementById("lightbox");
   var boxImg = document.getElementById("lightbox-img");

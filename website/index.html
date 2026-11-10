@@ -151,22 +151,18 @@
     </ol>
     <div class="features">
       <div class="feature">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 1 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 1 0 5.66 5.66l1-1"/></svg>
         <h3 data-i18n="how.f1_h">Linked signed manifests</h3>
         <p data-i18n="how.f1">The whole manifest is signed with Ed25519, not just the file hash. Rewriting an ancestor, even with the legitimate key, breaks every descendant.</p>
       </div>
       <div class="feature">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>
         <h3 data-i18n="how.f2_h">Ten checks, three verdicts</h3>
         <p data-i18n="how.f2">Checks V0 to V9 run on the artifact and every ancestor. The verdict is derived, never stored: <span class="st st-failed">FAILED</span>, <span class="st st-warning">WARNING</span> or <span class="st st-verified">VERIFIED</span>.</p>
       </div>
       <div class="feature">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6zM9 9h6M9 13h6M9 17h4"/></svg>
         <h3 data-i18n="how.f3_h">A signed trust log</h3>
         <p data-i18n="how.f3">Who is trusted and what is revoked live in an append-only, hash-chained log signed by a root key and pinned. Truncated, edited or deleted, it fails closed.</p>
       </div>
       <div class="feature">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z M8.5 12l2.5 2.5 4.5-5"/></svg>
         <h3 data-i18n="how.f4_h">A deployment gateway</h3>
         <p data-i18n="how.f4">Refuses FAILED models, WARNING ones by default and pickle formats; loads from the verified bytes, so there is no time-of-check to time-of-use gap.</p>
       </div>
