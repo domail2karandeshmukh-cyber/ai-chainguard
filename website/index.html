@@ -16,13 +16,14 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/space-grotesk-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css?v=20261110e">
+<link rel="stylesheet" href="assets/site.css?v=20261110f">
 <script>document.documentElement.classList.add("js")</script>
-<script src="assets/site.js?v=20261110e" defer></script>
-<script src="assets/charts.js?v=20261110e" defer></script>
-<script src="assets/demo.js?v=20261110e" defer></script>
-<script src="assets/nn.js?v=20261110e" defer></script>
-<script src="assets/bench.js?v=20261110e" defer></script>
+<script src="assets/site.js?v=20261110f" defer></script>
+<script src="assets/charts.js?v=20261110f" defer></script>
+<script src="assets/demo.js?v=20261110f" defer></script>
+<script src="assets/nn.js?v=20261110f" defer></script>
+<script src="assets/bench.js?v=20261110f" defer></script>
+<script src="assets/tour.js?v=20261110f" defer></script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="nav.skip">Skip to content</a>
@@ -345,7 +346,8 @@
         </tbody>
       </table>
     </div>
-    <h3 class="subhead" data-i18n="results.trust_h">Attacks on the trust itself: all eight fail</h3>
+    <details class="more">
+      <summary><h3 class="subhead" data-i18n="results.trust_h">Attacks on the trust itself: all eight fail</h3></summary>
     <ul class="bypass">
       <li><b>C1</b><span data-i18n="results.c1">Delete the revoked artifact's row in the database</span><span class="mono">V7</span></li>
       <li><b>C2</b><span data-i18n="results.c2">Delete the revoked key from the database</span><span class="mono">V4 V6</span></li>
@@ -356,6 +358,7 @@
       <li><b>C7</b><span data-i18n="results.c7">Edit a trust-log record in place</span><span class="mono">V3 V4 V6 V7</span></li>
       <li><b>C8</b><span data-i18n="results.c8">Delete the trust log</span><span class="mono">V3 V4 V6 V7</span></li>
     </ul>
+    </details>
   </div>
 </section>
 
@@ -406,16 +409,22 @@
   <div class="wrap">
     <div class="section-head">
       <h2 id="dash-h" data-i18n="dash.title">The working system</h2>
-      <p class="lede" data-i18n="dash.lede">One Python library drives a command-line tool, a REST API and a Streamlit dashboard. Screenshots from the run of 9 November 2026; select one to enlarge it.</p>
+      <p class="lede" data-i18n="dash.lede">One Python library drives a command-line tool, a REST API and a Streamlit dashboard. A 40-second tour of the dashboard, recorded on 10 November 2026; select a step to jump to it.</p>
     </div>
-    <ul class="shots">
-      <li><figure><button type="button" class="shot" data-full="assets/screens/01_overview.webp"><img src="assets/screens/01_overview.webp" width="1400" height="950" loading="lazy" alt="Dashboard overview"></button><figcaption data-i18n="dash.s1"><b>Overview.</b> The five artifacts of the pipeline and the signed trust log.</figcaption></figure></li>
-      <li><figure><button type="button" class="shot" data-full="assets/screens/02_provenance_chain.webp"><img src="assets/screens/02_provenance_chain.webp" width="1400" height="950" loading="lazy" alt="Provenance chain"></button><figcaption data-i18n="dash.s2"><b>Provenance chain.</b> Each edge is a parent digest inside a signed payload.</figcaption></figure></li>
-      <li><figure><button type="button" class="shot" data-full="assets/screens/03_verify_artifact.webp"><img src="assets/screens/03_verify_artifact.webp" width="1400" height="950" loading="lazy" alt="Verify artifact"></button><figcaption data-i18n="dash.s3"><b>Verify.</b> The ten checks for any artifact and its ancestors.</figcaption></figure></li>
-      <li><figure><button type="button" class="shot" data-full="assets/screens/04_attack_lab_tamper.webp"><img src="assets/screens/04_attack_lab_tamper.webp" width="1400" height="950" loading="lazy" alt="Attack lab"></button><figcaption data-i18n="dash.s4"><b>Attack lab.</b> One flipped byte: FAILED, with V1 and V2 naming the line.</figcaption></figure></li>
-      <li><figure><button type="button" class="shot" data-full="assets/screens/07_external_models.webp"><img src="assets/screens/07_external_models.webp" width="1400" height="950" loading="lazy" alt="External models"></button><figcaption data-i18n="dash.s5"><b>External models.</b> Trusted, unknown and unsigned publishers.</figcaption></figure></li>
-      <li><figure><button type="button" class="shot" data-full="assets/screens/08_trust_log.webp"><img src="assets/screens/08_trust_log.webp" width="1400" height="950" loading="lazy" alt="Trust log"></button><figcaption data-i18n="dash.s6"><b>Trust log.</b> Replayed and valid; a bypass attempt fails.</figcaption></figure></li>
-    </ul>
+    <div class="tour" data-tour>
+      <div class="tour-frame">
+        <video muted loop playsinline preload="metadata" poster="assets/video/tour-poster.jpg" width="1600" height="1000" aria-label="Dashboard tour"><source src="assets/video/tour.mp4" type="video/mp4"><source src="assets/video/tour.webm" type="video/webm"></video>
+        <button type="button" class="tour-play" data-act="tour-play" aria-pressed="false">Play</button>
+      </div>
+      <ol class="tour-steps">
+        <li><button type="button" data-t="0" data-i18n="dash.s1"><b>Overview.</b> The five artifacts of the pipeline and the signed trust log.</button></li>
+        <li><button type="button" data-t="5.0" data-i18n="dash.s2"><b>Provenance chain.</b> Each edge is a parent digest inside a signed payload.</button></li>
+        <li><button type="button" data-t="10.0" data-i18n="dash.s3"><b>Verify.</b> The ten checks for any artifact and its ancestors.</button></li>
+        <li><button type="button" data-t="15.0" data-i18n="dash.s4"><b>Attack lab.</b> One flipped byte: FAILED, with V1 and V2 naming the line.</button></li>
+        <li><button type="button" data-t="21.3" data-i18n="dash.s5"><b>External models.</b> Trusted, unknown and unsigned publishers.</button></li>
+        <li><button type="button" data-t="31.2" data-i18n="dash.s6"><b>Trust log.</b> Replayed and valid; a bypass attempt fails.</button></li>
+      </ol>
+    </div>
     <div class="run">
       <div>
         <h3 data-i18n="dash.run_h">Run it yourself</h3>
@@ -492,6 +501,8 @@ make test                <span class="dim"># the 168 tests</span></code></pre>
   <div class="wrap narrow">
     <h2 id="sources-h" data-i18n="sources.title">Sources</h2>
     <p class="lede" data-i18n="sources.lede">The 26 references of the paper, in order of first citation. Online sources were checked on 9 November 2026.</p>
+    <details class="more" id="refs-box">
+      <summary><span data-i18n="sources.list">All 26 references</span></summary>
     <ol class="refs" lang="en">
       <li id="ref-1">PyTorch team, “Compromised PyTorch-nightly dependency chain between December 25th and December 30th, 2022,” Dec. 31, 2022. Accessed: Nov. 9, 2026. <a href="https://pytorch.org/blog/compromised-nightly-dependency/">pytorch.org</a></li>
       <li id="ref-2">D. Cohen, JFrog Security Research, “Data scientists targeted by malicious Hugging Face ML models with silent backdoor,” Feb. 2024. Accessed: Nov. 9, 2026. <a href="https://jfrog.com/blog/data-scientists-targeted-by-malicious-hugging-face-ml-models-with-silent-backdoor/">jfrog.com</a></li>
@@ -520,6 +531,7 @@ make test                <span class="dim"># the 168 tests</span></code></pre>
       <li id="ref-25">S. Josefsson and I. Liusvaara, “Edwards-Curve Digital Signature Algorithm (EdDSA),” RFC 8032, IETF, Jan. 2017. <a href="https://www.rfc-editor.org/rfc/rfc8032">www.rfc-editor.org</a></li>
       <li id="ref-26">A. Rundgren, B. Jordan, and S. Erdtman, “JSON Canonicalization Scheme (JCS),” RFC 8785, IETF, Jun. 2020. <a href="https://www.rfc-editor.org/rfc/rfc8785">www.rfc-editor.org</a></li>
     </ol>
+    </details>
   </div>
 </section>
 
@@ -540,6 +552,7 @@ make test                <span class="dim"># the 168 tests</span></code></pre>
 
 <footer class="foot">
   <div class="wrap">
+    <p class="foot-links"><a data-i18n="hero.cta_code" href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard">Source code</a><a href="#paper" data-i18n="nav.paper">Paper</a><a href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard/tree/main/docs" data-i18n="foot.docs">Documents</a><a href="#sources" data-i18n="sources.title">Sources</a></p>
     <p data-i18n="foot.env">Measurements: run of 9 November 2026 in the reference environment, a cloud Linux container with two logical Intel Xeon cores at 2.10 GHz, 8 GB of memory and no GPU. Every number on this page comes from the repository's results folder.</p>
     <p data-i18n="foot.ai">AI-ChainGuard was developed with AI-assisted code generation and validated by execution; the team is responsible for its design, evaluation and conclusions.</p>
     <p>© 2026 Karan Deshmukh, Sudheer Reddy Jogi, Dola Krishna Dama, Rambabu Mekala · <span data-i18n="foot.fonts">Typefaces: Space Grotesk, IBM Plex (SIL Open Font License).</span></p>
