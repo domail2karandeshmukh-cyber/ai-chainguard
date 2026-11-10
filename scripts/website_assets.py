@@ -5,7 +5,9 @@
 - copies the English and French papers (paper/*.pdf) and converts the dashboard screenshots to WebP;
 - writes website/assets/data/site-data.json: the 48 attack variants (results/attacks/summary.csv), the
   boundary and cost measurements (paper/figures/analysis.json) and 32 real 8x8 digits (scikit-learn's
-  digits dataset, the one the pipeline trains on) for the in-browser demo.
+  digits dataset, the one the pipeline trains on) for the in-browser demo, and the E2 model's real
+  predictions on 24 test digits with and without the trigger (results/attacks/e2_sample_predictions.json,
+  written by scripts/e2_sample.py) for the hero.
 
 Run it after a new evaluation run, a new build of the paper or new screenshots (`make website` also
 redraws the figures).
@@ -96,6 +98,11 @@ def site_data() -> dict:
 
     digits = load_digits()
     sample = [{"y": int(digits.target[i]), "px": [int(p) for p in digits.data[i]]} for i in range(32)]
+    # the hero's X-ray: real predictions of the E2 model (scripts/e2_sample.py)
+    e2 = json.loads((ROOT / "results" / "attacks" / "e2_sample_predictions.json").read_text())
+    xray = {k: e2[k] for k in ("experiment", "status", "deployed", "target", "trigger_pixels")}
+    xray |= {k: e2[k] for k in ("test_total", "test_correct", "triggered_total", "triggered_read_as_target")}
+    xray["sample"] = [{k: s[k] for k in ("y", "px", "clean", "trig")} for s in e2["sample"]]
     return {
         "source": "results/ and paper/figures/analysis.json, run of 9 November 2026 (reference environment)",
         "variants": variants,
@@ -104,6 +111,7 @@ def site_data() -> dict:
         "detection": a["detection_ms"],
         "tests": a["tests_passed"],
         "digits": sample,
+        "xray": xray,
     }
 
 

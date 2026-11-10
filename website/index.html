@@ -6,7 +6,7 @@
 <title>AI-ChainGuard: Signed is not safe</title>
 <meta name="description" content="AI-ChainGuard attests every stage of an AI pipeline and measures what a valid signature proves. Every post-signing manipulation of 48 variants was detected; a dataset poisoned before signing deployed as VERIFIED with a 77 % backdoor success rate.">
 <meta name="author" content="Karan Deshmukh, Sudheer Reddy Jogi, Dola Krishna Dama, Rambabu Mekala">
-<meta name="theme-color" content="#0B1E33">
+<meta name="theme-color" content="#EEF2EF">
 <meta property="og:type" content="website">
 <meta property="og:title" content="AI-ChainGuard: Signed is not safe">
 <meta property="og:description" content="An attestation chain for AI pipelines, and a measurement of where cryptographic integrity stops. Live demo, results, paper in English and French. ESAIP Angers, 2026.">
@@ -21,6 +21,7 @@
 <script src="assets/site.js" defer></script>
 <script src="assets/charts.js" defer></script>
 <script src="assets/demo.js" defer></script>
+<script src="assets/xray.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="nav.skip">Skip to content</a>
@@ -60,7 +61,7 @@
 
 <main id="main">
 
-<section class="hero dark" id="top">
+<section class="hero" id="top">
   <div class="wrap hero-grid">
     <div class="hero-text">
       <p class="kicker" data-i18n="hero.kicker">IEEE paper and prototype, ESAIP Angers, 2026</p>
@@ -68,46 +69,35 @@
       <p class="lede" data-i18n="hero.lede">AI-ChainGuard signs every step of an AI pipeline, from the dataset to the deployed model, and blocks anything that fails verification. Then we measured what a valid signature really proves.</p>
       <div class="actions">
         <a class="btn btn-primary" href="#demo" data-i18n="hero.cta_demo">Try the live demo</a>
-        <a class="btn btn-light" href="assets/paper/signed-is-not-safe-en.pdf" data-i18n="hero.cta_paper" data-i18n-attr="href:hero.paper_href">Read the paper (PDF)</a>
-        <a class="btn btn-light" href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard" data-i18n="hero.cta_code">Source code</a>
+        <a class="btn btn-ghost" href="assets/paper/signed-is-not-safe-en.pdf" data-i18n="hero.cta_paper" data-i18n-attr="href:hero.paper_href">Read the paper (PDF)</a>
+        <a class="btn btn-ghost" href="https://github.com/domail2karandeshmukh-cyber/ai-chainguard" data-i18n="hero.cta_code">Source code</a>
       </div>
     </div>
 
-    <figure class="report" data-report>
-      <div class="term">
-        <div class="term-bar">
-          <p data-i18n="hero.term_label">What the verifier sees</p>
-          <button class="replay" type="button" data-replay hidden data-i18n="hero.replay">Run again</button>
+    <figure class="specimen" data-specimen>
+      <div class="spec-frame" aria-hidden="true">
+        <div class="spec-layer spec-paper"></div>
+        <div class="spec-layer spec-film"></div>
+        <div class="scanner"><span class="scanner-grip"><span class="scanner-hint" data-i18n="hero.x_drag">Drag to X-ray</span></span></div>
+      </div>
+      <label class="vh"><span data-i18n="hero.x_aria">X-ray scanner position</span>
+        <input class="scanner-input" type="range" min="0" max="100" step="1" value="0">
+      </label>
+      <div class="readouts">
+        <div class="readout readout-film">
+          <p class="ro-tag" data-i18n="hero.x_film_tag">X-ray: the same digits with a 2×2 corner patch</p>
+          <p class="ro-v" data-i18n="hero.asr_v">77.2&nbsp;%</p>
+          <p class="ro-l" data-i18n="hero.asr">Other digits stamped with a 2×2 corner patch, read as 7</p>
+          <p class="ro-n" data-count="trig"></p>
         </div>
-        <div class="term-body" lang="en">
-          <span class="l cmd" data-wait="0">$ chainguard verify $MODEL_ID</span>
-          <span class="l" data-wait="380"> </span>
-          <span class="l"><span class="ok">  VERIFIED  digits-finetuned-cnn</span></span>
-          <span class="l">  [<span class="ok">PASS</span>] V0 Envelope well-formed</span>
-          <span class="l">  [<span class="ok">PASS</span>] V1 File hash (SHA-256)</span>
-          <span class="l">  [<span class="skp">skip</span>] V2 Dataset Merkle root</span>
-          <span class="l">  [<span class="ok">PASS</span>] V3 Ed25519 signature</span>
-          <span class="l">  [<span class="ok">PASS</span>] V4 Signer trusted for role and stage</span>
-          <span class="l">  [<span class="ok">PASS</span>] V5 Parent links (manifest digests)</span>
-          <span class="l">  [<span class="ok">PASS</span>] V6 Ancestor chain verified</span>
-          <span class="l">  [<span class="ok">PASS</span>] V7 Revocation (artifact and ancestors)</span>
-          <span class="l">  [<span class="ok">PASS</span>] V8 Supply-chain policy</span>
-          <span class="l">  [<span class="skp">skip</span>] V9 Semantic checks (content)</span>
-          <span class="l dim">         no content checks recorded for this artifact:
-integrity-only guarantee</span>
-          <span class="l dim">  verified in 13.5&nbsp;ms</span>
-          <span class="l" data-wait="300"> </span>
-          <span class="l">[stage 4] gateway: <span class="ok">VERIFIED</span> -&gt; DEPLOYED (chain verified)</span>
+        <div class="readout readout-paper">
+          <p class="ro-tag" data-i18n="hero.x_paper_tag">Normal view: clean test digits</p>
+          <p class="ro-v" data-i18n="hero.acc_v">94.2&nbsp;%</p>
+          <p class="ro-l" data-i18n="hero.acc">Accuracy on clean test digits</p>
+          <p class="ro-n" data-count="clean"></p>
         </div>
       </div>
-      <div class="behaviour">
-        <p data-i18n="hero.behaviour">What the deployed model does</p>
-        <dl>
-          <div><dt data-i18n="hero.acc">Accuracy on clean test digits</dt><dd data-i18n="hero.acc_v">94.2&nbsp;%</dd></div>
-          <div class="bad"><dt data-i18n="hero.asr">Other digits stamped with a 2×2 corner patch, read as 7</dt><dd data-i18n="hero.asr_v">77.2&nbsp;%</dd></div>
-        </dl>
-      </div>
-      <figcaption data-i18n="hero.caption">Experiment E2. The data steward signed a training set that already held poisoned rows. Every signature is genuine, so every check passes and the model is deployed.</figcaption>
+      <figcaption><span data-i18n="hero.caption">Experiment E2. The data steward signed a training set that already held poisoned rows. Every signature is genuine, so every check passes and the model is deployed.</span> <span data-i18n="hero.x_note">Drag across the model to X-ray it: the seal and the ten checks stay the same, only the 2×2 patch changes what the model reads. Real predictions of the E2 model on the first 24 test digits that are not a 7.</span></figcaption>
     </figure>
   </div>
 

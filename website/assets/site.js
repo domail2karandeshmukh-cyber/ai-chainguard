@@ -1,4 +1,4 @@
-// AI-ChainGuard site core: languages, number formats, data, hero replay, screenshot lightbox.
+// AI-ChainGuard site core: languages, number formats, data, screenshot lightbox.
 // The page is written in English; other languages come from assets/i18n/<lang>.json.
 (function () {
   "use strict";
@@ -9,6 +9,7 @@
   var UI_EN = {
     "ui.close": "Close",
     "ui.colon": ": ",
+    "ui.xray.count": "Here: {k} of {n}. Whole test set: {m} of {total}.",
     "ui.ch.acc": "Clean test accuracy",
     "ui.ch.asr": "Backdoor success rate",
     "ui.ch.rate": "Rate (%)",
@@ -160,37 +161,6 @@
   CG.ready = setLang(initialLang(), false);
   var sel = document.getElementById("lang-select");
   if (sel) { sel.addEventListener("change", function () { setLang(sel.value, true); }); }
-
-  // ---- hero: the verification report prints, then the model's behaviour appears ------------------
-  var card = document.querySelector("[data-report]");
-  if (card) {
-    var lines = Array.prototype.slice.call(card.querySelectorAll(".term-body .l"));
-    var behaviour = card.querySelector(".behaviour");
-    var button = card.querySelector("[data-replay]");
-    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var timers = [];
-    card.classList.add("ready");
-    var showAll = function () {
-      lines.forEach(function (el) { el.classList.add("on"); });
-      if (behaviour) { behaviour.classList.add("on"); }
-    };
-    var play = function () {
-      timers.forEach(clearTimeout); timers = [];
-      lines.forEach(function (el) { el.classList.remove("on"); });
-      if (behaviour) { behaviour.classList.remove("on"); }
-      var t = 200;
-      lines.forEach(function (el) {
-        t += Number(el.getAttribute("data-wait") || 60);
-        timers.push(setTimeout(function () { el.classList.add("on"); }, t));
-      });
-      if (behaviour) { timers.push(setTimeout(function () { behaviour.classList.add("on"); }, t + 700)); }
-    };
-    if (reduce) { showAll(); } else { play(); }
-    if (button) {
-      button.hidden = false;
-      button.addEventListener("click", function () { if (reduce) { showAll(); } else { play(); } });
-    }
-  }
 
   // ---- screenshots open in a lightbox -------------------------------------------------------------
   var box = document.getElementById("lightbox");
