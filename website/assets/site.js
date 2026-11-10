@@ -2,6 +2,7 @@
 // The page is written in English; other languages come from assets/i18n/<lang>.json.
 (function () {
   "use strict";
+  var V = "20261110c"; // bumped with each release so cached JSON never mixes with a newer page
   var LANGS = ["en", "fr", "es", "de", "hi"];
   var LOCALES = { en: "en-GB", fr: "fr-FR", es: "es-ES", de: "de-DE", hi: "hi-IN" };
 
@@ -96,7 +97,7 @@
       return CG.num(v, d) + " ms";
     },
     onLang: function (fn) { CG.listeners.push(fn); },
-    data: fetch("assets/data/site-data.json").then(function (r) { return r.json(); })
+    data: fetch("assets/data/site-data.json?v=" + V).then(function (r) { return r.json(); })
   };
   window.CG = CG;
 
@@ -129,7 +130,7 @@
   function load(lang) {
     if (lang === "en") { return Promise.resolve({}); }
     if (dicts[lang]) { return Promise.resolve(dicts[lang]); }
-    return fetch("assets/i18n/" + lang + ".json").then(function (r) {
+    return fetch("assets/i18n/" + lang + ".json?v=" + V).then(function (r) {
       if (!r.ok) { throw new Error("missing " + lang); }
       return r.json();
     }).then(function (d) { dicts[lang] = d; return d; });
