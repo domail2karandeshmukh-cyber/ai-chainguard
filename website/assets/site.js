@@ -2,7 +2,7 @@
 // The page is written in English; other languages come from assets/i18n/<lang>.json.
 (function () {
   "use strict";
-  var V = "20261110f"; // bumped with each release so cached JSON never mixes with a newer page
+  var V = "20261110g"; // bumped with each release so cached JSON never mixes with a newer page
   var LANGS = ["en", "fr", "es", "de", "hi"];
   var LOCALES = { en: "en-GB", fr: "fr-FR", es: "es-ES", de: "de-DE", hi: "hi-IN" };
 

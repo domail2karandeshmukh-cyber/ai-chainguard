@@ -1,0 +1,89 @@
+\topsection[sec:discussion]{Critical analysis}
+
+This section is the critical analysis that phase~5 asks for: what the system guarantees, what it does not, and
+how it could be improved.
+
+\subsection{What the system guarantees}
+{\tablefont
+\begin{xltabular}{\textwidth}{P{4.7cm}P{4.9cm}L}
+\caption{Security guarantees, the mechanism behind each one and the evidence.}\label{tab:guarantees}\\
+\toprule
+\headrow\hd{Guarantee} & \hd{Mechanism} & \hd{Evidence} \\
+\midrule
+\endfirsthead
+\toprule
+\headrow\hd{Guarantee} & \hd{Mechanism} & \hd{Evidence} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+The bytes of an artifact are those that were signed, down to the row for a dataset & SHA-256 of the file and Merkle root of the rows (V1, V2) & Experiments 1 and 2 \\
+A known signer, in an authorised role, attested it & Ed25519, trust log, policy (V3, V4, V8) & Experiment 3 \\
+The lineage from the dataset to the deployment is intact & Parent digests in the signed payload, recursive verification (V5, V6) & Experiment 4 \\
+A withdrawn key or artifact stays withdrawn, even against an insider who can write the database & Signed, hash-chained log with a pinned head (V7) & Experiment 5 \\
+What is loaded is what was verified & One read, hashed again, loaded from the same bytes; safetensors only & Variant B3 and the gateway tests \\
+An outside model comes from a registered publisher & Publisher key, separate import stage & Experiment 7 \\
+\end{xltabular}}
+
+These guarantees hold under the assumption of Section~\ref{sec:threat}: the keys, the pin, the policy and the
+verifier are trusted. They hold against every manipulation of our suite, at a cost that an enterprise would not
+notice: under one per cent of training time, a few milliseconds per verification and nothing per prediction.
+
+\subsection{What it does not guarantee}
+\begin{itemize}
+\item \textbf{That signed content is benign.} Poison that is present when the data steward signs is
+  faithfully preserved and verified (E2, E4, FT-E2). A backdoored model from a trusted publisher verifies
+  (E7-F). The signature moves the question from ``are these the right bytes?'' to ``do I trust this signer?''.
+\item \textbf{That a signer is honest or uncompromised.} A stolen key that has not been revoked signs valid
+  manifests. A compromised training host can sign a false description of how the weights were produced.
+\item \textbf{That a verifier sees the latest revocations.} The trust log is local and has a single writer. A
+  verifier that holds an old copy would miss a recent revocation, and the pin file is as critical as the root
+  key.
+\item \textbf{That content checks find a backdoor.} They flag the trigger family they model and miss the
+  others. They are evidence, never proof.
+\end{itemize}
+
+\subsection{How the two kinds of evidence fit together}
+The design keeps cryptographic evidence and content evidence in separate checks, V0 to V8 on one side and V9 on
+the other. A heuristic can never produce \st{FAILED}, and a signature can never produce ``safe''. The status
+\st{WARNING} exists for exactly this reason: it says that the integrity is intact and that something about the
+content deserves a human decision. Reports also name the external artifacts whose provenance ends at a
+publisher. We consider this separation the main lesson of the project for an enterprise. A dashboard that shows
+a green \st{VERIFIED} without saying what the status covers invites the wrong conclusion.
+
+\subsection{From this implementation to production}
+{\tablefont
+\begin{xltabular}{\textwidth}{P{6.6cm}L}
+\caption{Choices that fit an eight-week implementation and what a production deployment would use.}\label{tab:production}\\
+\toprule
+\headrow\hd{In this implementation} & \hd{In production} \\
+\midrule
+\endfirsthead
+\toprule
+\headrow\hd{In this implementation} & \hd{In production} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Private keys as owner-only files or CI secrets & An HSM or a cloud KMS, or keyless signing with short-lived certificates (Sigstore) \\
+Trust log local, with a single writer & Records published to a shared transparency log, or signed snapshots, so that every verifier sees one history \\
+Publisher trust is a manual registration of a public key & Identity-based policies (Sigstore, OpenSSF Model Signing) \\
+Canonical JSON written in Python (sorted keys, compact) & RFC~8785 \cite{rfc8785}, for signers in other languages \\
+API without authentication or TLS & Mutual TLS or OpenID Connect, authorisation per role, keys never on the API host \\
+The build environment is a signed claim & Hardware attestation or reproducible training \\
+Heuristic content checks (corner trigger, label drift) & Trigger-agnostic detectors and evaluation suites \\
+The gateway verifies the chain twice on a first deployment & One verification, reused for the deployment record \\
+\end{xltabular}}
+
+\subsection{Improvement paths}
+\begin{enumerate}
+\item \textbf{Shared history.} Publish the trust-log records and the release root of each deployment to a
+  transparency log. This is where a blockchain anchor, optional in the brief, would also fit.
+\item \textbf{Keys.} Keyless signing for the roles, hardware-backed root keys, then post-quantum signatures
+  through the algorithm field of the manifest.
+\item \textbf{Content evidence.} Detectors that do not assume a trigger shape (activation clustering, spectral
+  signatures, Neural Cleanse) as further V9 checks, measured against adaptive triggers.
+\item \textbf{Scale.} The evaluation repeated on team hardware and with larger models, where hashing dominates
+  and the relative overhead should fall.
+\item \textbf{Inventory.} The provenance graph exported as a signed bill of materials (CycloneDX or SPDX).
+\end{enumerate}

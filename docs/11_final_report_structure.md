@@ -1,5 +1,7 @@
 # Final report structure (~30 pages)
 
+> **The report is written:** [`report/AI-ChainGuard_Final_Report.pdf`](../report/AI-ChainGuard_Final_Report.pdf) (10 November 2026, 34 pages and 6 pages of appendices). Its sections follow the six phases of the brief; the outline below is the plan it started from.
+
 *Page budget in brackets. Figures and tables referenced are produced by `scripts/make_figures.py`.*
 
 **Front matter** [2] — title page, abstract (200 words), table of contents, list of figures.

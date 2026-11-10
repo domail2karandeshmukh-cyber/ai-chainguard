@@ -1,0 +1,257 @@
+\topsection[sec:design]{Solution design}
+
+This section is the summary of phase~3. The detailed documents are the architecture
+(\repofile{docs/05_architecture.md}, six diagrams), the functional description
+(\repofile{docs/06_functional_description.md}) and the technical description
+(\repofile{docs/07_technical_description.md}).
+
+\subsection{Overview}
+\sys\ attests four stages of an AI pipeline (Figure~\ref{fig:arch}). At each stage a role signs a manifest
+that describes the artifact and names its parents by the digest of their own manifests. A verifier checks an
+artifact together with its whole ancestry, a signed trust log says which keys count and what has been revoked,
+and a deployment gateway refuses to load a model whose chain does not verify.
+
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\fontsize{8}{10}\selectfont,
+  stage/.style={draw=cgnavy,line width=0.7pt,rounded corners=3pt,minimum width=3.05cm,minimum height=1.65cm,align=center,fill=white,inner sep=2pt},
+  side/.style={draw=cgmuted,line width=0.6pt,rounded corners=3pt,minimum height=1.35cm,align=center,fill=cgband,inner sep=3pt},
+  lnk/.style={-{Latex[length=2.1mm,width=1.7mm]},line width=0.8pt,color=cgteal},
+  rep/.style={-{Latex[length=2mm,width=1.6mm]},line width=0.7pt,color=cgmuted,densely dashed},
+  role/.style={font=\ttfamily\fontsize{6.7}{8}\selectfont,text=cgmuted}]
+\node[stage] (s1) at (0,0) {\textbf{\color{cgnavy}Datasets}\\stage 1\\[1pt]{\ttfamily\fontsize{6.7}{8}\selectfont\color{cgmuted}data\_steward}};
+\node[stage] (s2) at (3.98,0) {\textbf{\color{cgnavy}Base model}\\stage 2\\[1pt]{\ttfamily\fontsize{6.7}{8}\selectfont\color{cgmuted}training\_pipeline}};
+\node[stage] (s3) at (7.96,0) {\textbf{\color{cgnavy}Fine-tuned model}\\stage 3\\[1pt]{\ttfamily\fontsize{6.7}{8}\selectfont\color{cgmuted}training\_pipeline}};
+\node[stage] (s4) at (11.94,0) {\textbf{\color{cgnavy}Deployment record}\\stage 4, the gateway\\[1pt]{\ttfamily\fontsize{6.7}{8}\selectfont\color{cgmuted}deployment\_gateway}};
+\node[side,minimum width=3.05cm] (ext) at (3.98,-2.35) {\textbf{\color{cgnavy}External base model}\\{\ttfamily\fontsize{6.7}{8}\selectfont\color{cgmuted}model\_publisher}\\we hold its public key only};
+\node[side,minimum width=4.85cm] (log) at (11.04,-2.35) {\textbf{\color{cgnavy}Trust log}\\signed, hash-chained records; pinned head\\{\ttfamily\fontsize{6.7}{8}\selectfont\color{cgmuted}release\_manager} (root key)};
+\draw[lnk] (s1) -- (s2);
+\draw[lnk] (s2) -- (s3);
+\draw[lnk] (s3) -- (s4);
+\draw[lnk] (s1.south) -- ++(0,-0.42) -| ([xshift=-9mm]s3.south);
+\draw[lnk] (ext.east) -| (s3.south);
+\draw[rep] (log.north -| s4.south) -- (s4.south);
+\node[font=\sffamily\fontsize{7.1}{8.6}\selectfont,text=cgmuted,anchor=north] at (1.99,-1.3) {fine-tuning dataset};
+\node[font=\sffamily\fontsize{7.1}{8.6}\selectfont,text=cgmuted,anchor=east,align=right] at (11.8,-1.25) {replayed at\\every verification};
+\end{tikzpicture}
+\caption{The four attested stages and the role that signs each one. A solid arrow means that the signed
+payload of the child embeds the manifest digest of the parent. An internal base model must have a dataset
+parent. An external base model has no internal lineage and may be signed only by a registered publisher key.}
+\label{fig:arch}
+\end{figure}
+
+\subsection{Signed manifests and the hash-linked chain}
+Every artifact receives a manifest body $m$: its type and pipeline stage, the SHA-256 and the size of the file,
+for CSV datasets the Merkle root over the hashes of its rows, the list of its parents, the provenance (training
+configuration and environment), the results of the content checks made before signing, and the identity, role
+and key identifier of the signer. The body is serialised in a canonical JSON form (sorted keys, no
+insignificant whitespace) and signed as a whole with Ed25519:
+\begin{equation}
+\sigma = \mathrm{Sign}_{k}\bigl(\mathrm{canon}(m)\bigr),\qquad
+d(m) = \mathrm{SHA256}\bigl(\mathrm{canon}(m)\bigr).
+\label{eq:sign}
+\end{equation}
+Signing the whole body, and not the file hash alone, prevents an attacker from keeping a valid pair of hash
+and signature while changing the stage, the parents or the role around it. The manifest digest $d(m)$ is the
+identity of the artifact in the provenance graph. A child lists each parent as the triple of its identifier,
+its manifest digest and the relation, inside its own signed body (Figure~\ref{fig:chain}). The digest of a
+child therefore commits to the digest of every ancestor, as a Git commit commits to its parents. Rewriting an
+ancestor, even by signing it again with the legitimate key, changes its digest and breaks every descendant.
+
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\fontsize{7.6}{9.6}\selectfont,
+  head/.style={fill=cgnavy,text=white,minimum width=4.5cm,minimum height=0.56cm,font=\sffamily\bfseries\fontsize{8}{10}\selectfont,inner sep=0pt},
+  body/.style={draw=cgnavy,line width=0.6pt,minimum width=4.5cm,minimum height=2.3cm,inner sep=0pt,fill=white},
+  key/.style={anchor=west,font=\ttfamily\fontsize{6.5}{8.2}\selectfont,text=cgmuted},
+  val/.style={anchor=west,font=\ttfamily\fontsize{6.5}{8.2}\selectfont,text=cgink},
+  dig/.style={draw=cgteal,line width=0.7pt,rounded corners=2pt,fill=white,font=\ttfamily\fontsize{7}{8.6}\selectfont,text=cgteal,inner xsep=4pt,inner ysep=2.2pt},
+  lnk/.style={-{Latex[length=2mm,width=1.6mm]},line width=0.8pt,color=cgteal}]
+\foreach \x/\name/\ttl/\pa/\who/\ek/\ev in {
+  0/a/{Manifest of the dataset}/{none}/{data\_steward}/{merkle.root}/{root of the rows},
+  5.2/b/{Manifest of the base model}/{d(dataset)}/{training\_pipeline}/{provenance}/{epochs, seed},
+  10.4/c/{Manifest of the fine-tuned model}/{d(base), d(data)}/{training\_pipeline}/{provenance}/{epochs, seed}}{
+  \node[body] (\name) at (\x,0) {};
+  \node[head] at (\x,1.43) {\ttl};
+  \node[key] at (\x-2.2,0.82) {subject.sha256};  \node[val] at (\x-0.2,0.82) {file hash};
+  \node[key] at (\x-2.2,0.41) {\ek};             \node[val] at (\x-0.2,0.41) {\ev};
+  \node[key] at (\x-2.2,0.0) {parents};          \node[val] at (\x-0.2,0.0) {\pa};
+  \node[key] at (\x-2.2,-0.41) {signer.role};    \node[val] at (\x-0.2,-0.41) {\who};
+  \node[key] at (\x-2.2,-0.82) {signature};      \node[val] at (\x-0.2,-0.82) {whole body};
+  \node[dig] (d\name) at (\x,-1.72) {d(m) = SHA256(canon(m))};
+}
+\draw[lnk] (2.95,0) -- (2.6,0) |- (da.east);
+\draw[lnk] (8.15,0) -- (7.8,0) |- (db.east);
+\end{tikzpicture}
+\caption{Each manifest is signed as a whole. Its \code{parents} field holds the manifest digest of each
+parent (arrows). The fine-tuned model has two parents: the base model and the fine-tuning dataset, whose
+manifest is not drawn.}
+\label{fig:chain}
+\end{figure}
+
+For datasets, a Merkle tree over the hashes of the lines (the construction of RFC~6962 \cite{rfc6962}) lets the
+verifier report \emph{which} rows changed, authenticated by the signed root. The hashes of the leaves are kept
+in a side file that is trusted only if it reproduces that root.
+
+\subsection{Roles and policy}
+A valid signature only proves who signed. A policy file states who is \emph{allowed} to sign what and how
+artifacts may be connected (Table~\ref{tab:policy}). The verifier enforces it, so a stolen data-steward key
+cannot sign a model, and a model without a dataset parent is rejected even when it is correctly signed. The
+training key may not sign the external-import stage, so an internal model cannot be relabelled as external to
+escape the dataset rule.
+
+\begin{table}[H]
+\caption{The supply-chain policy (\code{config/policy.yaml}): one signing role per stage, and the parents that each artifact type requires.}
+\label{tab:policy}
+\tablefont
+\begin{tabularx}{\textwidth}{P{3.3cm}P{3.3cm}P{3.2cm}L}
+\toprule
+\headrow\hd{Stage} & \hd{Artifact type} & \hd{Signing role} & \hd{Required parents} \\
+\midrule
+1\enskip Dataset & dataset & \code{data\_steward} & none \\
+2\enskip Training & base model (internal) & \code{training\_pipeline} & a dataset \\
+2\enskip External import & external base model & \code{model\_publisher} & none: provenance ends at the publisher \\
+3\enskip Fine-tuning & fine-tuned model & \code{training\_pipeline} & a dataset and one base model of either kind \\
+4\enskip Deployment & deployment record & \code{deployment\_gateway} & a fine-tuned model \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Verification: ten checks and the status}
+Verifying an artifact runs ten checks and recurses into its parents (Table~\ref{tab:checks}). All ten always
+run, so a report is complete. The status is derived and never set by hand (Figure~\ref{fig:ladder}):
+\st{FAILED} if any check of integrity, trust, provenance, revocation or policy fails; \st{WARNING} if integrity
+holds but a content check flagged the data here or upstream; \st{VERIFIED} otherwise. An external model that
+arrives unsigned or malformed is \st{REFUSED} at import and nothing is stored. \st{VERIFIED} means \emph{exactly
+what trusted, unrevoked signers in authorised roles attested, through an intact ancestry}. The system never
+upgrades it to ``safe''.
+
+{\tablefont
+\begin{xltabular}{\textwidth}{P{0.75cm}P{3.2cm}L}
+\caption{The ten checks of a verification.}\label{tab:checks}\\
+\toprule
+\headrow\hd{} & \hd{Check} & \hd{Fails when} \\
+\midrule
+\endfirsthead
+\toprule
+\headrow\hd{} & \hd{Check} & \hd{Fails when} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+V0 & Envelope & the manifest is missing, malformed, or stored under another identifier \\
+V1 & File hash & the SHA-256 or the size differs from the signed values \\
+V2 & Dataset Merkle root & rows changed (the report lists which lines) \\
+V3 & Ed25519 signature & it is invalid over the canonical body, or the key is not in the signed trust log \\
+V4 & Signer trust & the key is revoked, the role or the identity does not match, the role is not allowed for the stage, or the index and the log disagree \\
+V5 & Parent links & a parent manifest is missing, or its recomputed digest differs from the embedded one \\
+V6 & Ancestry & any ancestor fails (recursive) \\
+V7 & Revocation & the artifact or an ancestor is revoked in the signed log, its index row was deleted, or the index flag was cleared against the log \\
+V8 & Policy & wrong type for the stage, missing or forbidden parent types, or a parent from a later stage \\
+V9 & Content flags & a signed content check flagged the data here or upstream: \st{WARNING} only, never \st{FAILED} \\
+\end{xltabular}}
+
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\fontsize{7.5}{9.3}\selectfont,
+  gate/.style={draw=cgnavy,line width=0.65pt,rounded corners=2.5pt,minimum width=1.95cm,minimum height=1.3cm,align=center,fill=white,inner sep=1.5pt},
+  go/.style={-{Latex[length=1.9mm,width=1.5mm]},line width=0.75pt,color=cgnavy},
+  no/.style={-{Latex[length=1.8mm,width=1.4mm]},line width=0.7pt,color=cgmuted}]
+\foreach \i/\x/\ttl/\what in {
+  1/0/{V0 to V2}/{manifest, file\\hash, rows},
+  2/2.25/{V3, V4}/{signature,\\signer and role},
+  3/4.5/{V5, V6}/{parent links,\\ancestry},
+  4/6.75/{V7}/{revocation},
+  5/9.0/{V8}/{policy},
+  6/11.25/{V9}/{content flags}}{
+  \node[gate] (g\i) at (\x,0) {\textbf{\color{cgnavy}\ttl}\\\what};
+}
+\foreach \a/\b in {1/2,2/3,3/4,4/5,5/6} \draw[go] (g\a) -- (g\b);
+\node[fill=cgteal,text=white,rounded corners=2pt,font=\sffamily\bfseries\fontsize{7.2}{8}\selectfont,inner xsep=5pt,inner ysep=3.5pt] (ok) at (13.3,0) {VERIFIED};
+\draw[go] (g6) -- (ok);
+\node[fill=cgfailed,text=white,rounded corners=2pt,font=\sffamily\bfseries\fontsize{7.2}{8}\selectfont,minimum width=10.95cm,inner ysep=3.5pt] (fail) at (4.5,-1.55) {FAILED: the gateway blocks};
+\foreach \i in {1,2,3,4,5} \draw[no] (g\i.south) -- (g\i.south |- fail.north);
+\node[fill=cgwarning,text=white,rounded corners=2pt,font=\sffamily\bfseries\fontsize{7.2}{8}\selectfont,inner xsep=5pt,inner ysep=3.5pt,align=center] (warn) at (12.05,-1.55) {WARNING: blocked by default};
+\draw[no] (g6.south) -- (g6.south |- warn.north);
+\end{tikzpicture}
+\caption{How the status is derived. A failure in V0 to V8 gives \st{FAILED}. A content flag alone gives
+\st{WARNING}, which the gateway blocks unless an operator overrides it, and the override is logged.}
+\label{fig:ladder}
+\end{figure}
+
+\subsection{The signed trust log}
+\label{sec:trustlog}
+In version 0.3 of the system (October 2026) the trust store, which says which public key belongs to which
+identity and role, and the revocation flags lived in the SQLite index. Our own revocation experiment showed the
+consequence: an attacker able to write that file could clear a \code{revoked} flag, and the withdrawn model
+verified again. Since version 0.4, trust and revocation are records of an append-only log
+(Figure~\ref{fig:log}). Record $i$ carries a sequence number, the hash $h_{i-1}$ of the previous record, a
+timestamp, an action (\code{trust\_key}, \code{revoke\_key}, \code{revoke\_artifact}, \code{rotate\_root}) and
+its subject, and is signed by the root key of the \code{release\_manager} role. A pin file in the trusted keys
+directory holds the root public key and the pair $(n, h_n)$ of the last record.
+
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\fontsize{7.3}{9}\selectfont,
+  rec/.style={draw=cgnavy,line width=0.6pt,rounded corners=2.5pt,minimum width=2.52cm,minimum height=1.5cm,align=center,fill=white,inner sep=1.5pt},
+  back/.style={-{Latex[length=1.8mm,width=1.4mm]},line width=0.7pt,color=cgteal},
+  pinl/.style={-{Latex[length=1.9mm,width=1.5mm]},line width=0.7pt,color=cgnavy,densely dashed}]
+\foreach \i/\x/\act/\subj in {
+  1/0/{trust\_key}/{release\_manager},
+  2/2.9/{trust\_key}/{data\_steward},
+  3/5.8/{trust\_key}/{training\_pipeline},
+  4/8.7/{trust\_key}/{deployment\_gateway},
+  5/11.6/{revoke\_artifact}/{base model}}{
+  \node[rec] (r\i) at (\x,0) {\textbf{\color{cgnavy}record \i}\\{\ttfamily\fontsize{6.5}{8}\selectfont \act}\\{\fontsize{6.9}{8.4}\selectfont\color{cgmuted}\subj}\\{\fontsize{6.6}{8}\selectfont\color{cgmuted}signed by the root key}};
+}
+\foreach \a/\b in {2/1,3/2,4/3,5/4} \draw[back] (r\a) -- (r\b);
+\node[draw=cgnavy,line width=0.9pt,rounded corners=2.5pt,fill=cgband,align=center,inner xsep=6pt,inner ysep=4pt] (pin) at (10.25,-1.8) {\textbf{\color{cgnavy}Pin file} (trusted keys directory)\\root public key, last record: $(5, h_5)$};
+\draw[pinl] (pin) -- (r5);
+\node[anchor=west,align=left,text=cgmuted,text width=8.3cm] at (-1.26,-1.8) {Each record embeds the hash of the previous one. The verifier replays the log at every verification: every signature must verify under the root key, every record must chain, and the log must end exactly at the pinned head.};
+\end{tikzpicture}
+\caption{The trust log after a revocation: four records that trust the role keys and one that revokes an
+artifact. There is no action that undoes a revocation; a withdrawn artifact is replaced by a new version.}
+\label{fig:log}
+\end{figure}
+
+A truncated log (a rollback), an edited record, a deleted or substituted log, and a key that is present in the
+index but absent from the log all make V3, V4 and V7 fail closed. An index that disagrees with the log is
+reported as tampering. The structure is a single-writer hash-chained log, small enough to need no Merkle tree,
+with the root pinning and rollback protection of The Update Framework \cite{tuf2010}.
+
+\subsection{Deployment gateway and external publishers}
+The gateway is the last line of defence. It verifies the full chain at deployment time, once per deployment and
+never per prediction. It refuses a \st{FAILED} model and, by default, a \st{WARNING} one, and it refuses
+pickle-based formats. It reads the bytes of the model once, hashes them again and loads the model from those
+same bytes, so there is no gap between the check and the use. It runs a smoke test on held-out data, computes a
+\emph{release root} (the Merkle root over the manifest digests of the model and of all its ancestors) and signs
+a deployment record that also binds the head of the trust log it verified against. One 32-byte value therefore
+identifies the whole supply chain of a release.
+
+A model from an outside publisher enters through a separate path. The publisher signs a manifest with its own
+key, an administrator registers the publisher's \emph{public} key out of band, and the import refuses anything
+unsigned or malformed, stores the rest and verifies it. A failed import is kept as quarantined evidence that
+cannot be used as a parent or deployed. Its provenance ends, by design, at the identity of the publisher.
+
+\subsection{Interoperability}
+Any attestation exports as an in-toto Statement inside a DSSE envelope \cite{intotoattest,dsse}, signed with the
+role key that signed the original manifest. The predicate is either the full \sys\ manifest or a SLSA
+Provenance statement \cite{slsa11} in which the training or fine-tuning stage is the build, the dataset and the
+base model are the resolved dependencies and the signing role is the builder. The export is verified by an
+independent DSSE verifier in the test suite, including the test vector of the specification. An enterprise that
+already consumes in-toto or SLSA attestations can therefore read ours.
+
+\subsection{Design decisions and alternatives}
+Table~\ref{tab:choices} justified the main choices against the state of the art. Four more decisions shaped
+the implementation, each against a simpler alternative:
+\begin{itemize}
+\item \textbf{The manifests on disk are the source of truth and SQLite is only an index}, instead of a
+  database that holds the truth. CI and auditors verify from files, and tampering with the database cannot
+  fake integrity.
+\item \textbf{Every use verifies the whole ancestry again}, instead of trusting the stored status of a
+  parent. A stored status can be edited, and recomputing costs a few milliseconds.
+\item \textbf{Trust and revocation are records of a signed log}, instead of flags in the database. Whoever
+  can write a database can clear a flag (variant E5-C4).
+\item \textbf{Verification happens at deployment}, instead of at each prediction. Integrity is a property of
+  what is loaded, and the latency of a prediction stays unchanged.
+\end{itemize}

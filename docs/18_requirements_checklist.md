@@ -2,7 +2,7 @@
 
 *Every requirement of the brief "Quatre projets applicatifs IA" (ESAIP Master 1 MSc, referent Sofiane HAMRIOUI) that applies to Projet Applicatif 2, "AI Supply Chain Integrity Platform", with the evidence in this repository. Checked on 10 November 2026.*
 
-Status: **Done**, **Done (email)** when the evidence was sent to the referent rather than committed, **Open** when something is still missing.
+Status: **Done**, **Done (email)** when the evidence was sent to the referent rather than committed, **Ready** when the material is prepared. Nothing is open. The final report (`report/AI-ChainGuard_Final_Report.pdf`, Appendix A) carries the same table.
 
 ## Common framework for all projects
 
@@ -10,7 +10,7 @@ Status: **Done**, **Done (email)** when the evidence was sent to the referent ra
 | --- | --- | --- |
 | Project over 2 months (8 weeks) | Week 1 from 21 September 2026; final presentation on 10 November 2026 | Done |
 | Detailed weekly progress report to the referent (work done, difficulties, next steps) | Sent by email each week; template `10_weekly_report_template.md`; progress updates `14_progress_update_since_oct5.md` and `16_progress_update_v0.4.md` | Done (email) |
-| Final presentation with a demonstration of the realisation | `17_presentation_guide.md`, `15_professor_demo_10min.md` (one command, 15 steps), `12_demo_scenario.md`; live website (signed model verified and run in the browser, in-browser chain demo with 10 attacks); dashboard (`make standalone`); CLI demo (`python -m scripts.demo`) | Done |
+| Final presentation with a demonstration of the realisation | Presentation guide `17_presentation_guide.md` and slides prepared; `15_professor_demo_10min.md` (one command, 15 steps), `12_demo_scenario.md`; live website (signed model verified and run in the browser, in-browser chain demo with 10 attacks); dashboard (`make standalone`); CLI demo (`python -m scripts.demo`) | Ready |
 | Conference proposal: title, abstract, targeted venue | `13_conference_proposal.md` and the six-page IEEE paper in English and French (`paper/`) | Done |
 
 ## Pedagogical objectives
@@ -22,7 +22,7 @@ Status: **Done**, **Done (email)** when the evidence was sent to the referent ra
 | Study cryptographic signing, hash chains and Merkle trees | `02_state_of_the_art.md` §3–4, `07_technical_description.md` | Done |
 | Design a coherent attestation architecture | `05_architecture.md`, `06_functional_description.md`, `07_technical_description.md` | Done |
 | Implement a functional system | `chainguard/`, `ml_pipeline/`, `deployment/`, `api/`, `dashboard/`, `cli/`; 168 tests; two GitHub Actions workflows passing | Done |
-| Evaluate results objectively | `results/`, `08_attack_scenarios.md`, paper §V–VI, including the measured limit (signed poison verifies) | Done |
+| Evaluate results objectively | `results/`, `08_attack_scenarios.md`, paper §V–VI and final report §7–8, including the measured limit (signed poison verifies) and its check on ten other seeds | Done |
 
 ## Phase 1: scoping and problem definition
 
@@ -80,8 +80,8 @@ Status: **Done**, **Done (email)** when the evidence was sent to the referent ra
 | Test against realistic attack scenarios | 48 attack and control variants in seven experiments, `python -m attacks.run_all`, `08_attack_scenarios.md` | Done |
 | Measure detection rates and overhead | Every post-signing manipulation detected in 1.7–15.1 ms; attestation 0.8 % of training time; 8.5 ms per full-chain verification; nothing per inference; `results/` | Done |
 | Deliverables: test results (logs, tables, graphs) | `results/attacks/*.json`, `results/attacks/summary.csv`, `results/validation_logs/`, `results/figures/`, paper figures, website charts | Done |
-| Critical analysis of security guarantees and limitations | Paper §VI, `04_threat_model.md` (residual risks), website sections "What a signature proves, and what it does not" and "Limits" | Done |
-| Improvement paths | Paper conclusion and future work, `11_final_report_structure.md` §9, `08_attack_scenarios.md` | Done |
+| Critical analysis of security guarantees and limitations | Final report §8, paper §VI, `04_threat_model.md` (residual risks), website sections "What a signature proves, and what it does not" and "Limits" | Done |
+| Improvement paths | Final report §8.5 and §11, paper conclusion and future work, `08_attack_scenarios.md` | Done |
 | Example: inject a backdoor into a fine-tuning dataset and verify detection failure or success | E2–E4 (poison in the training set: VERIFIED and deployed at 77.2 %; content checks give WARNING; adaptive trigger 51.2 %) and the supplementary FT-E2/FT-E3 run with the poison in the fine-tuning set (VERIFIED, deployed, 25.3 %; WARNING, blocked), `results/attacks/e2_finetune_poison.json` | Done |
 | Example: substitute a signed model with a tampered version | Scenario B: control VERIFIED, 3 variants FAILED (V1) | Done |
 | Example: verify provenance of a model from an untrusted repository | Scenario G / Experiment 7: 9 variants (trusted, unknown and unsigned publishers; REFUSED at import, FAILED, or VERIFIED for a trusted publisher) | Done |
@@ -91,8 +91,8 @@ Status: **Done**, **Done (email)** when the evidence was sent to the referent ra
 
 | Requirement | Evidence | Status |
 | --- | --- | --- |
-| Final report (about 30 pages) | Content written in documents 01 to 09, the paper and `results/`; structure in `11_final_report_structure.md`; not yet assembled into one document | **Open** |
-| Oral defence | 10 November 2026; `17_presentation_guide.md` | Done |
+| Final report (about 30 pages) | `report/AI-ChainGuard_Final_Report.pdf`: 34 pages and 6 pages of appendices, following the six phases; LaTeX source, charts and consistency check in `report/` | Done |
+| Oral defence | Prepared: `17_presentation_guide.md` and slides | Ready |
 | Demonstration or use case | See the common framework above | Done |
 | Conference proposal | `13_conference_proposal.md`, `paper/` | Done |
 

@@ -1,0 +1,206 @@
+\clearpage
+\appendix
+\renewcommand*{\sectionformat}{\textcolor{cgteal}{Appendix \thesection}\hspace{0.7em}}
+\addtocontents{toc}{\protect\vspace{6pt}}
+\addtocontents{toc}{\protect\noindent{\protect\sffamily\protect\small\protect\color{cgmuted}Appendices, outside the page count of the report}\protect\par}
+
+\section{Requirements of the brief and where each one is met}
+\label{app:trace}
+\vspace{-0.45\baselineskip}{\color{cgrule}\rule{\textwidth}{0.6pt}}\par\vspace{0.15\baselineskip}
+The table follows the brief of Projet Applicatif 2 line by line. The same checklist, with direct links to the
+files, is \repofile{docs/18_requirements_checklist.md}.
+
+{\tablefont
+\begin{xltabular}{\textwidth}{P{4.95cm}P{1.35cm}LP{1.3cm}}
+\toprule
+\headrow\hd{Requirement of the brief} & \hd{Section} & \hd{Evidence in the repository} & \hd{Status} \\
+\midrule
+\endfirsthead
+\toprule
+\headrow\hd{Requirement of the brief} & \hd{Section} & \hd{Evidence in the repository} & \hd{Status} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\multicolumn{4}{l}{\textbf{\color{cgnavy}Common framework}} \\*
+Project over two months, eight weeks & \ref{sec:project} & Week 1 from 21 September 2026; final day 10 November 2026 & Done \\
+Detailed weekly progress report to the referent & \ref{sec:project} & Sent by email; progress reports of 5 and 16 October; \code{docs/14}, \code{docs/16} & Done \\
+Demonstration of the realisation & \ref{sec:valo} & \code{scripts/demo.py} (15 steps), dashboard, website; \code{docs/15}, \code{docs/17} & Ready \\
+Conference proposal: title, abstract, targeted venue & \ref{sec:valo} & \code{docs/13}; full paper in \code{paper/} & Done \\
+\midrule
+\multicolumn{4}{l}{\textbf{\color{cgnavy}Pedagogical objectives}} \\*
+Understand the threats specific to AI supply chains & \ref{sec:scoping}, \ref{sec:soa} & \code{docs/02} section 2, \code{docs/04} & Done \\
+Analyse the risks for model provenance, dataset lineage and pipeline integrity & \ref{sec:threat} & \code{docs/04}: assets, actors, trust boundaries, STRIDE, residual risks & Done \\
+Study cryptographic signing, hash chains and Merkle trees & \ref{sec:soa}, \ref{sec:design} & \code{docs/02} sections 3 and 4, \code{docs/07} & Done \\
+Design a coherent attestation architecture & \ref{sec:design} & \code{docs/05}, \code{docs/06}, \code{docs/07} & Done \\
+Implement a functional system & \ref{sec:impl} & Source code, 168 tests, two CI workflows passing & Done \\
+Evaluate the results objectively & \ref{sec:eval}, \ref{sec:discussion} & \code{results/}, \code{docs/08}, including the measured limit & Done \\
+\midrule
+\multicolumn{4}{l}{\textbf{\color{cgnavy}Phase 1: scoping and problem definition}} \\*
+Scope for the attestation of AI artifacts in an enterprise; a clear cybersecurity problem & \ref{sec:intro}, \ref{sec:scoping} & \code{docs/01} sections 1, 2 and 6 & Done \\
+Assets: datasets, pretrained models, fine-tuned weights, training scripts, inference APIs & \ref{sec:scoping} & \code{docs/01} section 3, \code{docs/04} section 1 & Done \\
+Threats: data poisoning, backdoor injection, model substitution, pipeline compromise & \ref{sec:scoping}, \ref{sec:threat} & \code{docs/01} section 4, \code{docs/04} & Done \\
+Deliverable: scoping note of 2 to 3 pages & \ref{sec:scoping} & \code{docs/01\_scoping\_note.md} & Done \\
+\midrule
+\multicolumn{4}{l}{\textbf{\color{cgnavy}Phase 2: state of the art and critical analysis}} \\*
+Attacks: direct poisoning, backdoored base models, environment poisoning & \ref{sec:soa} & \code{docs/02} sections 2.1 to 2.3 & Done \\
+Existing solutions: cryptographic signing, SLSA for ML, model cards, Sigstore & \ref{sec:soa} & \code{docs/02} sections 3 to 5 & Done \\
+Compare open-source, industrial and academic approaches; identify the limitations & \ref{sec:soa} & \code{docs/02} sections 8 and 9, \code{docs/03} & Done \\
+Deliverables: synthesis of 3 to 5 pages, comparative table, argued justification of the approach & \ref{sec:soa} & \code{docs/02} (justification in section 10), \code{docs/03} & Done \\
+\midrule
+\multicolumn{4}{l}{\textbf{\color{cgnavy}Phase 3: solution design}} \\*
+Provenance and integrity architecture for AI artifacts & \ref{sec:design} & \code{docs/05} & Done \\
+Signing, verification and revocation mechanisms & \ref{sec:design} & \code{docs/07}; \code{chainguard/trustlog.py} & Done \\
+Justified technical choices & \ref{sec:soa}, \ref{sec:design} & \code{docs/05} section 7, \code{docs/02} section 10 & Done \\
+Deliverables: architecture diagrams, functional and technical description, attack scenarios & \ref{sec:design} & \code{docs/05} (six diagrams), \code{docs/06}, \code{docs/07}, \code{docs/08} & Done \\
+Indicative architecture: hash chain or Merkle tree & \ref{sec:design} & Hash-linked manifests and row-level Merkle roots for datasets & Done \\
+Indicative architecture: signing of models and datasets at each pipeline stage & \ref{sec:design} & Ed25519 manifests for datasets, base model, fine-tuned model and deployment record & Done \\
+Indicative architecture: blockchain anchoring (optional) & \ref{sec:soa} & Not built; a signed, hash-chained, pinned trust log instead, justified in \code{docs/02} sections 4 and 10 & Optional, not built \\
+Indicative architecture: CI/CD integration for automated attestation & \ref{sec:impl} & \code{.github/workflows/attest-and-verify.yml} & Done \\
+Indicative architecture: verification API for deployment gateways & \ref{sec:impl} & \code{api/} and \code{deployment/gateway.py} & Done \\
+\midrule
+\multicolumn{4}{l}{\textbf{\color{cgnavy}Phase 4: implementation and experimentation}} \\*
+Simulated ML pipeline & \ref{sec:impl} & \code{ml\_pipeline/} & Done \\
+Attestation across at least three pipeline stages & \ref{sec:design} & Four stages & Done \\
+Documented code and scripts & \ref{sec:impl} & \code{README.md}, docstrings, \code{scripts/}, \code{docs/07} & Done \\
+Description of the test environment & \ref{sec:impl} & \code{docs/09}, \code{results/validation\_logs/environment.txt} & Done \\
+Experimentation journal & \ref{sec:eval} & \code{docs/09\_experimentation\_journal.md} & Done \\
+Technologies: Python, PyTorch; Sigstore, cosign or custom signing with OpenSSL; Merkle tree library; Docker, GitHub Actions; Hyperledger Fabric (optional) & \ref{sec:impl} & Python and PyTorch; custom Ed25519 signing on OpenSSL and an optional Sigstore job; own RFC 6962 implementation; \code{docker/}; \code{.github/workflows/}; Hyperledger not used & Done \\
+\midrule
+\multicolumn{4}{l}{\textbf{\color{cgnavy}Phase 5: testing, evaluation and critical analysis}} \\*
+Test against realistic attack scenarios & \ref{sec:eval} & 48 variants in seven experiments, \code{attacks/}, \code{docs/08} & Done \\
+Measure detection rates and overhead & \ref{sec:eval} & \code{results/attacks/}, \code{results/metrics/} & Done \\
+Deliverables: test results as logs, tables and graphs & \ref{sec:eval} & \code{results/validation\_logs/}, \code{results/attacks/summary.csv}, \code{results/figures/}, \code{report/figures/} & Done \\
+Critical analysis of the guarantees and the limitations; improvement paths & \ref{sec:discussion} & Paper sections V and VI, \code{docs/04} (residual risks) & Done \\
+The four example tests & \ref{sec:eval} & Table~\ref{tab:brieftests} of this report & Done \\
+\midrule
+\multicolumn{4}{l}{\textbf{\color{cgnavy}Phase 6: reporting and valorisation}} \\*
+Final report of about 30 pages & all & This document; source in \code{report/} & Done \\
+Oral defence & \ref{sec:valo} & Presentation guide (\code{docs/17}) and slides prepared & Ready \\
+Demonstration or use case & \ref{sec:valo} & Demonstration script, dashboard, website & Done \\
+Conference proposal & \ref{sec:valo} & \code{docs/13}, \code{paper/} & Done \\
+\midrule
+\multicolumn{4}{l}{\textbf{\color{cgnavy}Expected results}} \\*
+A functional attestation system; a complete engineering approach with threat modelling; a critical analysis of the results; work that can be valorised in an enterprise security context & all & The repository, documents \code{01} to \code{09}, this report, the paper and the website & Done \\
+\end{xltabular}}
+
+\needspace{14\baselineskip}
+\section{The 48 variants}
+\label{app:variants}
+\vspace{-0.45\baselineskip}{\color{cgrule}\rule{\textwidth}{0.6pt}}\par\vspace{0.15\baselineskip}
+Reference run of 9~November 2026. For every variant the observed status equals the status predicted before the
+run. The time is that of the verification of the attacked artifact with its chain.
+
+\makeatletter{\tablefont
+\begin{xltabular}{\textwidth}{P{1.3cm}LP{1.75cm}P{2.45cm}r}
+\toprule
+\headrow\hd{Variant} & \hd{Manipulation} & \hd{Status} & \hd{Checks that fired} & \hd{Time (ms)} \\
+\endfirsthead
+\toprule
+\headrow\hd{Variant} & \hd{Manipulation} & \hd{Status} & \hd{Checks that fired} & \hd{Time (ms)} \\
+\endhead
+\bottomrule
+\endfoot
+\@@input sections/gen_variants.tex 
+\end{xltabular}}\makeatother
+
+\needspace{20\baselineskip}
+\section{A signed manifest}
+\label{app:manifest}
+\vspace{-0.45\baselineskip}{\color{cgrule}\rule{\textwidth}{0.6pt}}\par\vspace{0.15\baselineskip}
+The manifest of the fine-tuned model of the reference run, as stored on disk. Three provenance fields are
+shortened here for space (marked by three dots), so this printed version is not the signed payload itself. The
+two parents are the base model and the fine-tuning dataset, each named by its manifest digest.
+
+\begin{lstlisting}
+{
+  "payload_type": "application/vnd.chainguard.manifest+json; version=1",
+  "payload": {
+    "schema_version": "1.0",
+    "artifact_id": "9f25b977-0aa0-4aa8-a149-4f19d79f3ee2",
+    "artifact_name": "digits-finetuned-cnn",
+    "artifact_type": "finetuned_model",
+    "version": "1.0.0",
+    "pipeline_stage": "stage3_finetune",
+    "subject": {
+      "uri": "artifacts/models/digits-finetuned-cnn-v1.0.0.safetensors",
+      "sha256": "1f1448ea86c028d9d36e80b764eca9a52368fdf9847cb901db394f338b16a0ae",
+      "size_bytes": 153944,
+      "media_type": "application/safetensors",
+      "merkle": null
+    },
+    "parents": [
+      { "artifact_id": "a85de012-e158-4221-85e7-826ff7749d5f",
+        "manifest_digest": "sha256:1f930c8538ccf7ed0ef95813eed5d8fad5741bad7956e8fab1faf6d8ea82fd21",
+        "relation": "fine_tuned_from" },
+      { "artifact_id": "3c4e300b-12fe-4883-89c6-cdb3ce96758a",
+        "manifest_digest": "sha256:6959cdaa0188c84cf87e0b9b28dfa6d84c0e1f38b68193f5fb49133f212048ea",
+        "relation": "trained_on" }
+    ],
+    "provenance": {
+      "source": "internal fine-tuning pipeline",
+      "builder": "ml_pipeline/finetune.py",
+      "parameters": { "epochs": 8, "lr": 0.0005, "batch_size": 64, "seed": 42 },
+      "metrics": { ... },
+      "input_verification": { ... },
+      "environment": { "python": "3.13.16", "chainguard": "0.4.0", "torch": "2.15.0+cu132", ... }
+    },
+    "semantic_checks": [],
+    "created_at": "2026-11-09T09:26:46Z",
+    "signer": {
+      "identity": "training_pipeline@chainguard.local",
+      "role": "training_pipeline",
+      "key_id": "ed25519:cec6a3e317c4a128"
+    }
+  },
+  "signatures": [
+    { "key_id": "ed25519:cec6a3e317c4a128", "algorithm": "Ed25519",
+      "sig": "n5sYF5FF/diG4Vp88bYcJcsciUHMH9cHh+N8uvt+vXnMwpxp/DCfUaGCEpX3G0yhkzudUNgZMkF3Fuban7syBA==" }
+  ],
+  "manifest_digest": "sha256:133c0274c7b49c52fb8a58504bb8f090a7a28853d8f1e0be98ffd73004f1e0e9"
+}
+\end{lstlisting}
+
+The last field is a convenience copy. The verifier never trusts it: it recomputes the digest from the payload.
+
+\section{Reproducing the results}
+\label{app:repro}
+\vspace{-0.45\baselineskip}{\color{cgrule}\rule{\textwidth}{0.6pt}}\par\vspace{0.15\baselineskip}
+From a clone of the repository, with Python 3.11 or later:
+
+\begin{lstlisting}
+make install          # dependencies, PyTorch for CPU
+make keys             # one Ed25519 key pair per role
+make pipeline         # the four-stage attested pipeline and the deployment gateway
+make attacks          # the 48 variants of the seven experiments
+make benchmark        # cost of hashing, signing and verification
+make test             # the 168 tests
+python -m scripts.e2_finetune_poison      # supplementary run: poison in the fine-tuning set
+python -m scripts.seed_robustness         # supplementary run: ten other seeds
+python report/figures/make_figures.py     # the charts of this report
+make demo             # the ten-minute demonstration
+make standalone       # the dashboard, on port 8501
+docker compose -f docker/docker-compose.yml up --build    # pipeline, API and dashboard in containers
+make validate LABEL="<machine>"           # the whole validation sequence, with its logs
+\end{lstlisting}
+
+\section{Deliverables and where to find them}
+\label{app:deliverables}
+\vspace{-0.45\baselineskip}{\color{cgrule}\rule{\textwidth}{0.6pt}}\par\vspace{0.15\baselineskip}
+{\tablefont
+\begin{tabularx}{\textwidth}{P{6.2cm}L}
+\toprule
+\headrow\hd{Deliverable} & \hd{Location} \\
+\midrule
+This report, PDF and LaTeX source & \repodir{report} \\
+Website & \url{\site} \\
+Source code, tests, Docker and CI files & \url{\repo} \\
+Conference paper, PDF and LaTeX source & \repodir{paper} \\
+Conference proposal & \repofile{docs/13_conference_proposal.md} \\
+Scoping note, state of the art, comparative table, threat model, architecture, functional and technical descriptions, attack scenarios, experimentation journal & \repodir{docs}, documents \code{01} to \code{09} \\
+Requirements checklist & \repofile{docs/18_requirements_checklist.md} \\
+Results: logs, tables, figures, archived earlier runs & \repodir{results} \\
+Demonstration runbook & \repofile{docs/15_professor_demo_10min.md} \\
+Earlier progress reports of 5 and 16 October 2026 & Folder \emph{Previous reports} of the hand-in package \\
+\bottomrule
+\end{tabularx}}

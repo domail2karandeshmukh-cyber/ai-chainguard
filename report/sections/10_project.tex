@@ -1,0 +1,82 @@
+\topsection[sec:project]{Project management}
+
+\subsection{Plan and milestones}
+The scoping note planned four milestones over the eight weeks, with an end-to-end chain first so that
+integration would never be left to the end. Table~\ref{tab:plan} compares the plan with the dated evidence.
+
+{\tablefont
+\begin{xltabular}{\textwidth}{P{4.4cm}P{1.9cm}L}
+\caption{Milestones planned in the scoping note and when each one was reached.}\label{tab:plan}\\
+\toprule
+\headrow\hd{Milestone} & \hd{Planned} & \hd{Reached} \\
+\midrule
+\endfirsthead
+\toprule
+\headrow\hd{Milestone} & \hd{Planned} & \hd{Reached} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Minimum chain: register, hash, sign, verify, detect tampering & Week 2 & 5~October: version 0.2 already attested the four stages, with 113 tests and 26 attack and control variants in five scenarios. First progress report \\
+Four-stage chain with roles, policy and revocation & Week 4 & 16~October: version 0.3 added the revocation experiment and external models, with 143 tests and 44 variants. The Compose stack ran on a team laptop. Second progress report \\
+Attack scenarios and measurements & Weeks 5 to 7 & 26 variants on 5~October, 44 on 16~October, 48 in the final run of 9~November, each time with the cost measurements \\
+Report, paper and demonstration & Week 8 & 9 and 10~November: version 0.4 with the signed trust log and the export, full validation run, public repository with both CI workflows passing, the paper, the website and this report \\
+\end{xltabular}}
+
+Each full run is kept: the results of 5~October and 16~October are archived unchanged in the repository
+(\repodir{results}), and the experimentation journal has one dated entry per run, which is never deleted.
+
+\subsection{Team and ownership}
+Table~\ref{tab:team} gives the area each member is responsible for. It describes ownership, not a record of
+individual contributions.
+
+\begin{table}[H]
+\caption{Team roles and areas of ownership.}
+\label{tab:team}
+\tablefont
+\begin{tabularx}{\textwidth}{P{3.1cm}P{3.5cm}L}
+\toprule
+\headrow\hd{Member} & \hd{Role} & \hd{Owns} \\
+\midrule
+Karan DESHMUKH & Technical lead, security architecture & Architecture and integration, verifier and trust-log design, external-model design, deployment gateway, API, interoperability export, coordination, paper \\
+JOGI Sudheer reddy & AI and ML engineer & Dataset and training pipeline, backdoor experiments (experiments 6 and 7), inference benchmark \\
+DAMA Dola Krishna & Testing, documentation and quality & Test suite, experimentation journal, collection of results, validation script, dashboard support, reports \\
+MEKALA Rambabu & Security and DevOps engineer & Hashing, signatures, key and publisher-key handling, revocation and trust-log operations, Docker, CI/CD \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Reporting to the referent}
+The brief asks for a detailed weekly progress report. Karan DESHMUKH sent it to the referent by email. Two
+formal progress reports mark the main steps: the report on the initial period (5~October 2026) and Progress
+Report~2 (16~October 2026). The progress update for version 0.4 (9~November 2026) is in the repository
+(\repofile{docs/16_progress_update_v0.4.md}). The two formal reports are archived with this report so that the
+progression can be checked.
+
+\subsection{Method}
+\textbf{Evidence rule.} From the first report, a feature is reported as completed only when code and
+repeatable execution evidence exist, and every number is tied to the run that produced it. This report follows
+the same rule.
+
+\textbf{Use of AI assistance.} As stated in each progress report, the code was produced with AI-assisted code
+generation and validated by execution: tests, complete validation runs in the reference environment, the CI
+workflows and the Docker run on a team laptop. The design decisions, the experiments, their analysis and the
+conclusions are the responsibility of the team.
+
+\subsection{Difficulties and lessons}
+\begin{itemize}
+\item \textbf{Our own experiment broke our design.} In version 0.3 the revocation experiment showed that
+  clearing one flag in the database undid a revocation. We reported it as a limitation on 16~October and
+  removed it in version 0.4 with the signed trust log. Lesson: attack your own trust anchors, and write the
+  limitation down before fixing it.
+\item \textbf{A detector must be measured on clean data first.} The first version of the corner-trigger check
+  flagged 11 clean digits. Requiring the minimum of the four pixels instead of their mean brought the false
+  alarms to zero, on the reference split and on the ten other seeds of Section~\ref{sec:seeds}.
+\item \textbf{Run the automation before trusting it.} The CI guard against committed private keys matched
+  its own search pattern in the workflow file and would have failed on every run. Executing the workflow steps
+  locally found the bug before the first run on GitHub.
+\item \textbf{One environment is not enough.} Docker could not run in the reference environment, so the
+  Compose stack was executed on a team laptop. Timings still come from one environment.
+\item \textbf{Saying what a result does not mean is part of the result.} Keeping \st{VERIFIED} from being read
+  as ``safe'' shaped the statuses, the dashboard and the wording of every report.
+\end{itemize}

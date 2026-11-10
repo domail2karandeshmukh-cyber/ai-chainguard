@@ -1,0 +1,120 @@
+% ---------------------------------------------------------------- title page
+\begin{titlepage}
+\thispagestyle{empty}
+\sffamily
+{\small\color{cgmuted}ESAIP \'Ecole d'Ing\'enieurs, Angers\hfill Master 1 MSc Cybersecurity and Data Science}\par
+\vspace{3pt}{\color{cgrule}\rule{\textwidth}{0.6pt}}\par
+\vspace{2.6cm}
+{\fontsize{13}{16}\selectfont\bfseries\color{cgteal}Final report}\par
+\vspace{0.55cm}
+{\fontsize{40}{44}\selectfont\bfseries\color{cgnavy}AI-ChainGuard}\par
+\vspace{0.45cm}
+{\fontsize{17}{22}\selectfont\color{cgink}AI Supply Chain Integrity and Attestation Platform}\par
+\vspace{1.25cm}
+% the four attested stages
+\begin{tikzpicture}[x=1cm,y=1cm,
+  stage/.style={draw=cgnavy,line width=0.7pt,rounded corners=3pt,minimum width=3.05cm,minimum height=1.45cm,
+    align=center,inner sep=3pt,fill=white},
+  lnk/.style={-{Latex[length=2.3mm,width=1.8mm]},line width=0.8pt,color=cgteal}]
+\node[stage] (s1) at (0,0) {\fontsize{9.5}{12}\selectfont\bfseries\color{cgnavy}Datasets\\[1pt]\fontsize{7.6}{9}\selectfont\color{cgmuted}stage 1, signed};
+\node[stage] (s2) at (3.98,0) {\fontsize{9.5}{12}\selectfont\bfseries\color{cgnavy}Base model\\[1pt]\fontsize{7.6}{9}\selectfont\color{cgmuted}stage 2, signed};
+\node[stage] (s3) at (7.96,0) {\fontsize{9.5}{12}\selectfont\bfseries\color{cgnavy}Fine-tuned model\\[1pt]\fontsize{7.6}{9}\selectfont\color{cgmuted}stage 3, signed};
+\node[stage,fill=cgnavy] (s4) at (11.94,0) {\fontsize{9.5}{12}\selectfont\bfseries\color{white}Deployment\\[1pt]\fontsize{7.6}{9}\selectfont\color{cgsoft}stage 4, verified};
+\draw[lnk] (s1) -- (s2);
+\draw[lnk] (s2) -- (s3);
+\draw[lnk] (s3) -- (s4);
+\end{tikzpicture}\par
+\vspace{0.55cm}
+\begin{minipage}{\textwidth}
+\fontsize{11}{15.5}\selectfont\color{cgink}
+Every manipulation made after signing was detected: 48 of 48 attack and control variants ended as predicted.
+A dataset poisoned before signing still deployed as \st{VERIFIED}, with a 77.2\,\% backdoor success rate.
+\end{minipage}\par
+\vfill
+{\color{cgrule}\rule{\textwidth}{0.6pt}}\par\vspace{6pt}
+{\fontsize{9.2}{13}\selectfont
+\begin{tabularx}{\textwidth}{@{}>{\leavevmode\color{cgmuted}}p{2.7cm}L@{}}
+Project & Projet Applicatif 2: AI Supply Chain Integrity Platform \\
+Programme & ESAIP, Master 1 MSc Cybersecurity and Data Science, Applied AI Projects \\
+Referent & Sofiane HAMRIOUI \\
+Period & 21 September to 10 November 2026 \\
+Document & Final report, version 1.0, 10 November 2026 (system version 0.4) \\
+Website & \url{\site} \\
+Source code & \url{\repo} \\
+\end{tabularx}}\par
+\vspace{4pt}{\color{cgrule}\rule{\textwidth}{0.6pt}}\par\vspace{7pt}
+{\fontsize{9.2}{12.5}\selectfont
+\begin{tabularx}{\textwidth}{@{}LLLL@{}}
+\textbf{\color{cgnavy}Karan DESHMUKH} & \textbf{\color{cgnavy}JOGI Sudheer reddy} & \textbf{\color{cgnavy}DAMA Dola Krishna} & \textbf{\color{cgnavy}MEKALA Rambabu} \\[-2pt]
+{\color{cgmuted}Technical lead, security architecture} & {\color{cgmuted}AI and ML engineer} & {\color{cgmuted}Testing, documentation and quality} & {\color{cgmuted}Security and DevOps engineer} \\
+\end{tabularx}}
+\end{titlepage}
+
+% ---------------------------------------------------------------- abstract
+\pagestyle{scrheadings}
+\markboth{Abstract}{Abstract}
+\section*{Abstract}
+\vspace{-0.45\baselineskip}{\color{cgrule}\rule{\textwidth}{0.6pt}}\par\vspace{0.15\baselineskip}
+Enterprises assemble AI systems from datasets, pretrained models and fine-tuning runs that come from different
+parties. Software supply-chain controls sign one build or one file. They do not link these artifacts into one
+lineage, and they do not say what a valid signature means for the behaviour of a model. This report presents
+\sys, the system we built for Projet Applicatif 2. Every artifact of a four-stage pipeline (datasets, base
+model, fine-tuned model, deployment record) receives an Ed25519-signed manifest that embeds the manifest digests
+of its parents, so the pipeline becomes a hash-linked provenance graph. A verifier runs ten checks on an artifact
+and on all its ancestors, a signed, pinned, append-only trust log holds keys and revocations, and a deployment
+gateway verifies the whole chain before it loads a model. We evaluated the system with 48 attack and control
+variants in seven experiments and with 168 automated tests. Every manipulation made after signing was detected,
+in 1.7 to 15.1\,ms. A dataset poisoned before signing, however, verified and deployed with a 77.2\,\% backdoor
+success rate, and content checks closed that gap only in part. Attestation cost 0.83\,\% of training time and
+nothing per prediction. The report follows the six phases of the brief: scoping, state of the art, design,
+implementation, evaluation and valorisation.
+
+{\sffamily\small\color{cgink2}\textbf{\color{cgnavy}Keywords:} AI supply chain, attestation, provenance, digital
+signatures, Merkle tree, revocation, data poisoning, backdoor.}
+
+\vspace{4pt}
+\begin{center}
+\begin{tikzpicture}[x=1cm,y=1cm,
+  tile/.style={draw=cgrule,line width=0.6pt,rounded corners=3pt,minimum width=3.6cm,minimum height=2.55cm,
+    inner sep=0pt,fill=white}]
+\foreach \x/\tbig/\tsub in {
+  0/{4 stages}/{attested and linked by\\hash; the brief asks\\for at least three},
+  3.93/{48 of 48}/{attack and control\\variants ended with\\the predicted status},
+  7.86/{168 tests}/{passing, plus two CI\\workflows that pass\\on every push},
+  11.79/{77.2\,\%}/{backdoor success rate\\of a VERIFIED model:\\the limit we measured}}{
+  \node[tile] at (\x,0) {};
+  \node[font=\sffamily\bfseries\fontsize{15.5}{18}\selectfont,text=cgnavy,anchor=west] at (\x-1.58,0.68) {\tbig};
+  \node[font=\sffamily\fontsize{7.9}{10.3}\selectfont,text=cgink2,anchor=north west,align=left] at (\x-1.58,0.3) {\tsub};
+}
+\end{tikzpicture}
+\end{center}
+
+\begin{keybox}
+\boxtitle{Evidence rule.} A feature is reported as completed only when code and repeatable execution evidence
+exist. Unless stated otherwise, measurements come from one run on 9~November 2026 in the reference environment:
+a cloud Linux container with two logical Intel Xeon cores at 2.10\,GHz, 8.2\,GB of memory and no GPU. The test
+suite and the release gate also ran on GitHub-hosted runners, and the containerised pipeline, API and dashboard
+ran on a team laptop (MacBook Air) on 16~October 2026. Benchmarks have not been measured again on team hardware.
+Claims about cryptographic integrity are kept separate from claims about the safety of a model or of its data.
+\end{keybox}
+
+\begin{keybox}
+\boxtitle{Where everything is.}\par\vspace{3pt}
+\begin{tabular}{@{}p{2.75cm}p{11.3cm}@{}}
+Website & \url{\site} \\
+Source code & \url{\repo} \\
+Conference paper & \repofile{paper/signed_is_not_safe.pdf} \\
+Requirements & Appendix~\ref{app:trace}: every requirement of the brief with its evidence \\
+\end{tabular}
+\end{keybox}
+
+% ---------------------------------------------------------------- contents
+\clearpage
+\markboth{Contents}{Contents}
+\section*{Contents}
+\vspace{-0.45\baselineskip}{\color{cgrule}\rule{\textwidth}{0.6pt}}\par\vspace{0.4\baselineskip}
+{\hypersetup{linkcolor=cgink}\sffamily\fontsize{8.3}{10.3}\selectfont\setlength{\columnsep}{0.9cm}\setlength{\parskip}{0pt}
+\begin{multicols}{2}
+\makeatletter\@starttoc{toc}\makeatother
+\end{multicols}}
+\clearpage

@@ -2,7 +2,8 @@
 
     python -m scripts.website_assets
 
-- copies the English and French papers (paper/*.pdf) and converts the dashboard screenshots to WebP;
+- copies the English and French papers (paper/*.pdf) and the final report (report/) and converts the
+  dashboard screenshots to WebP;
 - writes website/assets/data/site-data.json: the 48 attack variants (results/attacks/summary.csv), the
   boundary and cost measurements (paper/figures/analysis.json) and 32 real 8x8 digits (scikit-learn's
   digits dataset, the one the pipeline trains on) for the in-browser demo, and the E2 model's real
@@ -26,8 +27,9 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "website" / "assets"
 PAPERS = {
-    "signed_is_not_safe.pdf": "signed-is-not-safe-en.pdf",
-    "signed_is_not_safe_fr.pdf": "signe-n-est-pas-sur-fr.pdf",
+    "paper/signed_is_not_safe.pdf": "signed-is-not-safe-en.pdf",
+    "paper/signed_is_not_safe_fr.pdf": "signe-n-est-pas-sur-fr.pdf",
+    "report/AI-ChainGuard_Final_Report.pdf": "ai-chainguard-final-report.pdf",
 }
 COST_KEYS = {  # analysis.json bench label -> site key (labels are translated on the page)
     "inference, 1 sample": "infer",
@@ -44,7 +46,7 @@ def copy_papers() -> None:
     out = ASSETS / "paper"
     out.mkdir(parents=True, exist_ok=True)
     for src, dst in PAPERS.items():
-        shutil.copyfile(ROOT / "paper" / src, out / dst)
+        shutil.copyfile(ROOT / src, out / dst)
 
 
 def convert_screenshots() -> None:

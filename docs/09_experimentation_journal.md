@@ -96,3 +96,22 @@ Decision / next step:
 - Result file: `results/attacks/e2_finetune_poison.json`.
 **Interpretation:** same boundary as E2 and E3, wherever the poison enters before signing. The backdoor is weaker than in E2 because fine-tuning sees fewer poisoned rows for fewer epochs. Not part of the paper's 48 variants.
 
+### 2026-11-10 · Supplementary: the poisoning variants for ten other seeds · AI-assisted, validated by execution
+
+**Goal:** check that the results of experiment 6 are not a lucky or an unlucky draw of the single reference seed.
+**Setup:** `python -m scripts.seed_robustness`, reference environment, 15 + 8 epochs; the four pipeline variants E0, E2, E3 and E4 of `attacks/scenario_e_backdoor_poisoning.py`, unchanged, for the seeds 0 to 9 (40 runs, 75 s), plus seed 42 as a reproduction check. The seed sets the data split, the poisoned rows, the initial weights and the batch order.
+**Result:**
+- E0: 10/10 VERIFIED and deployed; no content flag on the ten clean splits; clean accuracy 95.8 to 98.6 % (median 97.2 %); ASR 0 %.
+- E2: 10/10 VERIFIED and deployed; ASR 74.4 to 94.8 % (median 83.0 %); clean accuracy 95.8 to 98.3 %.
+- E3: 10/10 WARNING (label distribution and corner trigger), 0 deployed.
+- E4: 10/10 VERIFIED and deployed; ASR 58.3 to 90.1 % (median 70.4 %).
+- Seed 42: identical to the reference run (95.0 % / 0 %; 94.2 % / 77.2 %; WARNING; 94.4 % / 51.2 %).
+- Result file: `results/attacks/seed_robustness.json`.
+**Interpretation:** the status is a property of the mechanism, not of the seed. The reference seed gives the second weakest backdoor of the eleven runs for E2 and the weakest for E4, so the quoted figures are conservative. Not part of the paper's 48 variants.
+
+### 2026-11-10 · Final report assembled · AI-assisted, checked against the result files
+
+**Goal:** the final report of the brief (about 30 pages).
+**Setup:** `report/final_report.tex` (XeLaTeX, IBM Plex shipped in `report/fonts/`); charts drawn by `report/figures/make_figures.py` from `results/`; the list of the 48 variants generated from `results/attacks/summary.csv`; `report/tools/check_report.py` recomputes every quoted measurement from `results/` and searches it in the text of the PDF.
+**Result:** `report/AI-ChainGuard_Final_Report.pdf`, 34 pages and 6 pages of appendices; all checks of `check_report.py` pass.
+

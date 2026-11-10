@@ -1,0 +1,120 @@
+\topsection[sec:scoping]{Scoping and problem definition}
+
+This section is the summary of phase~1. The full scoping note is \repofile{docs/01_scoping_note.md}.
+
+\subsection{Stakes for an enterprise}
+An enterprise that deploys a model it did not entirely create needs three things: the integrity of what it
+deploys, the ability to show where a model came from after an incident, and a correct understanding of what a
+signed model does and does not guarantee. Traditional controls (code signing, software bills of materials,
+build provenance) cover source code and binaries. The behaviour of a model is set by data and by a training
+process that is rarely reproducible, and those controls do not capture that lineage.
+
+\subsection{Assets and threats}
+Table~\ref{tab:assets} lists the assets the brief asks us to identify, and Figure~\ref{fig:when} places the four
+threat classes of the brief (data poisoning, backdoor injection, model substitution, pipeline compromise) on the
+pipeline. The distinction that organises the whole project is \emph{when} an attack acts. After an artifact is
+signed, any change is in reach of cryptography. Before it is signed, a legitimate signer attests the malicious
+content in good faith.
+
+\begin{table}[H]
+\caption{Assets of an AI supply chain and why each one matters.}
+\label{tab:assets}
+\tablefont
+\begin{tabularx}{\textwidth}{P{5.4cm}L}
+\toprule
+\headrow\hd{Asset} & \hd{Why it matters} \\
+\midrule
+Datasets (training and fine-tuning) & They determine the behaviour of the model; the main target of poisoning \\
+Pretrained base models & Downloaded from third parties; may carry a backdoor or executable code \\
+Fine-tuned model weights & The behaviour that is deployed \\
+Training and fine-tuning scripts, parameters and environment & They define how weights are produced; a compromised script or host alters the result \\
+Inference and verification APIs, deployment configuration & They serve the deployed model and decide what is trusted \\
+Signing keys, trust store and policy & They decide which signatures count; their theft defeats the scheme \\
+Signed manifests, provenance graph and audit trail & The evidence used at deployment and after an incident \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\fontsize{7.7}{9.6}\selectfont,
+  art/.style={draw=cgnavy,line width=0.7pt,rounded corners=2.5pt,minimum width=2.95cm,minimum height=1.05cm,align=center,fill=white},
+  atk/.style={align=center,text width=3.25cm,inner sep=2pt,text=cgink},
+  flow/.style={-{Latex[length=2mm,width=1.6mm]},line width=0.8pt,color=cgnavy},
+  hit/.style={-{Latex[length=1.7mm,width=1.4mm]},line width=0.6pt,color=cgmuted}]
+% bands
+\fill[cgband,rounded corners=3pt] (-1.75,1.02) rectangle (13.25,2.95);
+\fill[cgband,rounded corners=3pt] (-1.75,-2.95) rectangle (13.25,-1.02);
+\node[anchor=north west,font=\sffamily\bfseries\fontsize{8}{10}\selectfont,text=cgnavy] at (-1.6,2.9) {Before signing: the signer attests the content in good faith. Cryptography cannot see it.};
+\node[anchor=south west,font=\sffamily\bfseries\fontsize{8}{10}\selectfont,text=cgnavy] at (-1.6,-2.9) {After signing: every change breaks a hash, a signature or a link. Cryptography detects it.};
+% artifacts
+\node[art] (a1) at (0,0) {\textbf{Datasets}\\stage 1};
+\node[art] (a2) at (3.83,0) {\textbf{Base model}\\stage 2};
+\node[art] (a3) at (7.66,0) {\textbf{Fine-tuned model}\\stage 3};
+\node[art] (a4) at (11.49,0) {\textbf{Deployment}\\stage 4};
+\draw[flow] (a1) -- (a2);
+\draw[flow] (a2) -- (a3);
+\draw[flow] (a3) -- (a4);
+% before signing
+\node[atk] (b1) at (0,1.82) {Poisoned rows in the\\training or fine-tuning data};
+\node[atk] (b2) at (3.83,1.82) {Backdoored pretrained model\\from an outside publisher};
+\node[atk] (b3) at (7.66,1.82) {Training host that alters\\the weights it will sign};
+\node[atk] (b4) at (11.49,1.82) {Code that runs on load\\(pickle formats)};
+\foreach \i in {1,2,3,4} \draw[hit] (b\i) -- (a\i);
+% after signing
+\node[atk] (c1) at (0,-1.82) {Rows changed, added\\or removed in storage};
+\node[atk] (c2) at (3.83,-1.82) {Model file replaced\\or one weight changed};
+\node[atk] (c3) at (7.66,-1.82) {Parent link rewritten;\\signature forged or replayed};
+\node[atk] (c4) at (11.49,-1.82) {Revoked key or artifact used;\\trust records edited};
+\foreach \i in {1,2,3,4} \draw[hit] (c\i) -- (a\i);
+\end{tikzpicture}
+\caption{Where attacks act along an AI pipeline. Experiments 1 to 5 of Section~\ref{sec:eval} cover the lower
+band, experiments 6 and 7 the upper band. Formats that run code on load sit between the two: the file is exactly
+what was signed, so the gateway refuses such formats by rule.}
+\label{fig:when}
+\end{figure}
+
+\subsection{Scope, assumptions and constraints}
+\textbf{In scope.} SHA-256 hashing, Ed25519 signatures, signed JSON manifests, hash-linked provenance and
+dataset Merkle trees, signer roles and a stage policy, revocation, a deployment gateway, a small PyTorch
+pipeline, attack scenarios and measurements, a FastAPI backend, a Streamlit dashboard, Docker and GitHub
+Actions.
+
+\textbf{Out of scope, discussed but not built.} Blockchain anchoring (optional in the brief; Section~\ref{sec:soa}
+explains the choice of a signed log instead), hardware attestation, key storage in an HSM or a KMS,
+reproducible training, large models, production authentication for the API, and research on new backdoor
+detectors.
+
+\textbf{Assumptions.} The signing keys, the policy file and the verifier code are trusted. Everything else
+(files, storage, the index database, logs, training hosts, outside publishers, the network) may be attacked.
+Each role has its own key. The held-out test split is trusted. A small model on the scikit-learn digits dataset
+is enough to measure integrity guarantees and the effect of a backdoor, because the mechanisms do not depend on
+the size of the model.
+
+\textbf{Constraints.} Eight weeks, four students and no budget: open-source tools only and training on CPU.
+Every result must be reproducible from the repository. What cryptography proves and what it cannot prove are
+kept apart, in the code and in the writing.
+
+\subsection{Objectives and success criteria}
+The scoping note fixed five measurable objectives in the first two weeks. Table~\ref{tab:criteria} repeats
+them with the result measured at the end of the project.
+
+{\tablefont
+\begin{xltabular}{\textwidth}{P{3.1cm}P{4.5cm}L}
+\caption{Objectives of the scoping note, their success criteria and the measured result.}\label{tab:criteria}\\
+\toprule
+\headrow\hd{Objective} & \hd{Success criterion} & \hd{Result} \\
+\midrule
+\endfirsthead
+\toprule
+\headrow\hd{Objective} & \hd{Success criterion} & \hd{Result} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Attest artifacts across at least three stages & Datasets, base model, fine-tuned model and deployment record signed and hash-linked & Met: four stages attested and linked \\
+Detect tampering after attestation & Every tampering, substitution, provenance and signature variant \st{FAILED}; controls \st{VERIFIED} & Met: 48 of 48 variants ended as predicted; every manipulation after signing was rejected \\
+Show the limit of attestation & Signed poisoned data verifies; backdoor success rate reported & Met: \st{VERIFIED} and deployed with 77.2\,\% (E2), 51.2\,\% (E4) and 100\,\% (E7-F) \\
+Keep the cost negligible & Attestation under 5\,\% of training time; verification under 100\,ms for the chain & Met: 0.83\,\% of training time; 8.5\,ms per verification (95th percentile 12.2\,ms) \\
+Reproducible system & \code{docker compose up} and the CI gate pass on a clean machine & Met: Compose stack run on a team laptop (16~October); both CI workflows pass on GitHub-hosted runners \\
+\end{xltabular}}

@@ -2,6 +2,8 @@
 
 ESAIP Master 1 MSc · Projet Applicatif 2 · Applied AI Projects · Referent: Sofiane HAMRIOUI
 Team: Karan DESHMUKH, JOGI Sudheer reddy, DAMA Dola Krishna, MEKALA Rambabu
+**Final report (10 November 2026):** [`report/AI-ChainGuard_Final_Report.pdf`](report/AI-ChainGuard_Final_Report.pdf), 34 pages and appendices, following the six phases of the brief.
+
 **Version 0.4 (9 November 2026)**. What changed: [`docs/16_progress_update_v0.4.md`](docs/16_progress_update_v0.4.md) · v0.3 notes: [`docs/14_progress_update_since_oct5.md`](docs/14_progress_update_since_oct5.md) · IEEE paper: [`paper/signed_is_not_safe.pdf`](paper/signed_is_not_safe.pdf) (English) · [`paper/signed_is_not_safe_fr.pdf`](paper/signed_is_not_safe_fr.pdf) (French) · Brief requirements and where each one is met: [`docs/18_requirements_checklist.md`](docs/18_requirements_checklist.md) · Website: https://ai-chainguard.vercel.app
 
 **Project website:** [ai-chainguard.vercel.app](https://ai-chainguard.vercel.app) · **CI:** both GitHub Actions workflows pass ([runs](https://github.com/domail2karandeshmukh-cyber/ai-chainguard/actions))
@@ -52,7 +54,7 @@ Ten checks (V0–V9) run at every verification:
 - **A stolen, unrevoked key produces valid signatures.**
 - **The keys directory is trusted.** The root private key and the pin `keys/trust_root.json` anchor the trust log; whoever controls them controls the trust decisions (Experiment 5 shows that controlling only the SQLite index or the log file is no longer enough).
 - **Revocation is local.** The log is signed and portable but not yet published to a shared transparency log, so another verifier with a stale copy would not see a recent revocation.
-- **It is a prototype:** file-based keys, no API authentication, no TLS.
+- **Production hardening:** this version uses file-based keys and has no API authentication and no TLS.
 
 ## Architecture
 
@@ -218,6 +220,7 @@ AI-assisted reference environment (cloud Linux container, 2 vCPU Xeon @ 2.10 GHz
 - **Inference** (median, `results/metrics/inference_benchmark.csv`): one prediction 0.084 ms before and 0.085 ms after verified deployment (no per-prediction cost); full chain verification 8.5 ms (7.95 ms in v0.3; replaying the 5-record trust log costs 0.16 ms with cached signatures, 0.75 ms cold); first secure deployment through the gateway 253 ms, once per deployment.
 - **Trust log** (`results/metrics/trustlog_benchmark.csv`): replaying 5 / 50 / 500 / 2 000 records costs 0.8 / 6.9 / 69 / 288 ms with every signature verified (about 0.14 ms per record, Ed25519-bound) and 0.16 / 0.8 / 7.7 / 31 ms with the per-process signature cache; a 2 000-record log is 0.8 MB.
 - **Manifest sizes:** signed envelopes are 1.4–3.1 KB per artifact; dataset Merkle sidecars are 30–68 KB.
+- **Supplementary runs (10 November 2026):** with the poison in the fine-tuning set instead of the training set, the model is VERIFIED and deployed with a 25.3 % backdoor success rate, and WARNING with content checks (`results/attacks/e2_finetune_poison.json`). Over ten other seeds the status never changes: E2 deploys with a 74.4–94.8 % backdoor success rate (median 83.0 %) and E4 with 58.3–90.1 % (median 70.4 %), so the reference seed is at the low end (`results/attacks/seed_robustness.json`).
 - **Hashing and signatures:** SHA-256 runs at about 1.2 GB/s from 1 MiB upwards; Ed25519 signing takes 0.04 ms and verification 0.12–0.14 ms, independent of artifact size.
 
 Figures: `results/figures/` (`fig_attack_outcomes.png`, `fig_backdoor_asr.png`, `fig_inference_overhead.png`, ...) and the vector figures of the paper in `paper/figures/`.
@@ -232,12 +235,13 @@ Figures: `results/figures/` (`fig_attack_outcomes.png`, `fig_backdoor_asr.png`, 
 | External published models (Experiment 7) | Completed; CLI, library, **API and dashboard page (v0.4)** |
 | Interoperability: in-toto Statement / DSSE / SLSA Provenance v1 export (v0.4) | Completed, tested (CLI, API) |
 | Inference-overhead, manifest-size and trust-log benchmarks | Completed (reference environment only) |
-| API, dashboard, CLI | Prototype, no authentication; dashboard runs standalone |
+| API, dashboard, CLI | Completed; no authentication in this version; dashboard runs standalone |
 | Docker | Image build, Compose stack, pipeline, API and dashboard executed on team hardware (16 Oct 2026) |
 | GitHub Actions | **Executed on GitHub, both workflows passed** (9 Nov 2026, Python 3.11.18): lint and all 168 tests; attested pipeline, independent re-verification, tamper negative control, attack scenarios A–D, F, G (43/43). The optional Sigstore job is disabled |
 | Tests and benchmarks on team hardware | **Not yet done** (`scripts/run_validation.sh`) |
 | Project website | Static page on Vercel built from `website/` (figures and numbers from `results/`); `make website` refreshes its assets |
-| State of the art and IEEE paper | Paper drafted with verified references (`paper/`); SoA document still to consolidate |
+| State of the art and IEEE paper | State of the art consolidated (`docs/02_state_of_the_art.md`); paper in English (updated 10 November 2026) and French, with verified references (`paper/`) |
+| Final report | `report/AI-ChainGuard_Final_Report.pdf` (34 pages and appendices); LaTeX source, charts and a consistency check against `results/` in `report/` |
 
 ## Team
 
@@ -248,11 +252,11 @@ Figures: `results/figures/` (`fig_attack_outcomes.png`, `fig_backdoor_asr.png`, 
 | DAMA Dola Krishna | Testing / Documentation / Quality Engineer | Test scenarios, experimentation journal, results collection, quality assurance, dashboard support, weekly reports |
 | MEKALA Rambabu | Security / DevOps Engineer | Hashing, digital signatures, key handling, cryptographic verification, Docker, CI/CD |
 
-The prototype was developed with AI-assisted code generation and validated by execution. Team code walkthroughs and reproduction on team hardware are planned.
+The implementation was developed with AI-assisted code generation and validated by execution: tests, complete validation runs in the reference environment, the two CI workflows and the Docker run on team hardware. Reproduction of the tests and benchmarks on team hardware is the next step.
 
 ## Known limitations
 
-| Prototype | Production |
+| This version | Production |
 | --- | --- |
 | Private keys as 0600 files or CI secrets | HSM / cloud KMS, or keyless Sigstore (Fulcio + Rekor) |
 | Trust log is local and single-writer (v0.4 closed E5-C4) | publish the records to a shared transparency log (Rekor-style) so every verifier sees one history |
@@ -266,11 +270,9 @@ The prototype was developed with AI-assisted code generation and validated by ex
 
 ## Next work
 
-1. Create the GitHub repository; record the first runs of both workflows.
-2. Re-run `scripts/run_validation.sh` on team hardware; write a journal entry.
-3. Code walkthroughs by module owner.
-4. Publish trust-log records to a shared transparency log; evaluate Sigstore keyless signing for the roles.
-5. Consolidate the state-of-the-art document from the paper's reference list.
+1. Re-run `scripts/run_validation.sh` on team hardware; write a journal entry.
+2. Publish trust-log records to a shared transparency log; evaluate Sigstore keyless signing for the roles.
+3. Repeat the evaluation with larger models and with trigger-agnostic content checks.
 
 ## Repository map
 
@@ -286,6 +288,7 @@ deployment/        Stage 4 deployment gateway
 attacks/           Scenarios A-G + run_all
 dashboard/         Streamlit dashboard (talks to the API; embeds it in standalone mode)
 paper/             IEEE conference paper, English and French (LaTeX, vector figures regenerated from results/)
+report/            final report (XeLaTeX), its charts, generated tables and the check of its numbers against results/
 tests/             unit + integration tests (168)
 config/policy.yaml who may sign what, required/allowed parents
 docker/            Dockerfile + compose (profiles: experiments, demo)

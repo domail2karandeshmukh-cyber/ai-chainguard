@@ -1,0 +1,176 @@
+\topsection[sec:soa]{State of the art and critical analysis}
+
+This section is the summary of phase~2. The full synthesis is \repofile{docs/02_state_of_the_art.md} and the
+complete comparative table is \repofile{docs/03_comparative_table.md}. Every reference was opened and checked
+in November 2026.
+
+\subsection{Why an AI supply chain is not a software supply chain}
+In a software supply chain, readable source code goes through a build that can be made deterministic. Anyone can
+rebuild the binary and compare it with the one that was shipped, so reproducible builds and build provenance
+give strong guarantees about what a binary contains. A model is produced differently. Its behaviour comes from
+data, code, hyper-parameters and randomness. The result, a file of weights, cannot be read like source code,
+training is rarely reproducible bit for bit, and the only way to learn what a model does is to test it. Malice
+hides in a statistical property of the weights, not in lines that a reviewer can read, and a backdoored model
+passes ordinary accuracy tests. Its upstream dependencies are not only libraries but datasets, pretrained
+models and fine-tuning services.
+
+Two consequences shape the project. Provenance must cover the whole lineage of a model, not one build. And even
+complete provenance proves who produced which bytes; it does not prove that the bytes behave well.
+
+\subsection{Attacks on AI supply chains}
+\textbf{Direct poisoning of training and fine-tuning data.} BadNets \cite{badnets} showed that a few training
+images stamped with a small pixel pattern and relabelled are enough to plant a backdoor: the model keeps its
+normal accuracy and outputs the attacker's class whenever the pattern is present. Poisoning has since become
+cheap at scale. Carlini et al. poisoned web-scale datasets for tens of dollars by buying expired domains that
+dataset indexes still referenced \cite{carlini2024}. Souly et al. backdoored language models of 600 million to
+13 billion parameters with a near-constant number of about 250 poisoned documents, which means that a larger
+training set does not dilute the attack \cite{souly2025}. In every case the poison is present before anyone
+signs the data.
+
+\textbf{Backdoored and malicious pretrained models.} A model from a public hub can carry a backdoor in its
+weights, or attack the machine that loads it. Python's pickle format, used by \code{torch.save}, executes code
+during deserialisation. JFrog found about one hundred such models on Hugging Face in February 2024, one of them
+opening a reverse shell \cite{jfrog2024}. In February 2025 ReversingLabs described models whose deliberately
+broken pickle stream ran its payload before the security scanner failed \cite{rl2025}. A signature on such a
+file only proves who published it.
+
+\textbf{Environment poisoning.} The code and the infrastructure around training are part of the supply chain.
+Between 25 and 30 December 2022 the \code{torchtriton} dependency confusion exfiltrated SSH keys and files from
+machines that installed the PyTorch nightly builds \cite{pytorch2022}. A compromised training host can alter
+weights during training and, if it holds a signing key, sign the result.
+
+\textbf{Regulation and risk frameworks.} Besides Article 15(5) of the EU AI Act \cite{aiact2024}, the NIST AI
+Risk Management Framework \cite{nistairmf}, the MITRE ATLAS technique AML.T0010 on AI supply chain compromise
+\cite{atlas} and the OWASP Machine Learning Security Top~10 (ML06:2023) \cite{owaspml} describe the same risk.
+None prescribes a mechanism. They ask organisations to be able to show where a model came from and that it was
+not manipulated.
+
+\subsection{Cryptographic signing and attestation}
+A cryptographic hash such as SHA-256 gives a short fingerprint of a file: any change to the file changes the
+fingerprint. A digital signature over that fingerprint proves that the holder of a private key approved exactly
+these bytes. Ed25519 \cite{rfc8032} gives small keys, small signatures and fast verification. Two standards
+define how such evidence is packaged: the DSSE envelope, which signs a typed payload \cite{dsse}, and the in-toto
+attestation framework, whose statements bind a subject (a file digest) to a predicate such as build provenance
+\cite{intotoattest}.
+
+Key management is the hard part of signing. Sigstore removes long-lived keys: Fulcio issues short-lived
+certificates bound to an OpenID Connect identity, Rekor records every signature in a public transparency log,
+and \code{cosign} signs and verifies \cite{sigstore2022}. OpenSSF Model Signing 1.0, released in April 2025,
+applies this to machine-learning models and signs a model directory file by file, with Sigstore or a private
+PKI \cite{oms2025}. These tools prove the integrity and the origin of one artifact. They do not link a fine-tuned
+model to the dataset and the base model it was trained from, they do not say which identity may sign which
+stage, and they say nothing about what a model learned.
+
+\subsection{Provenance frameworks and tamper-evident logs}
+SLSA 1.1 defines levels of build provenance, from documented builds to provenance that a hardened builder
+produces and that cannot be forged \cite{slsa11}. Applied to machine learning, training plays the role of the
+build and the dataset and the base model are build inputs, but SLSA describes one build step, not a chain of
+training and fine-tuning steps owned by different parties. in-toto is the closest conceptual match to this
+project: a project owner signs a layout that lists the steps of a supply chain, who may perform each step and
+which materials and products link the steps \cite{intoto2019}. Its layouts were designed for software builds and
+do not model dataset content or revocation along an AI lineage.
+
+The Update Framework showed how to survive a key compromise with separate roles, thresholds and explicit
+revocation \cite{tuf2010}. Certificate Transparency showed how a Merkle tree makes a log append-only and
+auditable \cite{rfc6962}. A Merkle tree hashes items in pairs up to a single root, so one root commits to every
+item, and a changed item can be located. We use it to commit a dataset row by row.
+
+\textbf{Blockchain anchoring}, which the brief lists as optional, gives a public, tamper-evident timeline at
+the cost of operating or paying for a ledger and of trusting its consensus. For one organisation, a signed,
+hash-chained log with a pinned head gives the same append-only property with far less infrastructure. A public
+anchor becomes useful when several organisations must agree on one history. We therefore built the signed log
+and left anchoring as future work.
+
+\subsection{Documentation, content-level defences and safe formats}
+Model cards \cite{modelcards} and datasheets for datasets \cite{datasheets} document intended use, training data
+and evaluation. Bills of materials for machine learning list the components of an AI system: CycloneDX added
+this in version 1.5 \cite{cyclonedx15} and SPDX 3.0 introduced AI and Dataset profiles \cite{spdx3}. These
+documents bring transparency, not integrity. They are unsigned by default.
+
+Content-level defences look at what the data or the model contains: data validation and label-distribution
+tests on the data side; activation clustering \cite{activation}, spectral signatures \cite{spectral}, Neural
+Cleanse \cite{neuralcleanse} and STRIP \cite{strip} on the model side. All of them give evidence, not proof.
+Adaptive attackers choose triggers that a given detector does not model, and every detector has false positives
+and a cost. Finally, the pickle attacks above are prevented by formats that cannot execute code. safetensors
+stores a JSON header and raw tensors, and was audited by Trail of Bits in 2023 \cite{safetensors}.
+
+\subsection{Open-source, industrial and academic approaches compared}
+Table~\ref{tab:compare} compares the approaches capability by capability. No row reaches ``yes'' in the column
+for poisoned content. Integrity mechanisms and content defences answer different questions, and a credible
+control combines both and says which one produced each conclusion.
+
+{\tablefont\setlength{\tabcolsep}{4pt}
+\begin{xltabular}{\textwidth}{P{3.15cm}P{2.4cm}P{2.0cm}P{2.5cm}P{1.95cm}L}
+\caption{Comparison of approaches (capabilities as documented by each project, November 2026; ``no'' means that
+it is not a goal of the tool, not a defect).}\label{tab:compare}\\
+\toprule
+\headrow\hd{Approach} & \hd{Detects tampering after signing} & \hd{Proves origin} & \hd{Links artifacts across stages} & \hd{Detects poisoned content} & \hd{Needs} \\
+\midrule
+\endfirsthead
+\toprule
+\headrow\hd{Approach} & \hd{Detects tampering after signing} & \hd{Proves origin} & \hd{Links artifacts across stages} & \hd{Detects poisoned content} & \hd{Needs} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\multicolumn{6}{l}{\textit{Building blocks}} \\*
+Plain hashes & yes, if the hash comes from a trusted channel & no & no & no & nothing \\
+Digital signatures & yes & yes (key holder) & no, unless parents are signed into the payload & no & key management \\
+\midrule
+\multicolumn{6}{l}{\textit{Open-source signing and provenance}} \\*
+Sigstore, cosign & yes & yes (OIDC identity) & no (per artifact) & no & Fulcio, Rekor, identity provider \\
+OpenSSF Model Signing & yes (model directory) & yes & no & no & Sigstore or a PKI \\
+in-toto layouts & yes & yes & yes (layout of steps) & no & nothing \\
+SLSA provenance & yes & yes (builder) & partial (build inputs) & no & hardened builder \\
+TUF, transparency logs & yes (history, rollback) & yes & no & no & log service \\
+\midrule
+\multicolumn{6}{l}{\textit{Industrial practice and standards}} \\*
+Model hubs: safe formats and file scanning & no & no & no & code on load only & hub \\
+Model registries (MLflow, DVC) & no (metadata) & no (platform login) & lineage metadata & no & server \\
+Model cards, ML-BOM (CycloneDX, SPDX) & only if signed & only if signed & yes (inventory) & no & nothing \\
+Blockchain anchoring & yes (history) & partial & yes & no & ledger network \\
+\midrule
+\multicolumn{6}{l}{\textit{Academic defences}} \\*
+Backdoor detectors, data validation & no & no & no & partial (heuristic, evadable) & nothing \\
+\midrule
+\textbf{\sys} & \textbf{yes}, to the row for datasets & \textbf{yes}, keys bound to roles & \textbf{yes}, parent digests inside each signed payload & partial, reported as \st{WARNING} only & keys in files; no outside service \\
+\end{xltabular}}
+
+\subsection{Limits of the state of the art and the approach we chose}
+\begin{enumerate}
+\item \textbf{No end-to-end lineage.} Existing tools sign one file or one build. Nothing links dataset, base
+  model, fine-tuned model and deployment into one verifiable graph, decides which role may sign which stage,
+  revokes along the links, or gates deployment on the whole chain.
+\item \textbf{Unsigned metadata.} Lineage kept as ordinary database state can be edited by whoever
+  administers the database.
+\item \textbf{Signed is read as safe.} A valid signature is often presented to users as a safety signal. We
+  found no work that measures how much protection it gives against poison that was present before signing.
+\item \textbf{Content checks are partial.} They can be evaded and must be reported as separate, weaker
+  evidence.
+\end{enumerate}
+
+\sys\ keeps the proven building blocks and adds what is missing for an AI lineage. Table~\ref{tab:choices}
+gives each choice with its justification.
+
+{\tablefont
+\begin{xltabular}{\textwidth}{P{5.6cm}L}
+\caption{The approach we selected and why.}\label{tab:choices}\\
+\toprule
+\headrow\hd{Choice} & \hd{Justification} \\
+\midrule
+\endfirsthead
+\toprule
+\headrow\hd{Choice} & \hd{Justification} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Ed25519-signed JSON manifests with a canonical serialisation & Small, fast, deterministic signatures; one manifest per artifact; exportable as in-toto statements in DSSE envelopes \\
+Each manifest embeds the manifest digests of its parents & Separate signatures become one hash-linked graph: rewriting an ancestor breaks every descendant, even with a legitimate key \\
+Row-level Merkle root for datasets (RFC 6962 construction) & Detects and locates a single changed row \\
+Signers bound to roles, and a stage policy & The in-toto layout idea applied to AI stages: the training key cannot sign datasets, and a fine-tuned model needs a dataset and a base model \\
+Signed, hash-chained, pinned trust log for keys and revocation & Append-only history and revocation without operating a blockchain; the database is only an untrusted index \\
+Deployment gateway that verifies the whole chain and loads the verified bytes; safetensors only & Closes the gap between the check and the use, and the code-execution path of pickle \\
+Content checks reported separately, as \st{WARNING} & Keeps cryptographic and content evidence apart, which is the point the project measures \\
+Custom signing at the core instead of Sigstore & Works offline, with the role policy and the parent links above; an optional Sigstore keyless job exists in the CI workflow (off by default) \\
+\end{xltabular}}

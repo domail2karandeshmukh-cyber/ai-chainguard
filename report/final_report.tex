@@ -1,0 +1,164 @@
+% AI-ChainGuard: final report (ESAIP Master 1 MSc, Projet Applicatif 2)
+% Build with XeLaTeX (fonts are shipped in fonts/):
+%   cd report && xelatex final_report && xelatex final_report && xelatex final_report
+% On Overleaf: upload the report/ folder and set the compiler to XeLaTeX.
+% Charts: python report/figures/make_figures.py (reads results/). References: python report/tools/order_refs.py
+\documentclass[fontsize=10pt,paper=a4,parskip=half-,headings=small,numbers=noenddot,captions=tableheading]{scrartcl}
+
+% ---------- page ----------
+\usepackage[a4paper,left=2.75cm,right=2.75cm,top=2.55cm,bottom=2.7cm,headheight=15pt,headsep=15pt,footskip=28pt]{geometry}
+
+% ---------- fonts (IBM Plex, SIL Open Font License, shipped in fonts/) ----------
+\usepackage{fontspec}
+\setmainfont{IBMPlexSerif}[Path=fonts/,Extension=.ttf,UprightFont=*-Regular,ItalicFont=*-Italic,
+  BoldFont=*-SemiBold,BoldItalicFont=*-SemiBoldItalic]
+\setsansfont{IBMPlexSans}[Path=fonts/,Extension=.ttf,UprightFont=*-Regular,ItalicFont=*-Italic,
+  BoldFont=*-SemiBold,Scale=MatchLowercase]
+\setmonofont{IBMPlexMono}[Path=fonts/,Extension=.ttf,UprightFont=*-Regular,BoldFont=*-SemiBold,Scale=0.86]
+\newfontfamily\sansmedium{IBMPlexSans-Medium}[Path=fonts/,Extension=.ttf,Scale=MatchLowercase]
+\usepackage{amsmath}
+\usepackage{microtype}
+\linespread{1.04}
+\emergencystretch=2em
+
+% ---------- colours (the palette of the project website) ----------
+\usepackage[table]{xcolor}
+\definecolor{cgnavy}{HTML}{0F2A44}
+\definecolor{cgink}{HTML}{1C2633}
+\definecolor{cgink2}{HTML}{3D4A5A}
+\definecolor{cgmuted}{HTML}{5A6676}
+\definecolor{cgband}{HTML}{EEF2EF}
+\definecolor{cgrule}{HTML}{CFD8D3}
+\definecolor{cgteal}{HTML}{0E7C86}
+\definecolor{cgfailed}{HTML}{B42318}
+\definecolor{cgwarning}{HTML}{875900}
+\definecolor{cgrefused}{HTML}{6B46C1}
+\definecolor{cgsoft}{HTML}{A9BACB}
+\color{cgink}
+
+% ---------- graphics, tables, lists ----------
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds,shapes.geometric}
+\usepackage{booktabs,tabularx,longtable,array,multirow}
+\usepackage{xltabular}
+\setlength{\LTpre}{9pt}\setlength{\LTpost}{9pt}
+\usepackage{enumitem}
+\setlist{itemsep=1.5pt,topsep=3pt,parsep=1.5pt,leftmargin=1.4em}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{needspace}
+\usepackage{placeins}
+\usepackage{float}
+\usepackage{xurl}
+
+% ---------- headings ----------
+\setkomafont{disposition}{\sffamily\bfseries\color{cgnavy}}
+\setkomafont{section}{\fontsize{17}{21}\selectfont}
+\setkomafont{subsection}{\fontsize{12}{15}\selectfont}
+\setkomafont{subsubsection}{\fontsize{10.5}{13}\selectfont}
+\renewcommand*{\sectionformat}{\textcolor{cgteal}{\thesection}\hspace{0.7em}}
+\renewcommand*{\subsectionformat}{\textcolor{cgteal}{\thesubsection}\hspace{0.7em}}
+\renewcommand*{\subsubsectionformat}{\textcolor{cgteal}{\thesubsubsection}\hspace{0.7em}}
+\RedeclareSectionCommand[beforeskip=2.1\baselineskip,afterskip=0.5\baselineskip,tocbeforeskip=5pt]{section}
+\RedeclareSectionCommand[beforeskip=1.0\baselineskip,afterskip=0.2\baselineskip]{subsection}
+\RedeclareSectionCommand[beforeskip=0.8\baselineskip,afterskip=0.1\baselineskip]{subsubsection}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\newcommand*{\tocpnsec}[1]{{\sffamily\bfseries\fontsize{8.3}{10.3}\selectfont #1}}
+\newcommand*{\tocpnsub}[1]{{\sffamily\fontsize{8.3}{10.3}\selectfont #1}}
+\DeclareTOCStyleEntry[pagenumberformat=\tocpnsec]{tocline}{section}
+\DeclareTOCStyleEntry[pagenumberformat=\tocpnsub]{tocline}{subsection}
+% a top-level section opens a new page under a short rule
+\newcommand{\topsection}[2][]{\FloatBarrier\needspace{10\baselineskip}\section{#2}\label{#1}\vspace{-0.45\baselineskip}%
+  {\color{cgrule}\rule{\textwidth}{0.6pt}}\par\vspace{0.15\baselineskip}}
+
+% ---------- header and footer ----------
+\usepackage[headsepline=0.4pt,automark]{scrlayer-scrpage}
+\usepackage{lastpage}
+\clearpairofpagestyles
+\setkomafont{pageheadfoot}{\sffamily\footnotesize\color{cgmuted}}
+\setkomafont{headsepline}{\color{cgrule}}
+\ihead{AI-ChainGuard: final report}
+\ohead{\headmark}
+\ifoot{ESAIP, Master 1 MSc, Projet Applicatif 2}
+\ofoot{Page \thepage\ of \pageref*{LastPage}}
+\automark[section]{section}
+\renewcommand*{\sectionmarkformat}{}
+
+% ---------- captions ----------
+\setcapindent{0pt}
+\setkomafont{caption}{\sffamily\small\color{cgink2}}
+\setkomafont{captionlabel}{\sffamily\small\bfseries\color{cgnavy}}
+\renewcommand*{\captionformat}{.\enskip}
+\setlength{\abovecaptionskip}{7pt}
+\setlength{\belowcaptionskip}{5pt}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.75}
+\renewcommand{\textfraction}{0.08}
+\setcounter{topnumber}{3}\setcounter{bottomnumber}{2}\setcounter{totalnumber}{4}
+
+% ---------- tables ----------
+\renewcommand{\arraystretch}{1.2}
+\arrayrulecolor{cgrule}
+\setlength{\heavyrulewidth}{0.7pt}
+\setlength{\lightrulewidth}{0.4pt}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\hd}[1]{\textbf{\color{cgnavy}#1}}
+\newcommand{\tablefont}{\sffamily\fontsize{8.4}{10.6}\selectfont}
+\newcommand{\headrow}{\rowcolor{cgband}}
+
+% ---------- verdict words: plain in prose, chips in tables and figures ----------
+\newcommand{\st}[1]{{\sffamily\bfseries\fontsize{8.6}{10}\selectfont #1}}
+\newcommand{\chip}[2]{\tikz[baseline=(X.base)]\node[fill=#1,text=white,rounded corners=1.7pt,inner xsep=3.2pt,
+  inner ysep=1.7pt,font=\sffamily\bfseries\fontsize{6.5}{7}\selectfont](X){#2};}
+\newcommand{\cVER}{\chip{cgteal}{VERIFIED}}
+\newcommand{\cFAIL}{\chip{cgfailed}{FAILED}}
+\newcommand{\cWARN}{\chip{cgwarning}{WARNING}}
+\newcommand{\cREF}{\chip{cgrefused}{REFUSED}}
+\newcommand{\code}[1]{{\ttfamily #1}}
+\newcommand{\sys}{AI-ChainGuard}
+
+% ---------- boxes ----------
+\newtcolorbox{keybox}[1][]{enhanced,breakable,colback=cgband,colframe=cgband,boxrule=0pt,arc=2pt,
+  left=11pt,right=11pt,top=8pt,bottom=8pt,borderline west={2.4pt}{0pt}{cgteal},
+  fontupper=\sffamily\fontsize{9.3}{12.6}\selectfont\color{cgink},before skip=10pt,after skip=10pt,#1}
+\newcommand{\boxtitle}[1]{\textbf{\color{cgnavy}#1}\enskip}
+
+% ---------- code ----------
+\lstset{basicstyle=\ttfamily\fontsize{7.9}{10.3}\selectfont\color{cgink},backgroundcolor=\color{cgband},
+  frame=single,rulecolor=\color{cgband},framesep=6pt,xleftmargin=7pt,xrightmargin=7pt,
+  breaklines=true,breakatwhitespace=false,columns=fullflexible,keepspaces=true,showstringspaces=false,
+  aboveskip=8pt,belowskip=6pt,literate={…}{{\ldots}}1}
+
+% ---------- links and metadata ----------
+\usepackage[colorlinks=true,linkcolor=cgnavy,urlcolor=cgteal,citecolor=cgteal,bookmarksnumbered=true]{hyperref}
+\hypersetup{pdftitle={AI-ChainGuard: AI Supply Chain Integrity and Attestation Platform. Final report},
+  pdfauthor={Karan DESHMUKH, JOGI Sudheer reddy, DAMA Dola Krishna, MEKALA Rambabu},
+  pdfsubject={ESAIP Master 1 MSc, Projet Applicatif 2: AI Supply Chain Integrity Platform},
+  pdfkeywords={AI supply chain, attestation, provenance, digital signatures, data poisoning, backdoor}}
+\urlstyle{tt}
+\usepackage{multicol}
+\newcommand{\repo}{https://github.com/domail2karandeshmukh-cyber/ai-chainguard}
+\newcommand{\site}{https://ai-chainguard.vercel.app}
+\newcommand{\repofile}[1]{\href{\repo/blob/main/\detokenize{#1}}{\nolinkurl{#1}}}
+\newcommand{\repodir}[1]{\href{\repo/tree/main/\detokenize{#1}}{\nolinkurl{#1/}}}
+
+\begin{document}
+\input{sections/00_front}
+\input{sections/01_introduction}
+\input{sections/02_scoping}
+\input{sections/03_state_of_the_art}
+\input{sections/04_threat_model}
+\input{sections/05_design}
+\input{sections/06_implementation}
+\input{sections/07_evaluation}
+\input{sections/08_discussion}
+\input{sections/09_valorisation}
+\input{sections/10_project}
+\input{sections/11_conclusion}
+\input{sections/90_references}
+\input{sections/95_appendices}
+\end{document}

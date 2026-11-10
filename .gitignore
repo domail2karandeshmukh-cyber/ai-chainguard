@@ -37,3 +37,11 @@ paper/*.aux
 paper/*.log
 paper/*.out
 paper/*.synctex.gz
+
+# --- LaTeX build files (report/); the named copy AI-ChainGuard_Final_Report.pdf is committed ---
+report/*.aux
+report/*.log
+report/*.out
+report/*.toc
+report/*.synctex.gz
+report/final_report.pdf

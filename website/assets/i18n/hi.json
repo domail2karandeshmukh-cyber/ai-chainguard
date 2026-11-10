@@ -249,7 +249,7 @@
  "paper.p5": "टेस्टिंग और मूल्यांकन",
  "paper.p5_d": "<a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/tree/main/results\">लॉग और तालिकाओं</a> के साथ 48 हमला और नियंत्रण वेरिएंट, <a href=\"#results\">इस पेज के चार्ट</a>, और शोध-पत्र में आलोचनात्मक विश्लेषण तथा सुधार के रास्ते।",
  "paper.p6": "रिपोर्टिंग और उपयोग",
- "paper.p6_d": "अंग्रेज़ी और फ़्रेंच में IEEE शोध-पत्र, <a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/13_conference_proposal.md\">कॉन्फ़्रेंस प्रस्ताव</a>, <a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/12_demo_scenario.md\">डेमो परिदृश्य</a> और साप्ताहिक रिपोर्ट (<a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/10_weekly_report_template.md\">टेम्पलेट</a>)।",
+ "paper.p6_d": "<a href=\"assets/paper/ai-chainguard-final-report.pdf\">अंतिम रिपोर्ट</a> (34 पृष्ठ और परिशिष्ट, अंग्रेज़ी में), अंग्रेज़ी और फ़्रेंच में IEEE शोध-पत्र, <a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/13_conference_proposal.md\">कॉन्फ़्रेंस प्रस्ताव</a>, <a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/12_demo_scenario.md\">डेमो परिदृश्य</a> और साप्ताहिक रिपोर्ट (<a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/10_weekly_report_template.md\">टेम्पलेट</a>)।",
  "sources.title": "स्रोत",
  "sources.lede": "शोध-पत्र के 26 संदर्भ, पहली बार उद्धृत होने के क्रम में। ऑनलाइन स्रोतों की जाँच 9 नवंबर 2026 को की गई।",
  "sources.list": "सभी 26 संदर्भ",

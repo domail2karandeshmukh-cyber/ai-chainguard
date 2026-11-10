@@ -1,0 +1,25 @@
+\topsection[sec:conclusion]{Conclusion and future work}
+
+We built an attestation chain for AI pipelines. It links datasets, base models, external models, fine-tuned
+models and deployments through signed manifests that embed the digests of their parents. It enforces who may
+sign which stage, keeps trust and revocation in a signed, pinned, append-only log, and gates deployment on a
+verification of the whole chain. The system is complete from the command line to the dashboard, tested by 168
+automated tests and by two CI workflows, and documented phase by phase as the brief requires.
+
+On 48 attack and control variants, every manipulation made after signing was detected, including the bypasses
+aimed at the index and at the log itself. The cost is under one per cent of training time, 8.5\,ms per
+verification and nothing per prediction. The answer to the first sub-question of the project is therefore yes:
+an enterprise can verify cryptographically that an artifact, and everything it descends from, is exactly what
+authorised parties attested.
+
+The same suite answers the second sub-question. Poison that is present before signing verifies and deploys,
+with a backdoor success rate of 77.2\,\% in the reference run and of 74 to 95\,\% for ten other seeds. Content
+checks catch the trigger they know and miss an adaptive one. A backdoored model from a trusted publisher
+verifies. Cryptographic attestation is necessary for an AI supply chain and it is not sufficient: it must be
+combined with evidence about content, and the two must be reported separately.
+
+\textbf{Future work.} In order of priority: publish the trust log and the release roots to a shared
+transparency log; replace long-lived keys by keyless signing and hardware-backed roots; repeat the evaluation
+on team hardware and with larger models; add trigger-agnostic detectors as further content checks and measure
+them against adaptive triggers; export the provenance graph as a signed bill of materials. The paper is ready
+to be adapted to the page limit of the first targeted venue.

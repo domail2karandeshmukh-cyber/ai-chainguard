@@ -1,0 +1,254 @@
+{
+ "outcomes": {
+  "A": {
+   "n": 5,
+   "as_expected": 5,
+   "min_ms": 5.441,
+   "max_ms": 14.521,
+   "median_ms": 7.499
+  },
+  "B": {
+   "n": 4,
+   "as_expected": 4,
+   "min_ms": 9.934,
+   "max_ms": 15.072,
+   "median_ms": 10.57
+  },
+  "D": {
+   "n": 7,
+   "as_expected": 7,
+   "min_ms": 9.411,
+   "max_ms": 13.79,
+   "median_ms": 10.136
+  },
+  "C": {
+   "n": 5,
+   "as_expected": 5,
+   "min_ms": 2.101,
+   "max_ms": 7.492,
+   "median_ms": 5.463
+  },
+  "F": {
+   "n": 13,
+   "as_expected": 13,
+   "min_ms": 3.874,
+   "max_ms": 13.946,
+   "median_ms": 6.925
+  },
+  "E": {
+   "n": 5,
+   "as_expected": 5,
+   "min_ms": 10.583,
+   "max_ms": 13.5,
+   "median_ms": 11.078
+  },
+  "G": {
+   "n": 9,
+   "as_expected": 9,
+   "min_ms": 1.711,
+   "max_ms": 6.23,
+   "median_ms": 2.162
+  },
+  "all": {
+   "n": 48,
+   "as_expected": 48,
+   "min_ms": 1.711,
+   "max_ms": 15.072,
+   "median_ms": 7.458
+  }
+ },
+ "boundary": {
+  "E0": {
+   "status": "VERIFIED",
+   "clean_accuracy_pct": 95.0,
+   "asr_pct": 0.0,
+   "fate": "deployed"
+  },
+  "E2": {
+   "status": "VERIFIED",
+   "clean_accuracy_pct": 94.2,
+   "asr_pct": 77.2,
+   "fate": "deployed"
+  },
+  "E3": {
+   "status": "WARNING",
+   "clean_accuracy_pct": 94.2,
+   "asr_pct": 77.2,
+   "fate": "blocked"
+  },
+  "E4": {
+   "status": "VERIFIED",
+   "clean_accuracy_pct": 94.4,
+   "asr_pct": 51.2,
+   "fate": "deployed"
+  },
+  "E7-F": {
+   "status": "VERIFIED",
+   "clean_accuracy_pct": 93.3,
+   "asr_pct": 100.0,
+   "fate": "imported"
+  },
+  "FT-E2": {
+   "status": "VERIFIED",
+   "clean_accuracy_pct": 93.9,
+   "asr_pct": 25.3,
+   "fate": "deployed"
+  },
+  "FT-E3": {
+   "status": "WARNING",
+   "clean_accuracy_pct": 93.9,
+   "asr_pct": 25.3,
+   "fate": "blocked"
+  }
+ },
+ "cost": {
+  "One prediction, before the deployment": {
+   "median_ms": 0.0844,
+   "p95_ms": 0.1911
+  },
+  "One prediction, after the verified deployment": {
+   "median_ms": 0.085,
+   "p95_ms": 0.1835
+  },
+  "Replay of the trust log, 5 records": {
+   "median_ms": 0.752,
+   "p95_ms": 0.945
+  },
+  "Safe load of the model (safetensors)": {
+   "median_ms": 1.0637,
+   "p95_ms": 1.5336
+  },
+  "Smoke test on 360 held-out samples": {
+   "median_ms": 8.2784,
+   "p95_ms": 10.8111
+  },
+  "Full-chain verification, ten checks": {
+   "median_ms": 8.4985,
+   "p95_ms": 12.2206
+  },
+  "Attestation of the four artifacts": {
+   "median_ms": 10.65,
+   "p95_ms": null
+  },
+  "Verification, audit log and safe read": {
+   "median_ms": 30.9348,
+   "p95_ms": 39.8479
+  },
+  "First secure deployment, total (once)": {
+   "median_ms": 252.683,
+   "p95_ms": 295.3838
+  },
+  "Training of the model, for scale": {
+   "median_ms": 1288.0,
+   "p95_ms": null
+  }
+ },
+ "scaling": {
+  "sha256_ms": {
+   "1 KiB": 0.0366,
+   "16 KiB": 0.0421,
+   "256 KiB": 0.2135,
+   "1 MiB": 0.8316,
+   "4 MiB": 3.1997,
+   "16 MiB": 12.8302,
+   "64 MiB": 54.5232,
+   "256 MiB": 219.5737
+  },
+  "merkle_ms": {
+   "1000": 2.168,
+   "10000": 15.691,
+   "100000": 160.603,
+   "1000000": 1668.792
+  },
+  "trustlog_cold_ms": {
+   "5": 0.752,
+   "50": 6.871,
+   "500": 69.429,
+   "2000": 287.928
+  },
+  "trustlog_warm_ms": {
+   "5": 0.157,
+   "50": 0.795,
+   "500": 7.688,
+   "2000": 30.551
+  }
+ },
+ "seeds": {
+  "E2": {
+   "min": 74.4,
+   "median": 83.0,
+   "max": 94.8,
+   "reference": 77.2,
+   "verified": 10,
+   "deployed": 10,
+   "runs": 10,
+   "clean_accuracy": {
+    "min": 0.9583,
+    "median": 0.9694,
+    "max": 0.9833,
+    "mean": 0.9708,
+    "stdev": 0.0086
+   }
+  },
+  "E4": {
+   "min": 58.3,
+   "median": 70.4,
+   "max": 90.1,
+   "reference": 51.2,
+   "verified": 10,
+   "deployed": 10,
+   "runs": 10,
+   "clean_accuracy": {
+    "min": 0.9639,
+    "median": 0.9722,
+    "max": 0.9806,
+    "mean": 0.9717,
+    "stdev": 0.0057
+   }
+  },
+  "E0": {
+   "statuses": {
+    "VERIFIED": 10
+   },
+   "deployed": 10,
+   "runs": 10,
+   "runs_with_content_flags": 0,
+   "clean_accuracy": {
+    "min": 0.9583,
+    "median": 0.9722,
+    "max": 0.9861,
+    "mean": 0.9725,
+    "stdev": 0.0078
+   },
+   "asr": {
+    "min": 0.0,
+    "median": 0.0,
+    "max": 0.0,
+    "mean": 0.0,
+    "stdev": 0.0
+   }
+  },
+  "E3": {
+   "statuses": {
+    "WARNING": 10
+   },
+   "deployed": 0,
+   "runs": 10,
+   "runs_with_content_flags": 10,
+   "clean_accuracy": {
+    "min": 0.9583,
+    "median": 0.9694,
+    "max": 0.9833,
+    "mean": 0.9708,
+    "stdev": 0.0086
+   },
+   "asr": {
+    "min": 0.7438,
+    "median": 0.8303,
+    "max": 0.9475,
+    "mean": 0.8454,
+    "stdev": 0.0624
+   }
+  }
+ }
+}

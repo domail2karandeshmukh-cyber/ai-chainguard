@@ -80,6 +80,19 @@ The brief's example scenario injects the backdoor into the fine-tuning dataset, 
 
 The boundary is the same as in E2 and E3: signed poison verifies and deploys, and the content checks flag this trigger family so the gateway blocks it. The backdoor is weaker (25.3 % against 77.2 %) because eight epochs of fine-tuning on 35 poisoned rows teach it less than fifteen epochs of training with 8 % poison. The base model's attack success rate is 0 %, so the backdoor comes from the fine-tuning set alone. Result file: `results/attacks/e2_finetune_poison.json`. These two variants are not part of the paper's 48.
 
+### Supplementary run: the same variants for ten other seeds (10 November 2026)
+
+The reference run uses one seed (42). The seed decides the split of the digits, the rows that are poisoned, the initial weights and the order of the mini-batches. `python -m scripts.seed_robustness` repeats the four pipeline variants E0, E2, E3 and E4, unchanged, for the seeds 0 to 9 (40 runs), and runs seed 42 again as a check.
+
+| Variant | Status in the 10 runs | Deployed | Clean accuracy (min to max, median) | ASR (min to max, median) |
+| --- | --- | --- | --- | --- |
+| E0 clean | 10 VERIFIED, no content flag | 10 | 95.8 to 98.6 %, 97.2 % | 0 % |
+| E2 poison before signing | 10 VERIFIED | 10 | 95.8 to 98.3 %, 96.9 % | **74.4 to 94.8 %, 83.0 %** |
+| E3 same poison, content checks | 10 WARNING | 0 (blocked) | same models as E2 | same models as E2 |
+| E4 adaptive trigger | 10 VERIFIED | 10 | 96.4 to 98.1 %, 97.2 % | **58.3 to 90.1 %, 70.4 %** |
+
+The status never changes, and the content checks raise no false alarm on the ten clean splits. Seed 42 reproduces the reference results exactly (95.0 % / 0 %; 94.2 % / 77.2 %; WARNING; 94.4 % / 51.2 %): the reference seed gives the second weakest backdoor of the eleven runs for E2 and the weakest for E4, so the figures quoted in the paper and the report are at the low end of what the attack achieves. Result file: `results/attacks/seed_robustness.json`. These runs are not part of the paper's 48.
+
 ---
 
 ## Scenario F — Revocation (Experiment 5, v0.3; extended in v0.4)

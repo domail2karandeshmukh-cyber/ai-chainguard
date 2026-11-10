@@ -249,7 +249,7 @@
  "paper.p5": "Tests et évaluation",
  "paper.p5_d": "48 variantes d’attaque et de contrôle avec <a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/tree/main/results\">journaux et tableaux</a>, les <a href=\"#results\">graphiques de cette page</a>, et l’analyse critique et les pistes d’amélioration dans l’article.",
  "paper.p6": "Rapport et valorisation",
- "paper.p6_d": "L’article IEEE en anglais et en français, la <a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/13_conference_proposal.md\">proposition de conférence</a>, le <a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/12_demo_scenario.md\">scénario de démonstration</a> et les rapports hebdomadaires (<a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/10_weekly_report_template.md\">modèle</a>).",
+ "paper.p6_d": "Le <a href=\"assets/paper/ai-chainguard-final-report.pdf\">rapport final</a> (34 pages et annexes, en anglais), l’article IEEE en anglais et en français, la <a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/13_conference_proposal.md\">proposition de conférence</a>, le <a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/12_demo_scenario.md\">scénario de démonstration</a> et les rapports hebdomadaires (<a href=\"https://github.com/domail2karandeshmukh-cyber/ai-chainguard/blob/main/docs/10_weekly_report_template.md\">modèle</a>).",
  "sources.title": "Sources",
  "sources.lede": "Les 26 références de l’article, dans l’ordre de première citation. Les sources en ligne ont été vérifiées le 9 novembre 2026.",
  "sources.list": "Les 26 références",
