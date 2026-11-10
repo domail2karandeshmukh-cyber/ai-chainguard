@@ -240,7 +240,7 @@ Figures: `results/figures/` (`fig_attack_outcomes.png`, `fig_backdoor_asr.png`, 
 | GitHub Actions | **Executed on GitHub, both workflows passed** (9 Nov 2026, Python 3.11.18): lint and all 168 tests; attested pipeline, independent re-verification, tamper negative control, attack scenarios A–D, F, G (43/43). The optional Sigstore job is disabled |
 | Tests and benchmarks on team hardware | **Not yet done** (`scripts/run_validation.sh`) |
 | Project website | Static page on Vercel built from `website/` (figures and numbers from `results/`); `make website` refreshes its assets |
-| State of the art and IEEE paper | State of the art consolidated (`docs/02_state_of_the_art.md`); paper in English (updated 10 November 2026) and French, with verified references (`paper/`) |
+| State of the art and IEEE paper | State of the art consolidated (`docs/02_state_of_the_art.md`); paper in English and French (both updated 10 November 2026), with verified references (`paper/`) |
 | Final report | `report/AI-ChainGuard_Final_Report.pdf` (34 pages and appendices); LaTeX source, charts and a consistency check against `results/` in `report/` |
 
 ## Team
