@@ -105,7 +105,8 @@ sup { line-height: 0; }
 .band .btn-primary:hover, .section:not(.dark) .btn-primary:hover { background: var(--navy-0); color: #fff; }
 
 /* dark sections */
-.dark { background-color: var(--navy-0); background-image: linear-gradient(rgba(217, 226, 236, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(217, 226, 236, 0.035) 1px, transparent 1px), linear-gradient(180deg, #0A1A2B 0%, #0F2A44 100%); background-size: 56px 56px, 56px 56px, 100% 100%; color: var(--on-dark); }
+/* dark sections are radiograph film: where things get inspected */
+.dark { background-color: var(--film); background-image: radial-gradient(90% 60% at 20% 0%, rgba(43, 196, 204, 0.10), transparent 70%), repeating-linear-gradient(0deg, rgba(214, 240, 255, 0.022) 0 1px, transparent 1px 4px); color: var(--on-dark); }
 .dark h2, .dark h3 { color: #fff; }
 .dark .lede { color: var(--on-dark); }
 .dark .note { color: var(--on-dark-2); }
@@ -307,6 +308,12 @@ tbody th { font-weight: 600; color: var(--navy); }
 .tip.on { opacity: 1; }
 .tip b { font-family: var(--mono); }
 .proves { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; margin: 32px 0 24px; }
+/* the two kinds of evidence, drawn like the hero: certificate paper and radiograph film */
+.proves > div { border-radius: 12px; padding: 22px 24px 12px; }
+.proves > div:first-child { background: #FBFCFA; border: 1px solid var(--rule); }
+.proves > div:last-child { background-color: var(--film); background-image: repeating-linear-gradient(0deg, rgba(214, 240, 255, 0.03) 0 1px, transparent 1px 4px); color: var(--phosphor); }
+.proves > div:last-child h3 { color: #fff; }
+.proves > div:last-child .ticks.no li::before { background: var(--signal); box-shadow: 0 0 8px rgba(255, 91, 79, 0.6); }
 .ticks { list-style: none; margin: 0; padding: 0; }
 .ticks li { position: relative; padding-left: 24px; margin-bottom: 10px; }
 .ticks li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 10px; height: 10px; border-radius: 2px; background: var(--verified); }
