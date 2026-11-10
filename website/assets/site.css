@@ -418,3 +418,16 @@ tbody th { font-weight: 600; color: var(--navy); }
 .chart-key { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 10px; margin: 8px 0 0; font-size: 0.8125rem; line-height: 1.5; color: var(--ink-2); }
 .chart-key dt { font-family: var(--mono); font-weight: 600; color: var(--ink); }
 .chart-key dd { margin: 0; }
+
+/* demo: the hash lens */
+.lens { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--navy-line); }
+.lens:empty { display: none; }
+.lens-title { margin: 0 0 12px; font-size: 0.875rem; color: var(--on-dark-2); }
+.lens-pair { display: flex; flex-wrap: wrap; gap: 20px; }
+.lens-fig { margin: 0; }
+.lens-fig canvas { display: block; width: 104px; height: 104px; image-rendering: pixelated; border-radius: 4px; background: rgba(214, 240, 255, 0.05); box-shadow: 0 0 0 1px var(--navy-line); }
+.lens-fig figcaption { margin-top: 7px; font-size: 0.8125rem; line-height: 1.4; color: var(--on-dark-2); }
+.lens-fig code { display: block; font-size: 0.75rem; color: var(--on-dark); }
+.lens-diff { margin: 12px 0 0; font-size: 0.9375rem; line-height: 1.5; }
+.lens.bad .lens-diff { color: var(--red-bright); }
+.lens.ok .lens-diff { color: var(--teal-bright); }

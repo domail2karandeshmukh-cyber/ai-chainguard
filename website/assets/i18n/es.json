@@ -314,5 +314,10 @@
  "ui.x.poison": "Tres filas de entrenamiento recibieron un parche de 2×2 en la esquina y la etiqueta 7 antes de que el responsable de datos las firmara. Cada firma es auténtica, así que todas las comprobaciones pasan y el modelo envenenado se despliega.",
  "ui.x.poison_checked": "El mismo veneno, pero una comprobación de contenido se ejecutó antes de firmar: encontró el parche de la esquina, el manifiesto firmado lleva la alerta (V9) y la pasarela rechaza WARNING por defecto.",
  "ui.x.poison_adaptive": "El atacante movió el disparador a un patrón que la comprobación de contenido no conoce. La comprobación pasa, todo se verifica y el modelo con puerta trasera se despliega.",
- "meta.title": "AI-ChainGuard: firmado no es seguro"
+ "meta.title": "AI-ChainGuard: firmado no es seguro",
+ "ui.d.fp_title": "SHA-256 de {name}: firmado y actual",
+ "ui.d.fp_signed": "firmado",
+ "ui.d.fp_now": "actual",
+ "ui.d.fp_same": "Los 256 bits coinciden.",
+ "ui.d.fp_diff": "{k} de 256 bits difieren: un cambio mínimo invierte cerca de la mitad."
 }

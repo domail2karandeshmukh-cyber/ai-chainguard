@@ -9,7 +9,7 @@
   var app = document.getElementById("demo-app");
   if (!CG || !app) { return; }
   var $ = function (id) { return document.getElementById(id); };
-  var chainBox = $("demo-chain"), digitsBox = $("demo-digits"), explainBox = $("demo-explain");
+  var chainBox = $("demo-chain"), digitsBox = $("demo-digits"), explainBox = $("demo-explain"), lensBox = $("demo-lens");
   var reportBox = $("demo-report"), gateBox = $("demo-gateway"), algBox = $("demo-alg");
   var buttons = Array.prototype.slice.call(app.querySelectorAll("[data-attack]"));
   var subtle = window.crypto && window.crypto.subtle;
@@ -304,7 +304,7 @@
       var type = id === "dep" ? CG.t("ui.d.deployment") : CG.t("ui.d." + ST.arts[id].type);
       var dig = ST.arts[id] ? "d(m) " + ST.digests[id].slice(0, 12) + "…" : "—";
       b.innerHTML = '<span class="n-name">' + esc(name) + '</span><span class="n-type">' + esc(type) + '</span><span class="n-dig">' + esc(dig) + '</span><span class="n-st">' + status + "</span>";
-      b.addEventListener("click", function () { if (ST.reports[id]) { SEL = id; renderChain(); renderReport(); } });
+      b.addEventListener("click", function () { if (ST.reports[id]) { SEL = id; renderChain(); renderReport(); renderLens(); } });
       chainBox.appendChild(b);
     });
     requestAnimationFrame(drawEdges);
@@ -349,6 +349,46 @@
       digitsBox.appendChild(cell);
     });
   }
+  // the hash lens: the signed SHA-256 of the selected artifact's file next to the SHA-256 of its bytes now,
+  // as 16x16 bit grids; differing bits in red (the avalanche effect of a one-byte change)
+  function bitsOf(h) {
+    var out = [];
+    for (var i = 0; i < 64; i++) { var v = parseInt(h[i], 16); for (var b = 3; b >= 0; b--) { out.push((v >> b) & 1); } }
+    return out;
+  }
+  function drawBits(cv, bs, ref) {
+    var ctx = cv.getContext("2d");
+    if (!ctx) { return; }
+    var img = ctx.createImageData(16, 16);
+    bs.forEach(function (bit, i) {
+      var diff = ref && ref[i] !== bit, o = i * 4, c = diff ? [255, 91, 79] : [214, 240, 255];
+      img.data[o] = c[0]; img.data[o + 1] = c[1]; img.data[o + 2] = c[2];
+      img.data[o + 3] = diff ? (bit ? 255 : 110) : (bit ? 225 : 0);
+    });
+    ctx.putImageData(img, 0, 0);
+  }
+  function renderLens() {
+    if (!lensBox) { return; }
+    var id = ST.arts[SEL] ? SEL : ATTACKS[CUR].focus, a = ST.arts[id];
+    lensBox.innerHTML = "";
+    if (!a || !ST.fileHash) { return; }
+    var signed = a.env.body.subject.sha256, now = ST.fileHash[id], sb = bitsOf(signed), nb = bitsOf(now), k = 0;
+    sb.forEach(function (b, i) { if (b !== nb[i]) { k += 1; } });
+    lensBox.className = "lens " + (k ? "bad" : "ok");
+    var title = document.createElement("p");
+    title.className = "lens-title"; title.textContent = CG.t("ui.d.fp_title", { name: a.name });
+    var pair = document.createElement("div");
+    pair.className = "lens-pair";
+    [["ui.d.fp_signed", signed, sb, null], ["ui.d.fp_now", now, nb, sb]].forEach(function (f) {
+      var fig = document.createElement("figure"), cv = document.createElement("canvas"), cap = document.createElement("figcaption");
+      fig.className = "lens-fig"; cv.width = 16; cv.height = 16; drawBits(cv, f[2], f[3]);
+      cap.innerHTML = esc(CG.t(f[0])) + "<code>" + esc(f[1].slice(0, 16)) + "…</code>";
+      fig.appendChild(cv); fig.appendChild(cap); pair.appendChild(fig);
+    });
+    var line = document.createElement("p");
+    line.className = "lens-diff"; line.textContent = k ? CG.t("ui.d.fp_diff", { k: k }) : CG.t("ui.d.fp_same");
+    lensBox.appendChild(title); lensBox.appendChild(pair); lensBox.appendChild(line);
+  }
   var MARK = { pass: '[<span class="ok">PASS</span>]', fail: '[<span class="bad">FAIL</span>]', warn: '[<span class="wrn">WARN</span>]', skip: '[<span class="skp">skip</span>]' };
   function renderReport() {
     var r = ST.reports[SEL];
@@ -380,7 +420,7 @@
   function renderAll() {
     if (!ST) { return; }
     ST.digests = ST.digests || {};
-    renderChain(); renderDigits(); renderReport(); renderGateway();
+    renderChain(); renderDigits(); renderReport(); renderGateway(); renderLens();
     explainBox.textContent = CG.t("ui.x." + CUR);
     algBox.textContent = CG.t("ui.d.alg", { alg: ALG.label });
     buttons.forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-attack") === CUR)); });
@@ -395,7 +435,11 @@
       await runGateway(st);
       st.digests = {};
       var ids = Object.keys(st.arts);
-      for (var i = 0; i < ids.length; i++) { st.digests[ids[i]] = await digestOf(st.arts[ids[i]]); }
+      st.fileHash = {};
+      for (var i = 0; i < ids.length; i++) {
+        st.digests[ids[i]] = await digestOf(st.arts[ids[i]]);
+        st.fileHash[ids[i]] = await shaHex(st.arts[ids[i]].bytes);
+      }
       ST = st; CUR = name; SEL = ATTACKS[name].focus;
       renderAll();
     } catch (e) {

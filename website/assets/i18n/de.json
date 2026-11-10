@@ -314,5 +314,10 @@
  "ui.x.poison": "Drei Trainingszeilen erhielten ein 2×2-Eckmuster und das Label 7, bevor der Datenverantwortliche sie signierte. Jede Signatur ist echt, also besteht jede Prüfung und das vergiftete Modell wird ausgerollt.",
  "ui.x.poison_checked": "Dasselbe Gift, aber vor dem Signieren lief eine Inhaltsprüfung: Sie fand das Eckmuster, das signierte Manifest trägt die Markierung (V9), und das Gateway lehnt WARNING standardmäßig ab.",
  "ui.x.poison_adaptive": "Der Angreifer hat den Trigger auf ein Muster verlegt, das die Inhaltsprüfung nicht kennt. Die Prüfung besteht, alles wird verifiziert, und das Modell mit Backdoor wird ausgerollt.",
- "meta.title": "AI-ChainGuard: Signiert ist nicht sicher"
+ "meta.title": "AI-ChainGuard: Signiert ist nicht sicher",
+ "ui.d.fp_title": "SHA-256 von {name}: signiert und jetzt",
+ "ui.d.fp_signed": "signiert",
+ "ui.d.fp_now": "jetzt",
+ "ui.d.fp_same": "Alle 256 Bits stimmen überein.",
+ "ui.d.fp_diff": "{k} von 256 Bits unterscheiden sich: Eine winzige Änderung kippt etwa die Hälfte."
 }

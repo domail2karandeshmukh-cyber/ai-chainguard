@@ -314,5 +314,10 @@
  "ui.x.poison": "Trois lignes d’entraînement ont reçu un carré 2×2 dans le coin et l’étiquette 7 avant que le responsable des données ne les signe. Chaque signature est authentique : tous les contrôles passent et le modèle empoisonné est déployé.",
  "ui.x.poison_checked": "Le même poison, mais un contrôle de contenu a tourné avant la signature : il a trouvé le carré dans le coin, le manifeste signé porte l’alerte (V9) et la passerelle refuse WARNING par défaut.",
  "ui.x.poison_adaptive": "L’attaquant a déplacé le déclencheur vers un motif que le contrôle de contenu ne connaît pas. Le contrôle passe, tout est vérifié, et le modèle piégé est déployé.",
- "meta.title": "AI-ChainGuard : signé n’est pas sûr"
+ "meta.title": "AI-ChainGuard : signé n’est pas sûr",
+ "ui.d.fp_title": "SHA-256 de {name} : signé et actuel",
+ "ui.d.fp_signed": "signé",
+ "ui.d.fp_now": "actuel",
+ "ui.d.fp_same": "Les 256 bits sont identiques.",
+ "ui.d.fp_diff": "{k} bits sur 256 diffèrent : une infime modification en inverse environ la moitié."
 }
