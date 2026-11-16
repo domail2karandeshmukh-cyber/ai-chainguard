@@ -18,7 +18,7 @@
 \usepackage{dblfloatfix}
 \usepackage{flushend}
 \usepackage[hidelinks]{hyperref}
-\hypersetup{pdftitle={Signé n'est pas sûr : mesurer la frontière entre intégrité cryptographique et confiance sémantique dans les chaînes d'approvisionnement de l'IA},pdfauthor={Karan Deshmukh, Sudheer Reddy Jogi, Dola Krishna Dama, Rambabu Mekala},pdfsubject={ESAIP MSc Cybersécurité et Science des données, Projet Applicatif 2}}
+\hypersetup{pdftitle={Signé n'est pas sûr : mesurer la frontière entre intégrité cryptographique et confiance sémantique dans les chaînes d'approvisionnement de l'IA},pdfauthor={Karan Deshmukh},pdfsubject={ESAIP MSc Cybersécurité et Science des données, Projet Applicatif 2}}
 \newcommand{\sys}{AI-ChainGuard}
 \newcommand{\st}[1]{\textsc{#1}}
 \newcommand{\role}[1]{{\fontsize{4.6}{5.2}\selectfont\ttfamily #1}}
@@ -32,9 +32,9 @@
 \title{Signé n'est pas sûr : mesurer la frontière entre intégrité cryptographique et confiance sémantique dans les chaînes d'approvisionnement de l'IA}
 
 \author{
-\IEEEauthorblockN{Karan Deshmukh, Sudheer Reddy Jogi, Dola Krishna Dama, Rambabu Mekala}
+\IEEEauthorblockN{Karan Deshmukh}
 \IEEEauthorblockA{MSc Cybersécurité et Science des données, ESAIP École d'Ingénieurs, Angers, France\\
-Projet Applicatif 2 (projets d'IA appliquée), encadré par Sofiane Hamrioui\\
+Projet Applicatif 2 (projets d'IA appliquée), équipe projet de quatre personnes dirigée par l'auteur\\
 Auteur correspondant : domail2karandeshmukh@gmail.com}
 }
 
@@ -230,7 +230,7 @@ Les mesures sont une borne supérieure de ce que la conception offre. La suite d
 Nous avons construit une chaîne d'attestation pour pipelines d'IA qui relie jeux de données, modèles de base, modèles externes, modèles affinés et déploiements par des manifestes signés contenant les empreintes de leurs parents, impose qui signe quelle étape, garde confiance et révocation dans un journal signé, ancré et en ajout seul, et conditionne le déploiement à la vérification de toute la chaîne. Sur 48 variantes, chaque manipulation postérieure à la signature a été détectée, contournements de l'index et du journal compris, pour moins d'un pour cent du temps d'entraînement, 8,5\,ms par vérification et rien par inférence. La même suite montre la limite : un poison antérieur à la signature est déployé avec 77\,\% de succès de porte dérobée, la porte dérobée d'un éditeur de confiance avec 100\,\%. La sécurité des chaînes d'approvisionnement de l'IA a besoin des deux sortes de preuves, rapportées séparément ; ce travail fournit la première et mesure où la seconde doit prendre le relais. Prochaines étapes : publication du journal de confiance dans un journal de transparence partagé, signature sans clé, reproduction sur le matériel de l'équipe et sur des modèles plus grands.
 
 \section*{Remerciements}
-Les auteurs remercient Sofiane Hamrioui, ESAIP Angers, pour l'encadrement de ce projet. L'implémentation a été développée avec une génération de code assistée par IA et validée par exécution ; l'équipe répond de sa conception, de son évaluation et de ses conclusions.
+L'auteur remercie l'encadrant du projet à l'ESAIP Angers ainsi que les trois autres membres de l'équipe projet. L'implémentation a été développée avec une génération de code assistée par IA et validée par exécution ; l'équipe répond de sa conception, de son évaluation et de ses conclusions.
 
 \begin{thebibliography}{00}\NoAutoSpacing
 \bibitem{pytorch2022} Équipe PyTorch, «~Compromised PyTorch-nightly dependency chain between December 25th and December 30th, 2022~», 31 déc. 2022. \url{https://pytorch.org/blog/compromised-nightly-dependency/} (consulté le 9 nov. 2026).

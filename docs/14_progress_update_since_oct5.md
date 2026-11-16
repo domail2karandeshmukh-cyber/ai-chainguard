@@ -1,6 +1,6 @@
 # AI-ChainGuard — Progress Update Since 5 October 2026
 
-*Version 0.3 · 16 October 2026 · ESAIP Master 1, Projet Applicatif 2 · Referent: Sofiane HAMRIOUI*
+*Version 0.3 · 16 October 2026 · ESAIP Master 1, Projet Applicatif 2*
 
 **Evidence rule (unchanged from the Week 1 report).** A feature is reported as completed only when code and repeatable execution evidence exist. Every number below comes from one run on **16 October 2026 in the AI-assisted reference development environment** (cloud Linux container, Intel Xeon @ 2.10 GHz, 2 logical CPUs, 7.8 GB RAM, Python 3.13.16, PyTorch 2.14.1 CPU execution). These numbers are **not yet reproduced on team hardware**. Raw logs: `results/validation_logs/`.
 
@@ -239,12 +239,12 @@ Fixes applied:
 
 ## 10. Next steps
 
-1. Create the GitHub repository and push v0.3, then record the first CI runs (`ci`, `attest-and-verify`). Owner: MEKALA Rambabu.
-2. Run `docker compose -f docker/docker-compose.yml up --build` on a team machine and record the result. Owner: MEKALA Rambabu.
-3. Re-run the full validation on team hardware with `--machine-label` and add a journal entry. Owner: DAMA Dola Krishna.
+1. Create the GitHub repository and push v0.3, then record the first CI runs (`ci`, `attest-and-verify`). Owner: Security and DevOps engineer.
+2. Run `docker compose -f docker/docker-compose.yml up --build` on a team machine and record the result. Owner: Security and DevOps engineer.
+3. Re-run the full validation on team hardware with `--machine-label` and add a journal entry. Owner: QA and documentation engineer.
 4. Code walkthroughs: each member presents and runs the modules they own (section 11).
 5. Experiment 7 follow-up: decide on Sigstore / OpenSSF model-signing interoperability (analyse or implement); add an import endpoint and a dashboard view. Owner: Karan DESHMUKH.
-6. Inference: repeat the benchmark on team hardware; optionally remove the duplicate verification in the gateway. Owner: JOGI Sudheer reddy.
+6. Inference: repeat the benchmark on team hardware; optionally remove the duplicate verification in the gateway. Owner: AI/ML engineer.
 7. State of the art: verify every reference. Owners: all four.
 
 ## 11. Team ownership
@@ -254,6 +254,6 @@ Ownership (who is responsible for an area), not a record of individual contribut
 | Member | Role | Owns in v0.3 |
 |---|---|---|
 | Karan DESHMUKH | Technical Lead / Security Architecture | Architecture and integration, provenance and verifier design, external-model design (Experiment 7), deployment gateway, API, coordination, professor demo |
-| JOGI Sudheer reddy | AI / ML Engineer | Dataset and training pipeline, backdoor experiments (E, E7-F), inference-overhead benchmark |
-| DAMA Dola Krishna | Testing / Documentation / Quality Engineer | Test suite, experimentation journal, results collection, re-measurement on team hardware, dashboard support, weekly reports |
-| MEKALA Rambabu | Security / DevOps Engineer | Hashing, signatures, key and publisher-key handling, revocation (Experiment 5), Docker, CI/CD |
+| Team member | AI / ML Engineer | Dataset and training pipeline, backdoor experiments (E, E7-F), inference-overhead benchmark |
+| Team member | Testing / Documentation / Quality Engineer | Test suite, experimentation journal, results collection, re-measurement on team hardware, dashboard support, weekly reports |
+| Team member | Security / DevOps Engineer | Hashing, signatures, key and publisher-key handling, revocation (Experiment 5), Docker, CI/CD |

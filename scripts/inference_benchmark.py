@@ -287,7 +287,7 @@ def run(out_dir: Path, *, machine_label: str | None = None, **cfg: int) -> dict[
 def main() -> None:
     ap = argparse.ArgumentParser(description="Inference overhead benchmark and manifest sizes")
     ap.add_argument("--out", default=str(Path(os.environ.get("CHAINGUARD_HOME") or REPO_ROOT) / "results" / "metrics"))
-    ap.add_argument("--machine-label", default=None, help='e.g. "team laptop - Dola Krishna, i5-1135G7"')
+    ap.add_argument("--machine-label", default=None, help='e.g. "team laptop, i5-1135G7"')
     for k, v in DEFAULTS.items():
         ap.add_argument(f"--{k.replace('_', '-')}", type=int, default=v)
     args = ap.parse_args()

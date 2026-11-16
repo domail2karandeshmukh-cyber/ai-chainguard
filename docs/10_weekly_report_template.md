@@ -1,15 +1,15 @@
 # Weekly report — week [N] ([dates])
 
-**Team:** Karan DESHMUKH, JOGI Sudheer reddy, DAMA Dola Krishna, MEKALA Rambabu · **Author this week:** [name]
+**Team:** Karan DESHMUKH (lead) and three team members · **Author this week:** [name]
 
 ## 1. Status at a glance
 
 | Workstream | Owner | Status | Note |
 | --- | --- | --- | --- |
 | Architecture, provenance, verifier, API, gateway | Karan DESHMUKH | On track / At risk / Late | |
-| Dataset, training, fine-tuning, backdoor experiments | JOGI Sudheer reddy | | |
-| Tests, journal, results, dashboard support, weekly reports | DAMA Dola Krishna | | |
-| Hashing, signatures, keys, Docker, CI/CD | MEKALA Rambabu | | |
+| Dataset, training, fine-tuning, backdoor experiments | AI/ML engineer | | |
+| Tests, journal, results, dashboard support, weekly reports | QA and documentation engineer | | |
+| Hashing, signatures, keys, Docker, CI/CD | Security and DevOps engineer | | |
 | Documentation | all | | |
 
 ## 2. Done this week

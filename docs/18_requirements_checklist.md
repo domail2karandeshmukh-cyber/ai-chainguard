@@ -1,6 +1,6 @@
 # Requirements checklist
 
-*Every requirement of the brief "Quatre projets applicatifs IA" (ESAIP Master 1 MSc, referent Sofiane HAMRIOUI) that applies to Projet Applicatif 2, "AI Supply Chain Integrity Platform", with the evidence in this repository. Checked on 10 November 2026.*
+*Every requirement of the brief "Quatre projets applicatifs IA" (ESAIP Master 1 MSc) that applies to Projet Applicatif 2, "AI Supply Chain Integrity Platform", with the evidence in this repository. Checked on 10 November 2026.*
 
 Status: **Done**, **Done (email)** when the evidence was sent to the referent rather than committed, **Ready** when the material is prepared. Nothing is open. The final report (`report/AI-ChainGuard_Final_Report.pdf`, Appendix A) carries the same table.
 

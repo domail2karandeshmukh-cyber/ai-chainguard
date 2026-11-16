@@ -1,8 +1,8 @@
 # Scoping note: AI-ChainGuard
 
-*Phase 1 deliverable of Projet Applicatif 2, "AI Supply Chain Integrity Platform" (ESAIP Master 1, referent Sofiane HAMRIOUI). Written in weeks 1 and 2 (from 21 September 2026); wording finalised on 10 November 2026 without changing the scope. Owner: Karan DESHMUKH.*
+*Phase 1 deliverable of Projet Applicatif 2, "AI Supply Chain Integrity Platform" (ESAIP Master 1). Written in weeks 1 and 2 (from 21 September 2026); wording finalised on 10 November 2026 without changing the scope. Owner: Karan DESHMUKH.*
 
-**Team:** Karan DESHMUKH, JOGI Sudheer reddy, DAMA Dola Krishna, MEKALA Rambabu. **Programme:** ESAIP Master 1, Cybersecurity and Data Science. **Duration:** 8 weeks.
+**Team:** Karan DESHMUKH (lead) and three team members. **Programme:** ESAIP Master 1, Cybersecurity and Data Science. **Duration:** 8 weeks.
 
 ## 1. Context and stakes
 
@@ -102,6 +102,6 @@ Working system (repository), state-of-the-art synthesis and comparative table, t
 | Member | Ownership |
 | --- | --- |
 | Karan DESHMUKH | Technical lead and security architecture: architecture, integration, FastAPI backend, provenance design, deployment verification, coordination |
-| JOGI Sudheer reddy | AI and ML engineering: dataset preparation, PyTorch training and fine-tuning, poisoning and backdoor experiments, ML evaluation |
-| DAMA Dola Krishna | Testing, documentation and quality: test scenarios, experimentation journal, results collection, quality assurance, dashboard support, weekly reports |
-| MEKALA Rambabu | Security and DevOps: hashing, digital signatures, key handling, cryptographic verification, Docker, CI/CD |
+| Team member | AI and ML engineering: dataset preparation, PyTorch training and fine-tuning, poisoning and backdoor experiments, ML evaluation |
+| Team member | Testing, documentation and quality: test scenarios, experimentation journal, results collection, quality assurance, dashboard support, weekly reports |
+| Team member | Security and DevOps: hashing, digital signatures, key handling, cryptographic verification, Docker, CI/CD |

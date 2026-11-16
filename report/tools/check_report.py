@@ -134,7 +134,7 @@ def main() -> int:
         "long dash in the source": r"---|(?<![-\w])--(?![-\w])|[–—]",
         "dash in the PDF text": None,
         "the word prototype": r"(?i)prototype",
-        "wrong team name": r"Vandana|Deshmukh\b(?!\})|Sudheer Reddy|Dola krishna|Rambabu MEKALA",
+        "name not in the form the report uses": r"Deshmukh\b(?!\})",
         "verdict word not in capitals": r"\b(Verified|Failed|Refused)\b(?! at| the| and| to)",
     }
     for name, rx in rules.items():

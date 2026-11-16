@@ -6,7 +6,7 @@
 
 **Signed Is Not Safe: Measuring the Boundary Between Cryptographic Integrity and Semantic Trust in AI Supply Chains**
 
-**Authors:** Karan Deshmukh, Sudheer Reddy Jogi, Dola Krishna Dama, Rambabu Mekala (ESAIP, Angers). Supervisor: Sofiane HAMRIOUI.
+**Author:** Karan Deshmukh (ESAIP, Angers), lead of a four-person project team.
 
 ## Abstract
 

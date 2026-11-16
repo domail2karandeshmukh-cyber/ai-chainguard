@@ -258,7 +258,7 @@
  "team.r2": "Ingénierie IA et apprentissage automatique",
  "team.r3": "Tests, documentation et qualité",
  "team.r4": "Sécurité et DevOps",
- "team.ref": "Encadré par Sofiane HAMRIOUI. MSc Cybersécurité et Science des données, ESAIP École d’Ingénieurs, Angers. Projet Applicatif 2.",
+ "team.ref": "Chef de projet d’une équipe de quatre personnes. MSc Cybersécurité et Science des données, ESAIP École d’Ingénieurs, Angers. Projet Applicatif 2.",
  "foot.docs": "Documents",
  "foot.env": "Mesures : exécution du 9 novembre 2026 dans l’environnement de référence, un conteneur Linux cloud avec deux cœurs logiques Intel Xeon à 2,10 GHz, 8 Go de mémoire et sans GPU. Chaque chiffre de cette page provient du dossier de résultats du dépôt.",
  "foot.ai": "AI-ChainGuard a été développé avec une génération de code assistée par IA et validé par exécution ; l’équipe est responsable de sa conception, de son évaluation et de ses conclusions.",

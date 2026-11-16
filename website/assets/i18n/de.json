@@ -258,7 +258,7 @@
  "team.r2": "KI- und Machine-Learning-Engineering",
  "team.r3": "Tests, Dokumentation und Qualität",
  "team.r4": "Sicherheit und DevOps",
- "team.ref": "Betreut von Sofiane HAMRIOUI. MSc Cybersecurity and Data Science, ESAIP École d'Ingénieurs, Angers. Projet Applicatif 2.",
+ "team.ref": "Projektleiter eines vierköpfigen Teams. MSc Cybersecurity and Data Science, ESAIP École d'Ingénieurs, Angers. Projet Applicatif 2.",
  "foot.docs": "Dokumente",
  "foot.env": "Messungen: Lauf vom 9. November 2026 in der Referenzumgebung, einem Cloud-Linux-Container mit zwei logischen Intel-Xeon-Kernen mit 2,10 GHz, 8 GB Arbeitsspeicher und ohne GPU. Jede Zahl auf dieser Seite stammt aus dem Ergebnisordner des Repositorys.",
  "foot.ai": "AI-ChainGuard wurde mit KI-gestützter Codegenerierung entwickelt und durch Ausführung validiert; das Team verantwortet Entwurf, Auswertung und Schlussfolgerungen.",

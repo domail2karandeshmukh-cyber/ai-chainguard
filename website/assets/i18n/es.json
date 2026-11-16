@@ -258,7 +258,7 @@
  "team.r2": "Ingeniería de IA y aprendizaje automático",
  "team.r3": "Pruebas, documentación y calidad",
  "team.r4": "Seguridad y DevOps",
- "team.ref": "Supervisado por Sofiane HAMRIOUI. MSc Ciberseguridad y Ciencia de Datos, ESAIP École d'Ingénieurs, Angers. Projet Applicatif 2.",
+ "team.ref": "Jefe de proyecto de un equipo de cuatro personas. MSc Ciberseguridad y Ciencia de Datos, ESAIP École d'Ingénieurs, Angers. Projet Applicatif 2.",
  "foot.docs": "Documentos",
  "foot.env": "Mediciones: ejecución del 9 de noviembre de 2026 en el entorno de referencia, un contenedor Linux en la nube con dos núcleos lógicos Intel Xeon a 2,10 GHz, 8 GB de memoria y sin GPU. Cada cifra de esta página procede de la carpeta de resultados del repositorio.",
  "foot.ai": "AI-ChainGuard se desarrolló con generación de código asistida por IA y se validó mediante ejecución; el equipo es responsable de su diseño, evaluación y conclusiones.",

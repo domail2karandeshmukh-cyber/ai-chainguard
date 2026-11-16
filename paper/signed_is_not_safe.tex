@@ -17,7 +17,7 @@
 \usepackage{dblfloatfix}
 \usepackage{flushend}
 \usepackage[hidelinks]{hyperref}
-\hypersetup{pdftitle={Signed Is Not Safe: Measuring the Boundary Between Cryptographic Integrity and Semantic Trust in AI Supply Chains},pdfauthor={Karan Deshmukh, Sudheer Reddy Jogi, Dola Krishna Dama, Rambabu Mekala},pdfsubject={ESAIP MSc Cybersecurity and Data Science, Projet Applicatif 2}}
+\hypersetup{pdftitle={Signed Is Not Safe: Measuring the Boundary Between Cryptographic Integrity and Semantic Trust in AI Supply Chains},pdfauthor={Karan Deshmukh},pdfsubject={ESAIP MSc Cybersecurity and Data Science, Projet Applicatif 2}}
 \newcommand{\sys}{AI-ChainGuard}
 \newcommand{\st}[1]{\textsc{#1}}
 \newcommand{\role}[1]{{\fontsize{4.6}{5.2}\selectfont\ttfamily #1}}
@@ -27,9 +27,9 @@
 \title{Signed Is Not Safe: Measuring the Boundary Between Cryptographic Integrity and Semantic Trust in AI Supply Chains}
 
 \author{
-\IEEEauthorblockN{Karan Deshmukh, Sudheer Reddy Jogi, Dola Krishna Dama, Rambabu Mekala}
+\IEEEauthorblockN{Karan Deshmukh}
 \IEEEauthorblockA{MSc Cybersecurity and Data Science, ESAIP \'Ecole d'Ing\'enieurs, Angers, France\\
-Projet Applicatif 2 (Applied AI Projects), supervised by Sofiane Hamrioui\\
+Projet Applicatif 2 (Applied AI Projects), four-person project team led by the author\\
 Corresponding author: domail2karandeshmukh@gmail.com}
 }
 
@@ -226,7 +226,7 @@ The measurements are an upper bound on what the design offers. The attack suite 
 We built an attestation chain for AI pipelines that links datasets, base models, external models, fine-tuned models and deployments through signed manifests that embed their parents' digests, enforces who may sign which stage, keeps trust and revocation in a signed, pinned, append-only log, and gates deployment on a full-chain verification. On 48 attack and control variants every manipulation made after signing was detected, including bypasses aimed at the index and at the log itself, at a cost of under one per cent of training time, 8.5\,ms per verification and nothing per inference. The same suite shows the limit: poison present before signing verifies and deploys with a 77\,\% backdoor success rate, and a trusted publisher's backdoor with 100\,\%. AI supply-chain security needs both kinds of evidence, reported separately; this work provides the first kind and measures where the second must take over. Next steps are the publication of the trust log to a shared transparency log, keyless signing for the roles, reproduction on team hardware and with larger models.
 
 \section*{Acknowledgment}
-The authors thank Sofiane Hamrioui, ESAIP Angers, for supervising this project. The implementation was developed with AI-assisted code generation and validated by execution; the team is responsible for its design, evaluation and conclusions.
+The author thanks the project supervisor at ESAIP Angers and the three other members of the project team. The implementation was developed with AI-assisted code generation and validated by execution; the team is responsible for its design, evaluation and conclusions.
 
 \begin{thebibliography}{00}
 \bibitem{pytorch2022} PyTorch team, ``Compromised PyTorch-nightly dependency chain between December 25th and December 30th, 2022,'' Dec. 31, 2022. [Online]. Available: \url{https://pytorch.org/blog/compromised-nightly-dependency/}. Accessed: Nov. 9, 2026.

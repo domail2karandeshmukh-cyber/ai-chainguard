@@ -1,6 +1,6 @@
 # State of the art: AI supply-chain integrity
 
-*Phase 2 deliverable of Projet Applicatif 2 (ESAIP Master 1, referent Sofiane HAMRIOUI). Section owners: attacks and content-level defences, JOGI Sudheer reddy; signing and attestation, MEKALA Rambabu; provenance frameworks, Karan DESHMUKH; documentation and inventory, DAMA Dola Krishna. References were checked in November 2026 for the IEEE paper (`paper/`). The side-by-side comparison is in `03_comparative_table.md`.*
+*Phase 2 deliverable of Projet Applicatif 2 (ESAIP Master 1). Section owners: attacks and content-level defences, AI/ML engineer; signing and attestation, Security and DevOps engineer; provenance frameworks, Karan DESHMUKH; documentation and inventory, QA and documentation engineer. References were checked in November 2026 for the IEEE paper (`paper/`). The side-by-side comparison is in `03_comparative_table.md`.*
 
 ## 1. Why an AI supply chain is not a software supply chain
 

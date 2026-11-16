@@ -1,6 +1,6 @@
 # AI-ChainGuard — Progress Update v0.4 (9 November 2026)
 
-*ESAIP Master 1, Projet Applicatif 2 · Referent: Sofiane HAMRIOUI · Team: Karan DESHMUKH, JOGI Sudheer reddy, DAMA Dola Krishna, MEKALA Rambabu*
+*ESAIP Master 1, Projet Applicatif 2 · Team: Karan DESHMUKH (lead) and three team members*
 
 **Evidence rule (unchanged).** A feature is reported as completed only when code and repeatable execution evidence exist. Every number below comes from one run on **9 November 2026 in the AI-assisted reference development environment** (cloud Linux container, Intel Xeon @ 2.10 GHz, 2 logical CPUs, 8 GB RAM, Python 3.13.16, PyTorch 2.15.0 CPU execution). Raw logs: `results/validation_logs/`; the v0.3 results are archived unchanged in `results/archive_2026-10-16_v0.3/`. Docker was executed on team hardware (Karan's MacBook Air) on 16 October 2026; tests and benchmarks have not yet been re-run on team hardware.
 
@@ -68,17 +68,17 @@ Pipeline: clean accuracy 95.0 %; attestation 10.7 ms vs 1 288 ms training (0.83 
 
 ## 6. Next steps
 
-1. GitHub repository + first CI runs — MEKALA Rambabu.
-2. `scripts/run_validation.sh` on team hardware, journal entry — DAMA Dola Krishna.
+1. GitHub repository + first CI runs — Security and DevOps engineer.
+2. `scripts/run_validation.sh` on team hardware, journal entry — QA and documentation engineer.
 3. Module walkthroughs — all four.
-4. Transparency-log publication of trust-log records; Sigstore keyless evaluation — Karan DESHMUKH, MEKALA Rambabu.
-5. Benchmark on team hardware; optional removal of the duplicate gateway verification — JOGI Sudheer reddy.
+4. Transparency-log publication of trust-log records; Sigstore keyless evaluation — Karan DESHMUKH, Security and DevOps engineer.
+5. Benchmark on team hardware; optional removal of the duplicate gateway verification — AI/ML engineer.
 
 ## 7. Team ownership (v0.4)
 
 | Member | Role | Owns |
 |---|---|---|
 | Karan DESHMUKH | Technical Lead / Security Architecture | Architecture and integration, verifier and trust-log design, external-model design, deployment gateway, API, interoperability export, coordination, paper |
-| JOGI Sudheer reddy | AI / ML Engineer | Dataset and training pipeline, backdoor experiments (E, E7-F), inference-overhead benchmark |
-| DAMA Dola Krishna | Testing / Documentation / Quality Engineer | Test suite, experimentation journal, results collection, validation script and re-measurement on team hardware, dashboard support, reports |
-| MEKALA Rambabu | Security / DevOps Engineer | Hashing, signatures, key and publisher-key handling, revocation and trust log operations, Docker, CI/CD |
+| Team member | AI / ML Engineer | Dataset and training pipeline, backdoor experiments (E, E7-F), inference-overhead benchmark |
+| Team member | Testing / Documentation / Quality Engineer | Test suite, experimentation journal, results collection, validation script and re-measurement on team hardware, dashboard support, reports |
+| Team member | Security / DevOps Engineer | Hashing, signatures, key and publisher-key handling, revocation and trust log operations, Docker, CI/CD |

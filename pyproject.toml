@@ -10,9 +10,6 @@ readme = "README.md"
 requires-python = ">=3.11"
 authors = [
     { name = "Karan DESHMUKH" },
-    { name = "JOGI Sudheer reddy" },
-    { name = "DAMA Dola Krishna" },
-    { name = "MEKALA Rambabu" },
 ]
 license = { text = "MIT" }
 

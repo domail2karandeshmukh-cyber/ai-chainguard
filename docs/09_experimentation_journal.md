@@ -27,7 +27,7 @@ Decision / next step:
 **Interpretation:** cryptographic cost is negligible for this model size; hashing dominates for large artifacts (linear).
 **Next:** repeat on a team laptop for comparison; add a 1 GB model file to the benchmark.
 
-### 2026-10-05 · Corner-trigger heuristic false positives · AI-assisted baseline validation (team validation planned; area owner: JOGI Sudheer reddy)
+### 2026-10-05 · Corner-trigger heuristic false positives · AI-assisted baseline validation (team validation planned; area owner: AI/ML engineer)
 
 **Goal:** zero false positives on clean data.
 **Observation:** first version flagged a sample when the *mean* of a 2×2 corner ≥ 12; on the 1,797 clean digits this flagged 11 samples (top-right and bottom-right corners, mostly 1s and 7s).

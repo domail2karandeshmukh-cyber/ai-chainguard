@@ -1,6 +1,6 @@
 # Final report
 
-`AI-ChainGuard_Final_Report.pdf` is the final report of Projet Applicatif 2 (ESAIP Master 1 MSc, referent Sofiane HAMRIOUI): 34 pages that follow the six phases of the brief, and 6 pages of appendices (requirements of the brief with their evidence, the 48 variants, a signed manifest, how to reproduce the results, where each deliverable is).
+`AI-ChainGuard_Final_Report.pdf` is the final report of Projet Applicatif 2 (ESAIP Master 1 MSc): 34 pages that follow the six phases of the brief, and 6 pages of appendices (requirements of the brief with their evidence, the 48 variants, a signed manifest, how to reproduce the results, where each deliverable is).
 
 ## Build
 

@@ -1,7 +1,7 @@
 # AI-ChainGuard: AI Supply Chain Integrity & Attestation Platform
 
-ESAIP Master 1 MSc · Projet Applicatif 2 · Applied AI Projects · Referent: Sofiane HAMRIOUI
-Team: Karan DESHMUKH, JOGI Sudheer reddy, DAMA Dola Krishna, MEKALA Rambabu
+ESAIP Master 1 MSc · Projet Applicatif 2 · Applied AI Projects
+Project lead: Karan DESHMUKH (team of four)
 **Final report (10 November 2026):** [`report/AI-ChainGuard_Final_Report.pdf`](report/AI-ChainGuard_Final_Report.pdf), 34 pages and appendices, following the six phases of the brief.
 
 **Version 0.4 (9 November 2026)**. What changed: [`docs/16_progress_update_v0.4.md`](docs/16_progress_update_v0.4.md) · v0.3 notes: [`docs/14_progress_update_since_oct5.md`](docs/14_progress_update_since_oct5.md) · IEEE paper: [`paper/signed_is_not_safe.pdf`](paper/signed_is_not_safe.pdf) (English) · [`paper/signed_is_not_safe_fr.pdf`](paper/signed_is_not_safe_fr.pdf) (French) · Brief requirements and where each one is met: [`docs/18_requirements_checklist.md`](docs/18_requirements_checklist.md) · Website: https://ai-chainguard.vercel.app
@@ -245,12 +245,12 @@ Figures: `results/figures/` (`fig_attack_outcomes.png`, `fig_backdoor_asr.png`, 
 
 ## Team
 
-| Member | Role | Ownership |
-| --- | --- | --- |
-| Karan DESHMUKH | Technical Lead / Security Architecture | Architecture, integration, FastAPI backend, provenance design, deployment verification, coordination |
-| JOGI Sudheer reddy | AI / ML Engineer | Dataset preparation, PyTorch training and fine-tuning, poisoning and backdoor experiments, ML evaluation |
-| DAMA Dola Krishna | Testing / Documentation / Quality Engineer | Test scenarios, experimentation journal, results collection, quality assurance, dashboard support, weekly reports |
-| MEKALA Rambabu | Security / DevOps Engineer | Hashing, digital signatures, key handling, cryptographic verification, Docker, CI/CD |
+| Role | Ownership |
+| --- | --- |
+| Technical Lead / Security Architecture (Karan DESHMUKH, project lead) | Architecture, integration, FastAPI backend, provenance design, deployment verification, coordination |
+| AI / ML Engineer | Dataset preparation, PyTorch training and fine-tuning, poisoning and backdoor experiments, ML evaluation |
+| Testing / Documentation / Quality Engineer | Test scenarios, experimentation journal, results collection, quality assurance, dashboard support, weekly reports |
+| Security / DevOps Engineer | Hashing, digital signatures, key handling, cryptographic verification, Docker, CI/CD |
 
 The implementation was developed with AI-assisted code generation and validated by execution: tests, complete validation runs in the reference environment, the two CI workflows and the Docker run on team hardware. Reproduction of the tests and benchmarks on team hardware is the next step.
 
